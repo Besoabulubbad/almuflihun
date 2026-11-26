@@ -1,6 +1,6 @@
 # Screens
 
-There are 62 approved screens and state boards. Each one has a PNG image in `screens/{Name}.png` and an HTML mockup in `mockups/`, which you can open in a browser. The mockups use the canvas template syntax: `{{ }}`, `<sc-for>`, `<sc-if>`. Read them as layout references, not as code to ship.
+There are 79 approved screens and state boards. Each one has a PNG image in `screens/{Name}.png` and an HTML mockup in `mockups/`, which you can open in a browser. The mockups use the canvas template syntax: `{{ }}`, `<sc-for>`, `<sc-if>`. Read them as layout references, not as code to ship.
 
 Navigation map:
 
@@ -168,6 +168,17 @@ Screens and state boards. A «لوحة حالات» (states board) shows the var
 - **المجتمع:** Community, CommunityCompose, VersePicker, CommunityThread, CommunityStates, Profile, ProfileMine, Grades.
 - **Settings:** Settings v4, CityPicker, WhatWeCollect, Feedback.
 - **Admin:** Admin hub, AdminReview, AdminLive, AdminUser, AdminAnnounce, AdminFeedback, AdminRoles.
+
+## Added in v5
+- **First launch:** Onboard1–4.
+- **Study:**
+  - Collections, CollectionPage, CollectionStates.
+  - SearchAdvanced, SearchStates.
+  - WordStudy, AyahStudy, SurahOverview.
+  - The AyahSheet has 6 actions. PlayerSheet has «استمع حتى» and a sleep timer. MushafIndex has «آخر الصفحات».
+- **System boards:** Motion, LoadingStates, ErrorStates, UpdateStates, UpdateRequired.
+- **Settings:** the row «تحديث التطبيق», and the gear dot on HomeB and Quran.
+- **Replaced:** «المحفوظات» (`Saved`, `SavedStates`) is now «مجموعاتي».
 
 ## Not designed yet
 - «أوقات التسبيح» on Home (waits for its spec).

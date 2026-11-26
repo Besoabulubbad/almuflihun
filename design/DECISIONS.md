@@ -48,3 +48,15 @@ Still open: the content of «من نحن وكيف نفهم ديننا», onboard
 | 28 | «لماذا تقرأ القرآن» | Hidden in the APK until its content exists. | Design (engineering proposal) |
 | 29 | Notification permission | Asked in-app first, at the first moment a notification is needed, never at first launch. | Design |
 | 30 | «أوقات التسبيح» | **Open.** It waits for `specs/screens.md → Home`. Only its Settings part (reminders tied to sunrise and sunset with an offset) is done. | Waiting for spec |
+
+
+# Round 4 (26 Nov 2026), design v5
+
+| # | Point | Decision | By |
+|---|---|---|---|
+| 31 | المحفوظات | Replaced by **«مجموعاتي»**. Existing saved items migrate into a collection «محفوظاتي». | Owner (ADR 0012) |
+| 32 | Word tap | Opens **word study**. «استمع للكلمة» stays hidden. | Owner (ADR 0012) |
+| 33 | Roots and lemmas | Always labelled «من اللغة», never in a Quran font. Counts need a licensed morphology source. | Design |
+| 34 | Pull to refresh | Community, Live and Admin lists only. | Design |
+| 35 | Late page font | Show skeleton lines. **Never** draw Quran text in a fallback font. | Design |
+| 36 | Update dot | It stays until the update is installed. Dismissing the banner does not clear it. | Owner (ADR 0010) |
