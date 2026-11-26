@@ -41,7 +41,11 @@ dependencyAnalysis {
     issues {
         all {
             onAny { severity("warn") }
-            onUnusedDependencies { severity("fail") }
+            onUnusedDependencies {
+                severity("fail")
+                // almuflihun.kmp.library gives every module kotlin-test, ready for its first test.
+                exclude("org.jetbrains.kotlin:kotlin-test")
+            }
             onUsedTransitiveDependencies { severity("fail") }
             onIncorrectConfiguration { severity("fail") }
             onCompileOnly { severity("fail") }
