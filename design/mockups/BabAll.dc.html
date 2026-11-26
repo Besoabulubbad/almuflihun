@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>كل آيات الباب</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri+Quran&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#2F4A7A}a:hover{color:#1E3258}
+button{font-family:inherit}
+</style>
+</helmet>
+<div dir="rtl" style="width: 390px; height: 2400px; box-sizing: border-box; overflow: hidden; background: #F5F2EC; color: #1D1C1A; font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; display: flex; flex-direction: column">
+  <div style="padding: 48px 12px 0; display: flex; align-items: center; gap: 4px">
+    <a href="Bab.dc.html" aria-label="رجوع" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; color: #1D1C1A"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+    <span style="font-size: 16px; font-weight: 600">{{ v.title }}</span>
+  </div>
+  <div style="padding: 8px 20px 32px; display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <span style="font-size: 28px; font-weight: 700">كل الآيات، {{ v.count }}</span>
+      <span style="font-size: 14px; line-height: 1.6; color: #57534C">كل مواضع الكلمة بمعناها في هذا الباب، بترتيب المصحف.</span>
+      <sc-if value="{{ v.hasNote }}" hint-placeholder-val="{{ false }}">
+        <span style="font-size: 14px; line-height: 1.6; color: #3B3833; background: #EDE8DE; border-radius: 12px; padding: 12px 12px">{{ v.note }}</span>
+      </sc-if>
+    </div>
+    <sc-for list="{{ v.list }}" as="it" hint-placeholder-count="8">
+      <a href="BabVerse.dc.html" style="text-decoration: none; color: #1D1C1A; background: #FFFFFF; border: 1px solid #E2DCD0; border-radius: 16px; padding: 16px 16px; display: flex; flex-direction: column; gap: 8px">
+        <span style="font-size: 12px; font-weight: 600; color: #57534C">{{ it.ref }}</span>
+        <span style="font-family: 'Amiri Quran', serif; font-size: 18px; line-height: 2.15">{{ it.t }}</span>
+      </a>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"door":{"editor":"enum","options":["awamir", "nawahi", "infaq", "dhikr", "shukr", "qawl", "hikma"],"default":"infaq"},"$preview":{"width":390,"height":2400}}'>
+class Component extends DCLogic {
+  componentDidMount() {
+    fetch('/_blob/b3f19048b24ccc8bdc9914f55dc01a9b').then((r) => r.json()).then((data) => this.setState({ data }));
+  }
+  renderVals() {
+    const SURAHS = ['الفاتحة','البقرة','آل عمران','النساء','المائدة','الأنعام','الأعراف','الأنفال','التوبة','يونس','هود','يوسف','الرعد','إبراهيم','الحجر','النحل','الإسراء','الكهف','مريم','طه','الأنبياء','الحج','المؤمنون','النور','الفرقان','الشعراء','النمل','القصص','العنكبوت','الروم','لقمان','السجدة','الأحزاب','سبأ','فاطر','يس','الصافات','ص','الزمر','غافر','فصلت','الشورى','الزخرف','الدخان','الجاثية','الأحقاف','محمد','الفتح','الحجرات','ق','الذاريات','الطور','النجم','القمر','الرحمن','الواقعة','الحديد','المجادلة','الحشر','الممتحنة','الصف','الجمعة','المنافقون','التغابن','الطلاق','التحريم','الملك','القلم','الحاقة','المعارج','نوح','الجن','المزمل','المدثر','القيامة','الإنسان','المرسلات','النبأ','النازعات','عبس','التكوير','الانفطار','المطففين','الانشقاق','البروج','الطارق','الأعلى','الغاشية','الفجر','البلد','الشمس','الليل','الضحى','الشرح','التين','العلق','القدر','البينة','الزلزلة','العاديات','القارعة','التكاثر','العصر','الهمزة','الفيل','قريش','الماعون','الكوثر','الكافرون','النصر','المسد','الإخلاص','الفلق','الناس'];
+    const ar = (n) => String(n).replace(/\d/g, (x) => '٠١٢٣٤٥٦٧٨٩'[x]);
+    const fmtRef = (ref) => { const [s, a] = ref.split(':'); return SURAHS[Number(s) - 1] + ' ' + ar(a.replace('-', '–')); };
+
+    const data = this.state && this.state.data;
+    if (!data) return { v: { title: '', count: '', hasNote: false, note: '', list: [] } };
+    const b = data.abwab.find((x) => x.id === (this.props.door || 'infaq')) || data.abwab[0];
+    return { v: { title: b.title, count: ar(b.count), hasNote: !!b.all_verses_note, note: b.all_verses_note || '', list: b.all_verses.map((k) => ({ ref: fmtRef(k), t: data.verses[k] })) } };
+  }
+}
+</script>
+</body>
+</html>

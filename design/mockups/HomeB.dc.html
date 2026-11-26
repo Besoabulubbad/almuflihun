@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>الرئيسية — نسخة ب</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri+Quran&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#2F4A7A}a:hover{color:#1E3258}
+button{font-family:inherit}
+</style>
+</helmet>
+<div dir="rtl" style="width: 390px; height: 956px; box-sizing: border-box; overflow: hidden; background: #141B2D; color: #1D1C1A; font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; display: flex; flex-direction: column; position: relative">
+  <span aria-hidden="true" style="position: absolute; top: 96px; right: 48px; width: 2px; height: 2px; border-radius: 999px; background: #B9C3D6"></span>
+  <span aria-hidden="true" style="position: absolute; top: 150px; left: 40px; width: 2px; height: 2px; border-radius: 999px; background: #8C98B3"></span>
+  <span aria-hidden="true" style="position: absolute; top: 230px; right: 30px; width: 4px; height: 4px; border-radius: 999px; background: #8C98B3"></span>
+  <span aria-hidden="true" style="position: absolute; top: 70px; left: 120px; width: 2px; height: 2px; border-radius: 999px; background: #B9C3D6"></span>
+
+  <div style="padding: 48px 20px 16px; display: flex; flex-direction: column; gap: 8px; color: #EDE9E1; position: relative">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <span style="font-size: 18px; font-weight: 700; color: #EDE9E1">المفلحون</span>
+      <a href="Settings.dc.html" aria-label="الإعدادات" style="width: 44px; height: 44px; border-radius: 999px; border: 1px solid #2E3A57; background: transparent; color: #B9C3D6; display: inline-flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"></path></svg></a>
+    </div>
+
+    <a href="Moon.dc.html" aria-label="تفاصيل القمر" style="text-decoration: none; color: #EDE9E1; display: flex; flex-direction: column; align-items: center; gap: 12px">
+      <svg aria-hidden="true" width="184" height="184" viewBox="0 0 192 192">
+        <defs><clipPath id="litB"><path d="M96 8 A88 88 0 0 0 96 184 A79 88 0 0 0 96 8 Z"></path></clipPath></defs>
+        <circle cx="96" cy="96" r="88" fill="#232C44"></circle>
+        <path d="M96 8 A88 88 0 0 0 96 184 A79 88 0 0 0 96 8 Z" fill="#F1ECE1"></path>
+        <g clip-path="url(#litB)" fill="#D8D1C2">
+          <circle cx="70" cy="64" r="20"></circle>
+          <circle cx="104" cy="82" r="14"></circle>
+          <circle cx="58" cy="112" r="16"></circle>
+          <circle cx="92" cy="138" r="10"></circle>
+          <circle cx="40" cy="80" r="7"></circle>
+        </g>
+      </svg>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+        <span style="font-size: 28px; font-weight: 700">الليلة السادسة عشرة</span>
+        <span style="font-size: 14px; color: #B9C3D6">أحدب متناقص، مضاء ٩٥٪</span>
+      </div>
+    </a>
+
+    <div aria-label="أيام الشهر القمري، اليوم السادس عشر" role="img" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 2px 0">
+      <sc-for list="{{ days }}" as="d" hint-placeholder-count="30">
+        <span style="{{ d.style }}"></span>
+      </sc-for>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <div style="background: #1D263C; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 2px; align-items: center"><span style="font-size: 12px; color: #B9C3D6">يشرق</span><span style="font-size: 16px; font-weight: 600">٧:١٣ م</span></div>
+      <div style="background: #1D263C; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 2px; align-items: center"><span style="font-size: 12px; color: #B9C3D6">يغيب</span><span style="font-size: 16px; font-weight: 600">٩:١٩ ص</span></div>
+      <div style="background: #1D263C; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 2px; align-items: center"><span style="font-size: 12px; color: #B9C3D6">المحاق</span><span style="font-size: 16px; font-weight: 600">بعد ١٣ يوماً</span></div>
+    </div>
+  </div>
+
+  <div style="flex: 1; background: #F5F2EC; border-radius: 24px 24px 0 0; padding: 20px 20px 16px; display: flex; flex-direction: column; gap: 16px; position: relative">
+    <a href="Mushaf.dc.html" style="text-decoration: none; color: #1D1C1A; background: #FFFFFF; border: 1px solid #E2DCD0; border-radius: 24px; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <span style="font-size: 12px; font-weight: 700; color: #57534C">تذكرة</span>
+        <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 12px; border-radius: 999px; background: #1D1C1A; color: #FFFFFF; font-size: 12px; font-weight: 700; white-space: nowrap">الأوامر</span>
+      </div>
+      <span style="font-family: 'Amiri Quran', serif; font-size: 22px; line-height: 2.15; color: #2F4A7A">إِنَّ اللَّهَ يَأْمُرُ بِالْعَدْلِ وَالْإِحْسَانِ</span>
+      <span style="height: 1px; background: #E2DCD0"></span>
+      <p style="margin: 0; font-family: 'Amiri Quran', serif; font-size: 18px; line-height: 1.8; color: #1D1C1A; text-align: justify"><mark style="background: #FFEFC2; color: #1D1C1A; border-radius: 8px; padding: 2px 4px">إِنَّ اللَّهَ يَأْمُرُ بِالْعَدْلِ وَالْإِحْسَانِ</mark> وَإِيتَاءِ ذِي الْقُرْبَىٰ وَيَنْهَىٰ عَنِ الْفَحْشَاءِ وَالْمُنْكَرِ وَالْبَغْيِ ۚ يَعِظُكُمْ لَعَلَّكُمْ تَذَكَّرُونَ <span style="color: #C9A24A">﴿٩٠﴾</span></p>
+      <div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 14px; color: #57534C">سورة النحل ٩٠</span><span style="font-size: 14px; font-weight: 600; color: #2F4A7A">افتح في المصحف</span></div>
+    </a>
+
+    <nav aria-label="الأقسام" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px">
+      <a href="Quran.dc.html" style="text-decoration: none; color: #FFFFFF; background: #2F4A7A; border-radius: 24px; padding: 16px 12px; min-height: 112px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px">
+        <svg aria-hidden="true" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"><path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5z"></path><path d="M12 6v13"></path></svg>
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 20px; font-weight: 700">الذكر</span></span>
+      </a>
+      <a href="Diyaa.dc.html" style="text-decoration: none; color: #1D1C1A; background: #FFFFFF; border: 1px solid #E2DCD0; border-radius: 24px; padding: 16px 12px; min-height: 112px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px">
+        <svg aria-hidden="true" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V9"></path><path d="M12 9c-2.5 0-3.5-2-3.5-4 2.5 0 3.5 2 3.5 4z"></path><path d="M12 9c2.5 0 3.5-2 3.5-4-2.5 0-3.5 2-3.5 4z"></path><path d="M12 14c-2.5 0-3.5-2-3.5-4 2.5 0 3.5 2 3.5 4z"></path><path d="M12 14c2.5 0 3.5-2 3.5-4-2.5 0-3.5 2-3.5 4z"></path></svg>
+        <span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 20px; font-weight: 700">الضياء</span></span>
+      </a>
+      <div aria-disabled="true" style="color: #57534C; background: #EDE8DE; border: 1px dashed #C8C1B4; border-radius: 24px; padding: 16px 12px; min-height: 112px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px">
+        <svg aria-hidden="true" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16"></path><path d="M8 20h8"></path><path d="M5 7h14"></path><path d="M5 7l-3 6a3 3 0 0 0 6 0z"></path><path d="M19 7l-3 6a3 3 0 0 0 6 0z"></path></svg>
+        <span style="font-size: 20px; font-weight: 700">الفرقان</span><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 12px; border-radius: 999px; background: #FFFFFF; color: #57534C; font-size: 12px; font-weight: 700; white-space: nowrap">قريباً</span>
+      </div>
+    </nav>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":956}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const today = 16;
+    const monthLength = this.props.monthLength || 30;
+    const days = [];
+    for (let i = 1; i <= monthLength; i++) {
+      let style;
+      if (i === today) style = 'width: 8px; height: 8px; border-radius: 999px; background: #F1ECE1; box-shadow: 0 0 0 3px #2F4A7A';
+      else if (i < today) style = 'width: 4px; height: 4px; border-radius: 999px; background: #8C98B3';
+      else style = 'width: 4px; height: 4px; border-radius: 999px; box-sizing: border-box; border: 1px solid #4A5675';
+      days.push({ style });
+    }
+    return { days };
+  }
+}
+</script>
+</body>
+</html>
