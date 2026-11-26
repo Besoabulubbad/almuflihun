@@ -25,7 +25,15 @@ This file is the contract between the codebase and any AI agent (Claude Code, th
 
 ## Commands
 
-Filled in during Phase 1 (build system). Until then the project is the KMP wizard skeleton: `./gradlew :androidApp:assembleDebug`.
+```bash
+./gradlew :app:android:assembleDirectDebug            # the APK handed out (flavour `direct`, ADR 0010)
+./gradlew :app:android:assemblePlayDebug              # the future Play build (no self-update)
+./gradlew detekt                                      # static analysis
+./gradlew :app:shared:linkDebugFrameworkIosSimulatorArm64   # iOS framework (needs Xcode)
+./gradlew check                                       # everything CI runs (grows through Phase 1)
+```
+
+Convention plugins live in `build-logic/` (`almuflihun.*`); versions in `gradle/libs.versions.toml`.
 
 ## Conventions
 

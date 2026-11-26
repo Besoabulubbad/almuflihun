@@ -1,6 +1,7 @@
-rootProject.name = "AlMoflihon"
+rootProject.name = "almuflihun"
 
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             mavenContent {
@@ -27,5 +28,6 @@ dependencyResolutionManagement {
     }
 }
 
-include(":androidApp")
-include(":shared")
+// Application shells. Core and feature modules join in the skeleton PR (docs/architecture/modules.md).
+include(":app:android")
+include(":app:shared")
