@@ -45,3 +45,11 @@ The only list of what the app collects (ADR [0008](../adr/0008-analytics-and-cra
 ## What we deliberately do not collect
 
 Verse text, post or feedback text, search terms, names, emails, account IDs, exact location, contacts, the advertising ID.
+
+## Additions for the study engine (ADR 0012), pending the analytics-analyst review
+
+| # | Question | Events (parameters) |
+|---|---|---|
+| Q16 | Which study tools are used, and do they lead to reading? | `study_panel_open` (`from`: ayah_sheet, search, collection); `word_study_open` (`from`); `related_open` (`kind`: phrase, root); `surah_overview_open` |
+| Q17 | Is advanced search understood? | `search` gains `kind` values root, lemma, phrase and `terms` (1, 2, 3+) and `scoped` (yes, no); `search_save_results` |
+| Q18 | Do people organise verses? | `collection_create`; `collection_add` (`from`); `collection_share` (`target`: text, community); `note_add` |

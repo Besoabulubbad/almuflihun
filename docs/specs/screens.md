@@ -116,7 +116,9 @@ As in `design/SCREENS.md` and the data, no extra decisions: sections in order; e
 - The 20 illustrations are converted to vectors once and used only at `illustrationS/M/L`.
 - Station 6's tree counts (النخل ٢٠ / ١٩، الأعناب ١١ / ١٠): **the owner delegated the check to engineering** (2026-11-26). Once Tanzil's text is in the repo, the counts are recomputed from the text with a written definition of what counts, the verse lists are published in `docs/content/station-6-counts.md`, and the data is set to the verified numbers. More broadly, a build-time test checks that every verse key in the app's data exists and every quote and highlight sits in its verse (ADR 0001 confirmation).
 
-## 9. المحفوظات (Saved)
+## 9. المحفوظات → Collections («مجموعات»)
+
+**Superseded in part by ADR 0012 (2026-11-26):** the flat Saved list becomes named collections (S1). The sync rules below still apply, per collection.
 
 **Agreed 2026-11-26** (owner chose B).
 
@@ -160,3 +162,7 @@ As in `design/SCREENS.md` and the data, no extra decisions: sections in order; e
 - **Analytics (ADR 0008):** off until the user agrees in a one-time prompt; the switch in الخصوصية turns it off at any time.
 
 **App update in Settings (owner, 2026-11-26).** عن التطبيق always has a «تحديث التطبيق» row with the installed version. When an update is available and not installed, a red dot (`status.danger`) shows on the Settings gear on Home and the الذكر hub and on that row, which is highlighted, until the update is installed. Dismissing the banner does not clear the dot.
+
+## 13. The study engine (ADR 0012)
+
+**Agreed 2026-11-26.** المفلحون is a study app. Collections (S1), advanced search by word, root, lemma and phrase with combinations and scope (S2), word study (S3), related verses (S4), the ayah study panel (S5), the surah overview (S6), plus copy of the real text (P2), play scope (P5), recent pages (P6) and a sleep timer (P8). All offline. Tapping a word in the Mushaf opens word study. Screens wait for the designer ([design-requests.md §6](../design-requests.md)).
