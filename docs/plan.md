@@ -24,6 +24,7 @@ All taken on 2026-11-26, one question at a time; each has an ADR. Per-screen dec
 | Identity | `almuflihun`, application ID `app.almuflihun`, MIT licence | [0009](adr/0009-app-identity.md) |
 | Updates | The direct APK updates itself; `play` flavour for later | [0010](adr/0010-self-updating-apk.md) |
 | Architecture | Sojourn's setup, adapted | [0011](adr/0011-architecture-from-sojourn.md) |
+| Study engine | Collections, advanced search, word study, related verses, study panel, surah overview | [0012](adr/0012-study-engine.md) |
 
 ## Phases
 
@@ -79,6 +80,15 @@ Through a temporary local call (the secret stays on the owner's machine), fetch 
 
 **Exit:** all 115 door quotes, 14 slider quotes and every الضياء highlight are placed in the shipped text by test; the station 6 document exists.
 
+### Phase 3b: the study engine (ADR 0012)
+
+- Surah metadata (Tanzil `quran-data`) and QUL morphology (roots, lemmas, stems) committed with `SOURCES.md`, aligned to the layout's words by test.
+- Build-time indexes in the bundled database: roots, lemmas, normalised words, phrases (for related verses).
+- `core:quran` query API for advanced search (and/or/not, scope, grouping, counts), word study, related verses, surah overview.
+- Collections in `core:data` (device + sync), replacing the flat Saved list.
+
+**Exit:** reference counts for chosen roots match; every layout word has morphology or a documented exception; whole-Quran queries within 300 ms.
+
 ### Phase 4: astronomy
 
 - `core:astronomy`: the engine (Astronomy Engine or a common-code port, decided by checking its multiplatform support), moon phase, lit fraction, distance, rise and set with azimuths and altitude, sun times and twilight, the lunar-night rule (ADR via `design/DECISIONS.md` #6), the notable moments (crescent night, eclipses visible from the place, closest and farthest full moon, planet meetings, winter and harvest full moons), and the «أوقات التسبيح» windows.
@@ -95,7 +105,7 @@ Every component in DESIGN §6 and v4 (VerseCard, EvidenceItem, slider, HizbCard,
 
 ### Phase 6: offline screens
 
-In this order, each a PR that meets the quality bar: Home (with «تذكرة» and the moon), Moon, Mushaf (with index, search, full screen, saved-page ribbon), Hizb (with HizbEnd), الأبواب and the door pages, «كل الآيات», الحكمة, الضياء (hub and 11 stations), المحفوظات (device), Settings (local parts), onboarding (when designed). «أوقات التسبيح» lands on Home when designed. `app:shared` and `app:android` are wired at the start, so the app runs end to end from the first screen.
+In this order, each a PR that meets the quality bar: Home (with «تذكرة» and the moon), Moon, Mushaf (with index, advanced search, full screen, saved-page ribbon, recent pages), the study panel, word study and surah overview (ADR 0012), Hizb (with HizbEnd), الأبواب and the door pages, «كل الآيات», الحكمة, الضياء (hub and 11 stations), Collections (device; ADR 0012), Settings (local parts), onboarding (when designed). «أوقات التسبيح» lands on Home when designed. `app:shared` and `app:android` are wired at the start, so the app runs end to end from the first screen.
 
 **Exit:** all offline screens merged; the app is usable without any network.
 

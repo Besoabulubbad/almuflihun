@@ -39,3 +39,16 @@ v4 covers empty, offline (البثوث) and no-location states. Not yet designed
 ## 5. Onboarding (open since v1)
 
 What a first launch shows, in order: welcome, the consent prompt (v4 places it at first launch), location or city, theme. Keep it short; notifications are asked later (DECISIONS #29).
+
+## 6. The study engine (ADR 0012, owner, 2026-11-26)
+
+The owner's direction: المفلحون is a **study** app, not a memorisation app; ease of use first; the design may change to win. Please design:
+
+- **S1 Collections («مجموعات»)**, replacing the flat المحفوظات: the collections list (name, count, last change), a collection's page (verses in the user's order, a private «تأمّل» note per verse, reorder, remove), create and rename, "add to collection" from any verse (a sheet that lists collections with checkmarks; a verse can be in several), share a collection as plain text, post it to Community, empty states, the sync note.
+- **S2 Advanced search**, extending MushafSearch: a mode or chips for كلمة / جذر / لفظ (lemma) / عبارة, combining terms (و / أو / ليس), a scope filter (سورة، جزء، حزب، نطاق، مكية / مدنية), results grouped by surah with counts and a total, «احفظ النتائج في مجموعة», recent searches, no-results and too-many-results states.
+- **S3 Word study:** what tapping a word in the Mushaf now opens (it replaced «استمع للكلمة», which stays hidden): the word, its root and lemma, «وردت n مرة», occurrences as full verses with the word highlighted, grouped by form, each opening the Mushaf there.
+- **S4 Related verses:** a section listing verses that share a phrase with this ayah (the shared phrase highlighted in both) and verses sharing rarer roots.
+- **S5 Ayah study panel:** opened from the AyahSheet (a new action, e.g. «تدبّر الآية»): the full ayah, its position (surah، جزء، حزب، صفحة، مكية / مدنية), its words with roots (each opens S3), related verses (S4), the doors that include it, the user's collections and notes for it. Full screen or a tall sheet; how it fits beside the page on tablets.
+- **S6 Surah overview:** from the index or the Mushaf header: ayah count, place and order of revelation, most frequent roots, the doors that quote it, «ابدأ القراءة».
+- **Ease of use:** P5 play scope in the PlayerSheet (to the end of the surah, hizb, quarter, or a chosen ayah); P6 «آخر الصفحات» (10) in the index; P8 a sleep timer in the PlayerSheet.
+- The «من اللغة» level (DESIGN §1) applies to roots and lemmas: label them so they are never mistaken for the text.

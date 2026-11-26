@@ -48,8 +48,34 @@ These come from the gaps above and from how glyph-font Mushafs work.
 | P9 | **Tajweed colours** as a second Mushaf style. | quran.com has it | Large; QUL's V4 tajweed font is disabled and its licence is unclear; later |
 | P10 | **Two-page spread** on tablets in landscape. | Already in v4 as a rule; just build it well | Medium |
 
-## 3. Next steps
+## 3. Owner decision on the first pass (2026-11-26)
 
-- Owner decides P1–P8 (P9 deferred); accepted items become design requests where they need UI, and issues in the tracker.
-- Spike A measures the rendering path these depend on (fonts prefetch, per-word composables, semantics for P1).
-- Second research pass: Ayah (iOS), Tarteel's web help, and a morphology data source and its licence for P7.
+**المفلحون is a study app, not a memorisation app.** "We are not for repeaters; we are here to study it." Priorities: ease of use, grouping saved verses, an advanced search system, and a product that beats quran.com; the design may change to get there.
+
+- **Rejected:** P1 as a headline feature (the quality bar's basic TalkBack readability still applies: the Mushaf exposes its real text to screen readers), P3 memorisation mode, P4 repeat pauses.
+- **Kept, small ease-of-use items (pending confirmation):** P2 copy real text, P5 play scope, P6 recent pages, P8 sleep timer.
+- **P7 root search** moves into the study engine below.
+
+## 4. The study engine (second pass)
+
+Studying the Quran with the Quran as the only source means letting the text explain itself: where a word occurs, which verses share a phrase, how a theme runs through the surahs. No tafsir, no people as authorities (DESIGN §1).
+
+| # | Feature | What it does | Data needed |
+|---|---|---|---|
+| S1 | **Collections** («مجموعات») | Saved verses grouped into named collections; a verse can be in several; reorder; a private note per verse labelled «تأمّل»; share a collection as plain text or post it to Community; synced when signed in. Replaces the flat Saved list. | none new |
+| S2 | **Advanced search** | Words ignoring diacritics (decided) plus **root** and **lemma** search, exact phrase, combinations (and, or, not), scope (surah, juz, hizb, a range, Meccan or Medinan), results grouped by surah with counts, Mushaf order, «احفظ النتائج في مجموعة», local search history. | roots and lemmas per word; surah metadata |
+| S3 | **Word study** (a concordance) | Tap a word: its root and lemma, how many times it occurs, every occurrence as a full verse with the word highlighted, grouped by form. | roots and lemmas per word |
+| S4 | **Related verses** | For an ayah: verses that share a long phrase (computed from the text itself), and verses that share its rarer roots. Reveals the Quran's repeated phrases. | the text; roots for the second part |
+| S5 | **Ayah study panel** | One place per ayah: full text, position (surah, juz, hizb, page, Meccan or Medinan), its words with roots, related verses, the doors that include it, your collections and notes. Opened from the AyahSheet. | all of the above |
+| S6 | **Surah overview** | Ayah count, place and order of revelation, its most frequent roots, the doors that quote it. | surah metadata (Tanzil, CC BY 3.0) |
+
+### Data and licences
+
+| Data | Source | Licence | Fit |
+|---|---|---|---|
+| Surah metadata (ayah counts, revelation place and order, juz, hizb, pages) | Tanzil `quran-data` | CC BY 3.0, verbatim, attribution | good |
+| Roots, lemmas, stems per word | QUL morphology (6 SQLite sets, 77,432 entries) | QUL page: "no copyright information" | same situation as the page fonts (ADR 0004): commit with credit and include in the permission request to Tarteel |
+| Morphology (alternative) | Quranic Arabic Corpus 0.4 | GPL v3 plus "changing it is not allowed" | poor: copyleft on bundled data and a self-contradictory clause; avoid |
+| Roots via API | Quran Foundation | bundling and public repositories forbidden | not usable offline |
+
+The QUL morphology word segmentation (77,432) must be aligned with the layout's word list; Spike A checks this.
