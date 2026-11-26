@@ -69,3 +69,6 @@ include(":feature:settings")
 // Tooling
 include(":tooling:konsist")
 include(":tooling:detekt-rules")
+
+// Spikes (never shipped)
+include(":spike:mushaf")
