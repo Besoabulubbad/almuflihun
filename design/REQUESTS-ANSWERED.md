@@ -103,3 +103,45 @@ What the marks mean:
 | «الخصوصية» group | ✅ `Settings`: the switch, «ماذا نجمع» (`WhatWeCollect`, with a نجمع / لا نجمع أبداً list) and «رأيك». |
 | «رأيك» | ✅ `Feedback`: an optional category (يعجبني / لا يعجبني / مشكلة) and text. `AdminFeedback` has filter tabs. |
 | City picker | ✅ `CityPicker`: search over the offline list with Arabic names (city and country), «استخدم موقعي الحالي», a check on the current city, and a no-results state. |
+
+
+---
+
+# Design v5 (26 Nov 2026)
+
+## 1. «أوقات التسبيح»
+⏳ **Still waiting for `specs/screens.md → Home`.** It was not attached to either request. Without it the windows and their verses would be invented, which the design's honesty rule forbids. Send the section and it will be designed first.
+
+## 2. Self-update (ADR 0010)
+| Request | Answer |
+|---|---|
+| Settings row «تحديث التطبيق» | ✅ `Settings` → عن التطبيق. Shows the installed and new version, plus «حمّل التحديث». Without an update it reads «لديك أحدث نسخة». |
+| Red dot | ✅ On the gear in `HomeB` and `Quran`, and on the tinted row. It stays until installed; the banner does not clear it. |
+| Download progress, pause, cancel, install | ✅ `UpdateStates`. |
+| Explanation before «تثبيت تطبيقات غير معروفة» | ✅ `UpdateStates`, shown once. |
+| Required update | ✅ `UpdateRequired`: full screen with one action. |
+| Failure and verification failure | ✅ `UpdateStates`. |
+
+## 3. Motion and interaction
+✅ DESIGN §11, `tokens.json → motion`, `code/AppTokens.kt → Motion`, and the board `Motion`. These cover transitions (push, pop and predictive back, container transform, night ↔ paper), the signature moments, sheets and dialogs, press and focus for every component, haptics, duration and easing tokens, and reduced motion.
+
+## 4. Loading and errors
+✅ `LoadingStates` (skeletons, buffering ring, Mushaf font, pull-to-refresh decision) and `ErrorStates` (failed post with draft, sign-in, admin action, video, TikTok missing, audio stream, Quran Foundation down). Rules are in DESIGN §12.
+◐ **Pull to refresh:** yes on Community, Live and Admin lists; no elsewhere.
+
+## 5. Onboarding
+✅ `Onboard1–4`: welcome → consent → location or city → theme. Notifications are asked later.
+
+## 6. Study engine (ADR 0012)
+| Request | Answer |
+|---|---|
+| S1 Collections | ✅ `Collections`, `CollectionPage`, `CollectionStates`:<br>• list, page with order, private note, reorder and remove;<br>• create and rename;<br>• add-to sheet with checkmarks;<br>• share as text, post to Community;<br>• empty states and the sync note.<br>The الذكر tile «المحفوظات» is now «مجموعاتي». |
+| S2 Advanced search | ✅ `SearchAdvanced`, `SearchStates`:<br>• modes;<br>• و / أو / ليس;<br>• scope;<br>• results grouped by surah;<br>• save to a collection;<br>• recent searches;<br>• no results and too many results. |
+| S3 Word study | ✅ `WordStudy`. A tap on a word opens it, and the Mushaf hint now reads «اضغط على كلمة لدراستها». |
+| S4 Related verses | ✅ Inside `AyahStudy`, with real data for البقرة ٢١٩: ٢١٥ («ماذا ينفقون قل»), ٢٦٦ («كذلك يبين الله لكم الآيات لعلكم تتفكرون») and the rare root ع ف و (الأعراف ١٩٩). |
+| S5 Ayah study panel | ✅ `AyahStudy`, plus the new AyahSheet action «تدبّر». Tablet: a side panel at one third of the width. |
+| S6 Surah overview | ✅ `SurahOverview`, from the index surah rows. |
+| P5, P6, P8 | ✅ «استمع حتى» and the sleep timer are in `PlayerSheet`. «آخر الصفحات» (10) is in `MushafIndex`, with a link to the advanced search. |
+| «من اللغة» on roots and lemmas | ✅ DESIGN §13 level rule, applied on every screen above. |
+
+**Data the design cannot supply:** root and lemma counts need a licensed morphology source. They are marked «بيانات مثال» in the mockups.

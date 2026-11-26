@@ -415,7 +415,7 @@ Where a mockup differs from this table, the table is correct.
 - Every icon-only button has an Arabic content description (see the aria-labels in `mockups/`).
 - The ﴿n﴾ ornament is read as «آية n». The highlight is announced as «مظلّل».
 - Text scales with the system font size. Layouts must not clip at 130 %.
-- Reduced motion turns off the pager animation and the sheet slide.
+- Reduced motion follows §11.
 
 
 ## 10. v4 components (exact)
@@ -475,3 +475,167 @@ Where a mockup differs from this table, the table is correct.
 **Disabled portal («قريباً»):** `paper.sunk` with a dashed `paper.lineDashed` border, muted icon and text, the chip «قريباً», and `aria-disabled`.
 
 **Unknown value:** the text «لا نعرف» in `night.textFaint` or `paper.textMuted`, always next to a way to fix it («حدّد مدينتك»).
+
+
+## 11. Motion and interaction (v5)
+
+All values are in `tokens.json → motion`. The screen `Motion` illustrates them.
+
+| Token | ms | Use |
+|---|---|---|
+| `fast` | 120 | press, switch, icon swap, the playing-ayah cross-fade |
+| `standard` | 240 | element enter/exit, state change, tabs, scrim, dialogs |
+| `page` | 320 | screen transitions, page turn, sheet enter |
+| `sheetExit` | 200 | sheet exit |
+| `emphasised` | 400 | the moon shared element, container transform |
+| `highlightHold` | 1600 | how long a landed ayah stays highlighted |
+| `stagger` | 40 | delay between items after a hero transition |
+| `skeletonDelay` | 300 | skeletons appear only after this, so fast loads never flash |
+| `hizbEndDelay` | 600 | pause after the last ayah before the HizbEnd sheet |
+
+**Easings:**
+
+| Name | Bezier | Use |
+|---|---|---|
+| `standard` | (0.2, 0, 0, 1) | default |
+| `decelerate` | (0, 0, 0, 1) | things entering |
+| `accelerate` | (0.3, 0, 1, 1) | things leaving |
+| `emphasised` | (0.05, 0.7, 0.1, 1) | signature moments |
+
+**Screen transitions.** Direction is RTL: forward moves toward the left.
+- **Push:** the new screen enters from the left (30 % of the width) with a fade; the old one shifts right 10 % and dims. `page` / `emphasised`.
+- **Pop:** the reverse of push.
+- **Android predictive back:** the screen follows the finger, scales to 0.9 and reveals the previous one.
+- **Hub ↔ detail:** container transform. A door, collection, video or post tile expands into its screen.
+- **Night ↔ paper:** the night hero stays and the paper sheet rises from the bottom.
+
+**Signature moments.**
+- **Home moon → Moon page:** shared element, `emphasised`; the rest of the page staggers in by 40.
+- **«تذكرة» → Mushaf:** the page opens with the ayah in its upper third, fully highlighted. It holds 1600 ms, then fades over `standard`. There is no long animated scroll.
+- **Slider:** native snapping; the dots follow.
+- **Mushaf page turn:** horizontal drag; the next page comes from the left; on release `page` / `decelerate`. No 3D curl.
+- **HizbEnd sheet:** appears 600 ms after the last ayah ends, with a confirm haptic.
+- **Playing highlight:** cross-fades from ayah to ayah (`fast`); it never slides.
+
+**Sheets and dialogs.**
+- **Sheets:** enter `page` / `decelerate` from the bottom and exit `sheetExit` / `accelerate`.
+- **Scrim:** `night.bg` at 40 %.
+- **Drag:** the sheet follows the finger and closes past one third of its height or on a fling.
+- **Dialogs:** scale 0.96 → 1 with a fade, `standard`.
+
+**Press.**
+- **Cards and tiles:** overlay of `paper.text` at 8 % (night: `night.text` at 10 %) and scale to 0.98 (`fast`).
+- **Buttons:** `accent.indigoPressed`, no scale.
+- **Rows and chips:** overlay only.
+- **Icon buttons:** a 44 circle overlay.
+
+**Focus:** a 2 ring in `accent.indigo` (`night.accent` on night) with offset 2. It follows the component's radius + 2. Every tappable component shows it under keyboard or switch access.
+
+**Haptics.**
+- **Light:** save, add to collection, toggle.
+- **Long-press:** long-press on an ayah.
+- **Confirm:** post sent, report sent, hizb finished.
+- **Reject:** a blocked send.
+- **None:** scroll, page turn, slider.
+
+**Reduced motion.**
+- Every slide, transform and shared element becomes a cross-fade (`fast`).
+- The highlight appears and disappears without a fade.
+- The slider and the page turn jump.
+- Haptics stay.
+
+## 12. Loading and errors (v5)
+
+**Loading.** Screens: `LoadingStates`.
+- Loading uses skeletons in the content's own shape (`paper.sunk` blocks, radius as the real element). They are shown only after `skeletonDelay`.
+- There are no centred spinners. The only ring is the **buffering ring** around the play button.
+- **Mushaf page:** fonts are bundled, so the page shows at once. If a page font is late, show skeleton lines in the page frame. **Never** draw Quran text in a fallback font.
+- **Pull to refresh:** yes on Community, Live and Admin lists. No on the Mushaf, الأبواب and الضياء (local content).
+
+**Errors.** Screens: `ErrorStates`.
+- **Blocking errors** use a card: a `status.danger` title with an x icon, then what happened, what happened to the user's data, and the action.
+- **Background failures** (admin action, audio stream) use a snackbar on `paper.text` with one action.
+- Copy never shows error codes.
+- **A failed post keeps its draft and attached verses.**
+- **TikTok not installed:** offer the browser.
+- **A video that will not play:** offer «افتحه في يوتيوب».
+- **A service that is down:** say what still works offline.
+
+## 13. Study engine (v5)
+
+Screens: `Collections`, `CollectionPage`, `CollectionStates`, `SearchAdvanced`, `SearchStates`, `WordStudy`, `AyahStudy`, `SurahOverview`.
+
+**Level rule:** a **root** or **lemma** is «من اللغة».
+- It always carries the chip «من اللغة» (`accent.indigoTint` / `accent.indigo`), or sits in a box labelled «الجذر، من اللغة» / «اللفظ، من اللغة».
+- It is never set in a Quran font.
+- Quran words stay in `quran*` roles.
+
+**Collections** replace «المحفوظات»; the old saved items migrate into «محفوظاتي».
+- **Collections list:** each row has a 44 icon tile, the name in `bodyStrong`, and «n آية، آخر تغيير …» in `meta`.
+- **Collection page:** verses in the user's order, each with:
+  - a drag handle (the order number plus a grip);
+  - the full verse in `quranInline`;
+  - the ref;
+  - a «المزيد» menu;
+  - an optional private «تأمّلي (خاص بي)» note on `#FFF7E6` with `quran.brown` (the reflection colours).
+- **Actions:** «شارك نصاً» (verses in order with refs; private notes never shared), «انشر» (a Community verse post; reviewed; notes never published), «استمع».
+- **Add-to sheet:** a checkbox list. A verse can be in several collections.
+
+**Advanced search.**
+- Mode segmented control: كلمة / جذر / لفظ / عبارة.
+- Terms joined by «و / أو / ليس» chips, read from top to bottom.
+- A scope chip opens: القرآن كله، سورة، جزء، حزب، نطاق، مكية / مدنية.
+- Results are grouped by surah (a `paper.sunk` header with the count), with the total on top and «احفظ النتائج في مجموعة».
+- Recent searches show before typing.
+- **Too many results:** show the first 200 grouped, and ask to narrow.
+
+**Word study** opens when a word on the page is tapped. It replaces «استمع للكلمة», which stays hidden.
+- The word in `quranWord`, and the root and lemma boxes.
+- «الجذر ورد n مرة في m آية».
+- Tabs حسب الصيغة / حسب المصحف.
+- Groups by form, with full verses and the word highlighted. Each opens the Mushaf there.
+
+**Ayah study** («تدبّر» in the AyahSheet, now 6 tiles: استمع، من هنا، تدبّر، مجموعة، شارك، انسخ):
+- the full ayah in `quranBody`;
+- the position grid (سورة، جزء، حزب، صفحة، نزول);
+- word chips with their roots, each opening word study;
+- **related verses**, each with a reason overline («عبارة مشتركة: …» or «جذر نادر مشترك: …») and the shared phrase highlighted;
+- the doors that include it;
+- the user's collections, as chips;
+- the private note.
+
+On a phone it is full screen. **On a tablet** it is a side panel at one third of the width, and the page stays visible with the ayah highlighted.
+
+**Surah overview:**
+- a stat row (آيات، النزول، ترتيب النزول، الصفحات);
+- «ابدأ القراءة» and «اقرأ من حيث توقفت»;
+- the most frequent roots as bars («من اللغة»);
+- the doors that quote the surah, with counts.
+
+**Player additions:**
+- «استمع حتى» (آخر السورة / الحزب / الربع / آية أختارها);
+- a sleep timer (إيقاف / ١٥ د / ٣٠ د / آخر الآية).
+
+**Index addition:** «آخر الصفحات», the last 10 pages opened, newest first, in a horizontal row of 96 page cards.
+
+**Data honesty:** root and lemma counts and frequent-root lists come from a morphology source (to be chosen and licensed). The mockups mark them «بيانات مثال». The form count for «العفو» (2 verses) and the related-verse phrases for البقرة ٢١٩ were computed from the text.
+
+## 14. First launch and self-update (v5)
+
+**Onboarding** (`Onboard1–4`, night ground) has 4 steps:
+1. Welcome.
+2. Consent, with equal-weight buttons.
+3. Location: «استخدم موقعي» or «اختر مدينة بنفسي». Skipping is allowed, and then «لا نعرف» shows on the moon times.
+4. Theme: عادي / ليلي / حسب الجهاز, as previews.
+
+Each step has a progress pill (the active one is 24 wide) and «n من ٤». Notifications are not asked here (DECISIONS #29).
+
+**Self-update** (`Settings`, `UpdateStates`, `UpdateRequired`):
+- **Settings row:** «تحديث التطبيق» is always present in عن التطبيق.
+  - When an update exists, the row is tinted `diyaa.tintRose`, has an 8 `status.danger` dot, shows «المثبّت ١٫٠، والمتوفر ١٫١», and a «حمّل التحديث» pill.
+  - Otherwise it reads «لديك أحدث نسخة».
+- **Gear dot:** the same 8 dot sits on the Settings gear on Home and in الذكر, with a 2 ring in `night.bg`. It stays until the update is installed; dismissing the banner does not remove it.
+- **Download:** a progress bar (height `progressThick`), «إيقاف مؤقت / تابع» and «إلغاء», then «ثبّت التحديث».
+- **Unknown sources:** a one-time explanation card before Android's «تثبيت تطبيقات غير معروفة» screen.
+- **Failure states:** «لم يكتمل التنزيل» resumes from where it stopped. «لم نستطع التحقق من الملف» deletes the file and offers to download again.
+- **Required update:** a full night screen with one action.

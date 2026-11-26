@@ -1,6 +1,7 @@
 // Generated from tokens.json. Do not edit by hand: change tokens.json and regenerate.
 package ui.theme
 
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -262,4 +263,23 @@ object AppText {
     val quranBody: TextStyle get() = TextStyle(fontFamily = AppFonts.quran, fontSize = 22.sp, fontWeight = FontWeight.Normal, lineHeight = 2.15.em)
     val quranInline: TextStyle get() = TextStyle(fontFamily = AppFonts.quran, fontSize = 18.sp, fontWeight = FontWeight.Normal, lineHeight = 1.8.em)
     val quranSmall: TextStyle get() = TextStyle(fontFamily = AppFonts.quran, fontSize = 16.sp, fontWeight = FontWeight.Normal, lineHeight = 1.8.em)
+}
+
+/** Durations in ms and easings. See DESIGN.md §11. */
+object Motion {
+    const val instant = 0
+    const val fast = 120
+    const val standard = 240
+    const val page = 320
+    const val emphasised = 400
+    const val sheetExit = 200
+    const val highlightHold = 1600
+    const val stagger = 40
+    const val skeletonDelay = 300
+    const val hizbEndDelay = 600
+    val standardEasing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
+    val decelerateEasing = CubicBezierEasing(0f, 0f, 0f, 1f)
+    val accelerateEasing = CubicBezierEasing(0.3f, 0f, 1f, 1f)
+    val emphasisedEasing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)
+    const val pressScale = 0.98f
 }
