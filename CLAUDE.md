@@ -30,7 +30,7 @@ This file is the contract between the codebase and any AI agent (Claude Code, th
 ./gradlew :app:android:assemblePlayDebug              # the future Play build (no self-update)
 ./gradlew detekt                                      # static analysis
 ./gradlew :app:shared:linkDebugFrameworkIosSimulatorArm64   # iOS framework (needs Xcode)
-./gradlew check                                       # everything CI runs (grows through Phase 1)
+./gradlew check buildHealth                           # what CI runs on every PR (.github/workflows/pr.yml)
 ```
 
 Convention plugins live in `build-logic/` (`almuflihun.*`); versions in `gradle/libs.versions.toml`.
