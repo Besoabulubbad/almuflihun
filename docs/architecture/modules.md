@@ -23,7 +23,7 @@ All features share one contract: they may depend on `:core:ui`, `:core:designsys
 | `:feature:hizb` | Hizb, HizbEnd |
 | `:feature:doors` | RemindB, RemindStates, the door pages, BabAll, Hikma, HikmaPassage |
 | `:feature:diyaa` | Diyaa, DiyaaS1–S11 |
-| `:feature:saved` | Saved, SavedStates |
+| `:feature:collections` | Collections (ADR 0012; replaces Saved, SavedStates) |
 | `:feature:live` | Live, LiveVideos, VideoPlayer |
 | `:feature:community` | Community, CommunityCompose, CommunityThread, CommunityStates, VersePicker |
 | `:feature:profile` | Profile, ProfileMine, Grades |

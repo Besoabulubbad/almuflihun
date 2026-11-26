@@ -13,7 +13,7 @@ flowchart TB
   end
   subgraph feature["feature/"]
     home[home] ; moon[moon] ; hub[quran-hub] ; mushaf[mushaf] ; hizb[hizb] ; doors[doors] ; diyaa[diyaa]
-    saved[saved] ; live[live] ; community[community] ; profile[profile] ; admin[admin] ; settings[settings]
+    collections[collections] ; live[live] ; community[community] ; profile[profile] ; admin[admin] ; settings[settings]
   end
   subgraph core["core/"]
     ui["ui<br/>ScreenState · ViewModel base · scaffold"]
