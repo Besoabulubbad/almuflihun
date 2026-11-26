@@ -1,0 +1,22 @@
+# Defaults for the المفلحون design rules; detekt validates config/detekt/detekt.yml against this file.
+almuflihun:
+  active: true
+  TokensOnly:
+    active: true
+  NoAdHocTextStyle:
+    active: true
+  MotionTokensOnly:
+    active: true
+  StartEndOnly:
+    active: true
+  NoTextLiterals:
+    active: true
+  InsetsOnlyInOwners:
+    active: true
+    allowedFiles:
+      - 'AppScaffold.kt'
+      - 'AppSheet.kt'
+      - 'AyahSheet.kt'
+      - 'PlayerBar.kt'
+  NoQuranTextInCode:
+    active: true

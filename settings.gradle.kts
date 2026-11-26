@@ -65,3 +65,7 @@ include(":feature:community")
 include(":feature:profile")
 include(":feature:admin")
 include(":feature:settings")
+
+// Tooling
+include(":tooling:konsist")
+include(":tooling:detekt-rules")
