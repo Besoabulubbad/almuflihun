@@ -1,0 +1,23 @@
+name: Feature suggestion
+description: An idea for the app.
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The need
+      description: What are you trying to do, and what gets in the way today?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: Principles
+      options:
+        - label: The idea uses the Quran as its only source, and adds no streaks, guilt or pressure.
+          required: true

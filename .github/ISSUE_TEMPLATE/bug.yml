@@ -1,0 +1,30 @@
+name: Bug
+description: Something does not work as designed.
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Open …\n2. Tap …"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+  - type: input
+    id: version
+    attributes:
+      label: App version
