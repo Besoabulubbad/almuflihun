@@ -46,10 +46,18 @@ The only list of what the app collects (ADR [0008](../adr/0008-analytics-and-cra
 
 Verse text, post or feedback text, search terms, names, emails, account IDs, exact location, contacts, the advertising ID.
 
-## Additions for the study engine (ADR 0012), pending the analytics-analyst review
+## Study engine (ADR 0012), reviewed 2026-11-26
 
 | # | Question | Events (parameters) |
 |---|---|---|
-| Q16 | Which study tools are used, and do they lead to reading? | `study_panel_open` (`from`: ayah_sheet, search, collection); `word_study_open` (`from`); `related_open` (`kind`: phrase, root); `surah_overview_open` |
-| Q17 | Is advanced search understood? | `search` gains `kind` values root, lemma, phrase and `terms` (1, 2, 3+) and `scoped` (yes, no); `search_save_results` |
-| Q18 | Do people organise verses? | `collection_create`; `collection_add` (`from`); `collection_share` (`target`: text, community); `note_add` |
+| Q16 | Which study tools are used, from where, and do they lead back to reading? | `study_open` (`tool`: panel, word, related_phrase, related_root, overview; `from`: ayah_sheet, mushaf, search, collection, panel, index); `study_follow` (`tool`; `target`: mushaf, door) when a verse or door is opened from a study tool |
+| Q17 | Is advanced search understood, and does it find something? | `search` gains `kind` values root, lemma, phrase, mixed, plus `terms` (1, 2, 3+), `ops` (yes, no: and/or/not used) and `scoped` (yes, no); found-rate from the existing `results_bucket` and `search_open_result` (`kind`). Sent once per completed query, never per keystroke. |
+| Q18 | Do people organise verses into collections, and use them? | `collection_create` (`count`: 1, 2-5, 6+, collections held after creating); `save_add` gains `from` (ayah_sheet, panel, word, search_results) and `in_other` (yes, no: the verse is already in another collection); `collection_share` (`target`: text, community); `note_add` |
+
+Review notes:
+
+- **Never collected:** the query, the word, root or lemma searched or studied, which verse or surah a study tool was opened on, collection names, note text, the number of verses or notes per user. A root or lemma is chosen by the user's own concern (illness, debt, divorce, sin) and, joined to the app instance, would build a profile of religious interest; rule 3 covers it as free text. Surah-level position is allowed by rule 4 but no question needs it here.
+- **Reuse:** four separate open events became one `study_open` with `tool`; saving to a collection, including «save results», reuses `save_add` instead of `collection_add` and `search_save_results`, so Q8 and Q18 read from one event.
+- **Added to answer the questions:** `study_follow` (Q16's "lead to reading" had no event), `mixed`, `ops` (Q17's and/or/not), `count` and `in_other` (Q18: several collections, a verse in several).
+- **Not measured, no question yet:** reordering, search history, P2 copy, P5 play scope, P6 recent pages, P8 sleep timer. Add a question first if needed.
+- The wrapper's allow-list and its test must include every event, parameter and value above.
