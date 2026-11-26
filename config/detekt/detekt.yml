@@ -113,3 +113,42 @@ Compose:
     active: true
     viewModelFactories: ['koinViewModel']
 
+
+# The design and Quran rules (tooling/detekt-rules). Token, text-style, motion, direction and text rules govern
+# screens (feature/*) and core:ui; core:designsystem is where tokens become components and is exempt. Insets are
+# owned by named components everywhere. Quran text is never typed into product code, outside tests and the engine.
+almuflihun:
+  active: true
+  TokensOnly:
+    active: true
+    includes: ['**/feature/**', '**/core/ui/**']
+    excludes: ['**/commonTest/**', '**/androidHostTest/**', '**/androidDeviceTest/**', '**/iosTest/**']
+  NoAdHocTextStyle:
+    active: true
+    includes: ['**/feature/**', '**/core/ui/**']
+    excludes: ['**/commonTest/**', '**/androidHostTest/**', '**/androidDeviceTest/**', '**/iosTest/**']
+  MotionTokensOnly:
+    active: true
+    includes: ['**/feature/**', '**/core/ui/**']
+    excludes: ['**/commonTest/**', '**/androidHostTest/**', '**/androidDeviceTest/**', '**/iosTest/**']
+  StartEndOnly:
+    active: true
+    includes: ['**/feature/**', '**/core/ui/**']
+    excludes: ['**/commonTest/**', '**/androidHostTest/**', '**/androidDeviceTest/**', '**/iosTest/**']
+  NoTextLiterals:
+    active: true
+    includes: ['**/feature/**', '**/core/ui/**']
+    excludes: ['**/commonTest/**', '**/androidHostTest/**', '**/androidDeviceTest/**', '**/iosTest/**']
+  InsetsOnlyInOwners:
+    active: true
+    includes: ['**/core/**', '**/feature/**', '**/app/**']
+    excludes: ['**/commonTest/**', '**/androidHostTest/**', '**/androidDeviceTest/**', '**/iosTest/**']
+    allowedFiles:
+      - 'AppScaffold.kt'
+      - 'AppSheet.kt'
+      - 'AyahSheet.kt'
+      - 'PlayerBar.kt'
+  NoQuranTextInCode:
+    active: true
+    includes: ['**/core/**', '**/feature/**', '**/app/**']
+    excludes: ['**/commonTest/**', '**/androidHostTest/**', '**/androidDeviceTest/**', '**/iosTest/**', '**/tooling/**']
