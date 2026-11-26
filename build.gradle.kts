@@ -18,6 +18,13 @@ tasks.check {
 }
 
 // `./gradlew buildHealth`. Applied per module by the convention plugins; the root aggregates. Every category fails.
+// Modules that are still skeletons warn instead; remove a module from this list in the PR that gives it code.
+val skeletonModules = (
+    listOf("model", "common", "localization", "designsystem", "ui", "navigation", "platform", "quran", "astronomy", "audio",
+        "database", "firebase", "analytics", "update", "data", "domain", "testing").map { ":core:$it" } +
+        listOf("home", "moon", "quran-hub", "mushaf", "hizb", "doors", "diyaa", "collections", "live", "community", "profile",
+            "admin", "settings").map { ":feature:$it" }
+)
 dependencyAnalysis {
     structure {
         // Compose Multiplatform: we declare org.jetbrains.compose.* coordinates, which resolve to androidx.compose.*
@@ -34,13 +41,27 @@ dependencyAnalysis {
     issues {
         all {
             onAny { severity("warn") }
-            onUnusedDependencies { severity("fail") }
+            onUnusedDependencies {
+                severity("fail")
+                // almuflihun.kmp.library gives every module kotlin-test, ready for its first test.
+                exclude("org.jetbrains.kotlin:kotlin-test")
+            }
             onUsedTransitiveDependencies { severity("fail") }
             onIncorrectConfiguration { severity("fail") }
             onCompileOnly { severity("fail") }
             onRuntimeOnly { severity("fail") }
             onUnusedAnnotationProcessors { severity("fail") }
             onRedundantPlugins { severity("fail") }
+        }
+        skeletonModules.forEach { path ->
+            project(path) {
+                onAny { severity("warn") }
+                onUnusedDependencies { severity("warn") }
+                onUsedTransitiveDependencies { severity("warn") }
+                onIncorrectConfiguration { severity("warn") }
+                onCompileOnly { severity("warn") }
+                onRuntimeOnly { severity("warn") }
+            }
         }
     }
 }

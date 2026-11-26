@@ -18,4 +18,5 @@ dependencies {
     implementation(libs.androidx.activity) // enableEdgeToEdge
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.runtime) // setContent { App() }
+    implementation(libs.compose.ui)
 }
