@@ -1,0 +1,57 @@
+# iOS on pull requests, only when code the iOS app is built from changes (owner, 2026-11-26). Docs- and
+# design-only PRs skip it. main.yml still builds iOS on every merge to main and nightly, so nothing goes untested.
+name: PR checks (iOS)
+
+on:
+  pull_request:
+    paths:
+      - "app/shared/**"
+      - "iosApp/**"
+      - "core/**"
+      - "feature/**"
+      - "build-logic/**"
+      - "gradle/**"
+      - "**/*.gradle.kts"
+      - "gradle.properties"
+      - ".github/workflows/pr-ios.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-ios-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ios:
+    name: iOS framework and app (macOS)
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      # The Kotlin/Native toolchain and its caches are most of a cold run; keep them between runs.
+      - name: Cache Kotlin/Native toolchain
+        uses: actions/cache@v6
+        with:
+          path: ~/.konan
+          key: konan-${{ runner.os }}-${{ hashFiles('gradle/libs.versions.toml') }}
+          restore-keys: konan-${{ runner.os }}-
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: iOS simulator tests
+        run: ./gradlew iosSimulatorArm64Test --continue
+
+      # By target: the scheme is per-user (not committed), and a target build needs no simulator destination.
+      - name: Build the iOS app for the simulator
+        run: |
+          xcodebuild -project iosApp/iosApp.xcodeproj -target iosApp -configuration Debug \
+            -sdk iphonesimulator -arch arm64 CODE_SIGNING_ALLOWED=NO build
