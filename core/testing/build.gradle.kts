@@ -8,6 +8,10 @@ kotlin {
         commonMain.dependencies {
             // SnapshotCase and the runners render through AppPreview.
             api(project(":core:designsystem"))
+            // runAppTest and TestDispatcherProvider for ViewModel and use-case tests.
+            api(project(":core:common"))
+            api(libs.kotlinx.coroutines.test)
+            api(libs.kotlinx.coroutines.core)
         }
         androidMain.dependencies {
             // ScreenshotSuite: its subclasses inherit the runner, config and compose rule.
