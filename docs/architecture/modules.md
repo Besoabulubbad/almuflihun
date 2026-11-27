@@ -41,7 +41,7 @@ All features share one contract: they may depend on `:core:ui`, `:core:designsys
 | `:core:ui` | `ScreenState`, ViewModel base, scaffold that owns insets, preview and screenshot helpers | `:core:designsystem`, core-base |
 | `:core:navigation` | Keys, serializers, navigator interface, deep-link parsing | Navigation 3, core-base |
 | `:core:platform` | Location, haptics, share, local notifications, reduced motion, external apps, package installer | core-base |
-| `:core:quran` | Text, normalisation, page layout and glyph data, quote placement, search index, content data loading | core-base |
+| `:core:quran` | Text, normalisation, page layout and glyph data, quote placement, search index, content data loading | core-base, Compose Resources (the bundled `quran.db`), SQLDelight (ADR 0015) |
 | `:core:astronomy` | Moon and sun computation, lunar-night rule, notable moments, tasbih windows, city list | core-base |
 | `:core:audio` | Player, ayah and word timing, repeat, speed, downloads | `:core:quran`, core-base |
 | `:core:database` | SQLDelight schema and migrations | core-base |

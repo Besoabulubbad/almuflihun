@@ -2,6 +2,29 @@ import java.security.MessageDigest
 
 plugins {
     id("almuflihun.kmp.library")
+    // Builds files/quran.db from sources/ into Compose Resources (ADR 0015).
+    id("almuflihun.quran.database")
+}
+
+kotlin {
+    android {
+        androidResources {
+            // Compose Resources ship as Android assets.
+            enable = true
+        }
+    }
+    sourceSets {
+        commonMain.dependencies {
+            // Reads the bundled quran.db on Android and iOS. Resources only: core:quran has no UI.
+            implementation(libs.compose.components.resources)
+            // The Compose compiler, required by the Compose plugin, needs the runtime on the classpath.
+            implementation(libs.compose.runtime)
+        }
+    }
+}
+
+compose.resources {
+    packageOfResClass = "app.almuflihun.core.quran.resources"
 }
 
 // Every Quran source file is byte-exact and listed in SOURCES.md with its checksum (ADR 0004). Fails the build if a

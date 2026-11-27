@@ -22,10 +22,14 @@ dependencies {
     // compiler plugin is needed inside the build logic.
     implementation(libs.kotlinx.serialization.json)
 
+    // core/quran/sources → the bundled quran.db (almuflihun.quran.database, ADR 0015). Build time only, never in the app.
+    implementation(libs.sqlite.jdbc)
+
     testImplementation(libs.kotlin.test)
 }
 
 tasks.test {
     // The generator test runs against the real token file, so the build logic is proven on every `check`.
     systemProperty("almuflihun.tokensFile", rootDir.parentFile.resolve("design/tokens.json").absolutePath)
+    systemProperty("almuflihun.quranSources", rootDir.parentFile.resolve("core/quran/sources").absolutePath)
 }
