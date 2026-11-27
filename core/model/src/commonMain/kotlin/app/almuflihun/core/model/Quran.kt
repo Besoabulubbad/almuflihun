@@ -128,3 +128,31 @@ data class WordMorphology(val position: Int, val root: String?, val lemma: Strin
 
 /** «الجذر ورد n مرة في m آية»: how often a root occurs, and in how many ayahs. */
 data class RootUsage(val root: String, val occurrences: Int, val ayahs: Int)
+
+/** What a word study gathers occurrences by: its root, else its lemma, else its stem, else the word alone. */
+enum class StudyBasis { Root, Lemma, Stem, Word }
+
+/** One place the studied word's root (or lemma) occurs: placed for highlighting, with its form (lemma). */
+data class WordOccurrence(val range: WordRange, val position: Int, val lemma: String?)
+
+/** «حسب الصيغة»: the occurrences of one form (lemma). */
+data class WordForm(val lemma: String?, val occurrences: List<WordOccurrence>)
+
+/**
+ * Word study (ADR 0012, S3; DESIGN «Word study»): the tapped word, its root, lemma and stem, and every occurrence of
+ * its [basis] in Mushaf order («حسب المصحف») and grouped by form, largest first («حسب الصيغة»).
+ */
+data class WordStudy(
+    val key: AyahKey,
+    val position: Int,
+    val text: String,
+    val root: String?,
+    val lemma: String?,
+    val stem: String?,
+    val basis: StudyBasis,
+    val occurrences: List<WordOccurrence>,
+    val forms: List<WordForm>,
+) {
+    /** «في m آية» */
+    val ayahCount: Int get() = occurrences.map { it.range.key }.distinct().size
+}

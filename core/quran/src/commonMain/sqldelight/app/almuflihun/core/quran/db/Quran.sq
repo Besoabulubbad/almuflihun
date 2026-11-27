@@ -110,3 +110,17 @@ SELECT w.surah, w.ayah, r.letters, l.clean
 FROM word w LEFT JOIN root r ON r.id = w.root LEFT JOIN lemma l ON l.id = w.lemma
 WHERE w.is_end = 0
 ORDER BY w.id;
+
+wordInfo:
+SELECT w.text, w.root, w.lemma, w.stem, r.letters, l.text AS lemma_text, s.text AS stem_text
+FROM word w LEFT JOIN root r ON r.id = w.root LEFT JOIN lemma l ON l.id = w.lemma LEFT JOIN stem s ON s.id = w.stem
+WHERE w.surah = ? AND w.ayah = ? AND w.position = ? AND w.is_end = 0;
+
+wordsOfRoot:
+SELECT w.surah, w.ayah, w.position, l.text FROM word w LEFT JOIN lemma l ON l.id = w.lemma WHERE w.root = ? ORDER BY w.id;
+
+wordsOfLemma:
+SELECT w.surah, w.ayah, w.position, l.text FROM word w LEFT JOIN lemma l ON l.id = w.lemma WHERE w.lemma = ? ORDER BY w.id;
+
+wordsOfStem:
+SELECT w.surah, w.ayah, w.position, l.text FROM word w LEFT JOIN lemma l ON l.id = w.lemma WHERE w.stem = ? ORDER BY w.id;
