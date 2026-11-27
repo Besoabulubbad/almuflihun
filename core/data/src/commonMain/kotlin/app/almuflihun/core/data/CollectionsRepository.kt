@@ -5,6 +5,7 @@ import app.almuflihun.core.common.DispatcherProvider
 import app.almuflihun.core.database.UserDatabase
 import app.almuflihun.core.model.AyahKey
 import app.almuflihun.core.model.CollectedVerse
+import app.almuflihun.core.model.CollectionPlace
 import app.almuflihun.core.model.VerseCollection
 import app.almuflihun.core.model.WordRange
 import app.cash.sqldelight.coroutines.asFlow
@@ -27,8 +28,11 @@ interface CollectionsRepository {
     /** A collection's verses in the reader's order. */
     fun verses(collectionId: String): Flow<List<CollectedVerse>>
 
-    /** The collections holding [key], for the add-to sheet's checkboxes. */
-    fun collectionsWith(key: AyahKey): Flow<Set<String>>
+    /**
+     * The collections holding [key] with the note in each, «محفوظاتي» first: the ayah study panel, and the add-to
+     * sheet's ticked boxes (their ids).
+     */
+    fun placesOf(key: AyahKey): Flow<List<CollectionPlace>>
 
     /** Makes the default «محفوظاتي» if it does not exist yet, and returns its id. */
     suspend fun ensureDefault(): String
@@ -83,8 +87,10 @@ internal class LocalCollectionsRepository(
             }
         }
 
-    override fun collectionsWith(key: AyahKey): Flow<Set<String>> =
-        queries.membership(key.surah.toLong(), key.ayah.toLong()).asFlow().mapToList(dispatchers.io).map { it.toSet() }
+    override fun placesOf(key: AyahKey): Flow<List<CollectionPlace>> =
+        queries.placesOf(key.surah.toLong(), key.ayah.toLong()).asFlow().mapToList(dispatchers.io).map { rows ->
+            rows.map { CollectionPlace(it.id, it.name, it.is_default == 1L, it.note) }
+        }
 
     override suspend fun ensureDefault(): String = write {
         queries.defaultCollection().executeAsOneOrNull() ?: newCollection(name = null, isDefault = true)

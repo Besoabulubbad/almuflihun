@@ -176,3 +176,23 @@ data class SurahOverview(
     val sajdas: List<AyahKey>,
     val doors: List<DoorInSurah>,
 )
+
+/** A door that includes an ayah. Hidden doors are flagged; only visible ones are shown for now. */
+data class DoorMention(val doorId: String, val title: String, val visible: Boolean)
+
+/** A collection holding an ayah, with the reader's private note on it there (null when none). */
+data class CollectionPlace(val collectionId: String, val name: String?, val isDefault: Boolean, val note: String?)
+
+/**
+ * The ayah study panel (ADR 0012, S5; «تدبّر» in the AyahSheet): the full ayah, where it sits, its words with their
+ * roots, the phrases it shares, the doors that include it, and the reader's collections and notes on it.
+ */
+data class AyahStudy(
+    val ayah: Ayah,
+    val surah: Surah,
+    val position: AyahPosition,
+    val words: List<WordMorphology>,
+    val phrases: List<SharedPhrase>,
+    val doors: List<DoorMention>,
+    val collections: List<CollectionPlace>,
+)

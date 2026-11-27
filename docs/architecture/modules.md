@@ -49,7 +49,7 @@ All features share one contract: they may depend on `:core:ui`, `:core:designsys
 | `:core:analytics` | Allow-listed event wrapper, consent gate, Crashlytics | core-base |
 | `:core:update` | `app/latest` check, download, verification, installer hand-off, `minSupported` | `:core:platform`, `:core:firebase`, core-base |
 | `:core:data` | Repositories (Flow), offline-first | `:core:database`, `:core:firebase`, `:core:quran`, `:core:astronomy`, `:core:audio`, core-base |
-| `:core:domain` | Use cases and business rules (permissions shown in UI, points display, «تذكرة» pick, reading time) | `:core:data` interfaces, core-base |
+| `:core:domain` | Use cases and business rules (permissions shown in UI, points display, «تذكرة» pick, reading time, the ayah study panel) | `:core:data` interfaces, the Quran engine's readers (`:core:quran`), core-base |
 | `:core:testing` | Fixtures, fakes, screenshot runners, coroutine helpers | test-scoped |
 
 ## Outside Gradle

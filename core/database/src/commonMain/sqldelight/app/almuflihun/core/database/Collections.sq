@@ -82,3 +82,8 @@ UPDATE collection_verse SET position = ?, updated_at = ? WHERE collection_id = ?
 
 touchCollection:
 UPDATE collection SET updated_at = ? WHERE id = ?;
+
+placesOf:
+SELECT c.id, c.name, c.is_default, v.note FROM collection_verse v JOIN collection c ON c.id = v.collection_id
+WHERE v.surah = ? AND v.ayah = ? AND v.deleted = 0 AND c.deleted = 0
+ORDER BY c.is_default DESC, c.position;
