@@ -40,6 +40,7 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(project(":core:testing"))
+            implementation(libs.kotlinx.serialization.json) // reads design/data in ContentPlacementTest
             implementation(libs.kotlinx.coroutines.test) // runAppTest's TestScope
         }
         named("androidHostTest").dependencies {
