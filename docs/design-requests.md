@@ -27,3 +27,7 @@ The designer has not received the spec yet. It is [specs/screens.md → Home](sp
 `design/data/diyaa-food.json`, station 9, block `compare`: the two items carry `quotes` without a `ref`, so the app cannot place them or show them with their full verse (DESIGN §1). One of them («من طيبات ما رزقناكم») occurs in four verses (2:57, 2:172, 7:160, 20:81). Please add the verse key to each quote, for example `{"key": "2:61", "quote": "…", "words": [a, b]}`.
 
 Until then the build lists these four as known gaps (`ContentPlacementTest`), and the screen must not show them.
+
+## 5. Search results «حسب الرسم» (owner, 2026-11-27)
+
+Advanced search can group results by how the Mushaf writes the word (docs/specs/screens.md §13): for example «إِبْرَٰهِيمَ» 54 and «إِبْرَٰهِۦمَ» 15. Please design the switch between «حسب السورة» and «حسب الرسم» on SearchAdvanced and the shape group header (the Mushaf spelling in the Quran font, with its count). The engine is ready.

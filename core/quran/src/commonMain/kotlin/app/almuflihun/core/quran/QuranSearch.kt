@@ -62,10 +62,24 @@ data class SearchQuery(val terms: List<SearchTerm>, val scope: SearchScope = Sea
 data class SurahResults(val surah: Int, val count: Int, val ayahs: List<AyahMatch>)
 
 /**
- * Results grouped by surah in Mushaf order, with the total on top (DESIGN «Advanced search»). At most the limit of
- * ayahs is listed; [truncated] then asks the reader to narrow.
+ * One way the Mushaf writes what was found (owner, 2026-11-27): the same word can be spelled differently in places
+ * («إِبْرَٰهِيمَ» / «إِبْرَٰهِۦمَ», «عِبَادِ» / «عِبَٰدَ»), and different words can share the letters searched for.
+ * [shape] is the Mushaf's spelling of the word's stem (as first found); [count] the matches written so; [ayahs] those
+ * listed, each with only the matches of this shape.
  */
-data class GroupedResults(val totalAyahs: Int, val groups: List<SurahResults>, val truncated: Boolean)
+data class ShapeResults(val shape: String, val count: Int, val ayahs: List<AyahMatch>)
+
+/**
+ * Results grouped by surah in Mushaf order, with the total on top (DESIGN «Advanced search»), and the same matches
+ * grouped by how the Mushaf writes them, most frequent first ([shapes], «حسب الرسم»). At most the limit of ayahs is
+ * listed in each view; [truncated] then asks the reader to narrow.
+ */
+data class GroupedResults(
+    val totalAyahs: Int,
+    val groups: List<SurahResults>,
+    val truncated: Boolean,
+    val shapes: List<ShapeResults> = emptyList(),
+)
 
 /** Offline search over the shipped text (docs/specs/screens.md §11). */
 interface QuranSearch {
@@ -163,7 +177,8 @@ internal class IndexedQuranSearch(
                     val found = scoped.mapNotNull { ayah -> ayah.matches(prepared)?.let { ayah.key to it } }.toMap()
                     result = combine(result, found, if (result == null) Join.Or else term.join)
                 }
-                group(result.orEmpty(), limit)
+                val found = result.orEmpty()
+                group(found, limit).copy(shapes = byShape(found, scoped.associateBy { it.key }, limit))
             }
         }
 
@@ -197,6 +212,45 @@ internal class IndexedQuranSearch(
             SurahResults(surah, entries.size, shown)
         }
         return GroupedResults(result.size, groups, truncated = result.size > limit)
+    }
+
+    /**
+     * The matches grouped by the Mushaf's spelling of the words they fall on (each Mushaf word's stem; for a match
+     * over several words, their shapes in order). Shapes are compared by their letters, so case endings do not split
+     * a shape; the label is the first spelling met.
+     */
+    private fun byShape(
+        found: Map<AyahKey, List<WordRange>>,
+        ayahs: Map<AyahKey, IndexedAyah>,
+        limit: Int,
+    ): List<ShapeResults> {
+        class Shape(val label: String) {
+            var count = 0
+            val ayahs = LinkedHashMap<AyahKey, MutableList<WordRange>>()
+        }
+        val shapes = LinkedHashMap<String, Shape>()
+        found.forEach { (key, ranges) ->
+            val ayah = ayahs[key] ?: return@forEach
+            ranges.distinct().forEach { range ->
+                val words = ayah.groups.indices.filter { i ->
+                    val group = ayah.groups[i]
+                    group.first < range.last && group.last >= range.first - 1
+                }
+                if (words.isNotEmpty()) {
+                    val keyText = words.joinToString(" ") { ayah.shapeKeys[it] }
+                    val shape = shapes.getOrPut(keyText) { Shape(words.joinToString(" ") { ayah.shapes[it] }) }
+                    shape.count++
+                    shape.ayahs.getOrPut(key) { mutableListOf() } += range
+                }
+            }
+        }
+        var listed = 0
+        return shapes.values.sortedByDescending { it.count }.map { shape ->
+            val shown = shape.ayahs.entries.take((limit - listed).coerceAtLeast(0))
+                .map { (key, ranges) -> AyahMatch(key, ranges.sortedBy { it.first }) }
+            listed += shown.size
+            ShapeResults(shape.label, shape.count, shown)
+        }
     }
 
     private fun IndexedAyah.isIn(scope: SearchScope): Boolean = when (scope) {

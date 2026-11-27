@@ -106,8 +106,8 @@ WHERE w.surah = ? AND w.ayah = ? AND w.is_end = 0
 ORDER BY w.position;
 
 allWordMorphology:
-SELECT w.surah, w.ayah, r.letters, l.clean
-FROM word w LEFT JOIN root r ON r.id = w.root LEFT JOIN lemma l ON l.id = w.lemma
+SELECT w.surah, w.ayah, w.text, r.letters, l.clean, s.text AS stem_text
+FROM word w LEFT JOIN root r ON r.id = w.root LEFT JOIN lemma l ON l.id = w.lemma LEFT JOIN stem s ON s.id = w.stem
 WHERE w.is_end = 0
 ORDER BY w.id;
 
