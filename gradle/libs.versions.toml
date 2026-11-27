@@ -45,6 +45,7 @@ robolectric = "4.18"
 roborazzi = "1.79.0"
 savedstate = "1.4.0"
 sqldelight = "2.4.1"
+sqlite-jdbc = "3.53.4.0"
 turbine = "1.2.1"
 
 [libraries]
@@ -109,6 +110,7 @@ sqldelight-primitiveAdapters = { module = "app.cash.sqldelight:primitive-adapter
 sqldelight-androidDriver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-nativeDriver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-sqliteDriver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-http = { module = "io.ktor:ktor-http", version.ref = "ktor" }
 ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }

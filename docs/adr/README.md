@@ -31,6 +31,7 @@ Design and content decisions made with the designer live in [`design/DECISIONS.m
 | [0012](0012-study-engine.md) | A Quran study engine: collections, advanced search, word study, related verses | accepted | 2026-11-26 |
 | [0013](0013-mushaf-fonts-download.md) | The Mushaf: exact QPC page fonts downloaded once, Digital Khatt bundled as the fallback | accepted | 2026-11-27 |
 | [0014](0014-language-ready.md) | Arabic first, built ready for English | accepted | 2026-11-27 |
+| [0015](0015-bundled-quran-database.md) | The Quran ships as one read-only database, built from the sources at compile time | accepted | 2026-11-27 |
 
 ## How these were decided
 
