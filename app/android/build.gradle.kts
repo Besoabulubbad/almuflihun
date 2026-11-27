@@ -19,4 +19,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.compose.runtime) // setContent { App() }
     implementation(libs.compose.ui)
+    implementation(libs.koin.android) // androidContext()
+    implementation(libs.koin.core) // initKoin's KoinAppDeclaration
 }

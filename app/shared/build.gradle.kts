@@ -1,6 +1,7 @@
 plugins {
     id("almuflihun.kmp.library")
     id("almuflihun.compose")
+    id("almuflihun.koin")
 }
 
 kotlin {
@@ -15,6 +16,21 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":core:designsystem"))
             implementation(project(":core:localization")) // AppTheme reads the UI language (ADR 0014)
+            implementation(project(":core:navigation"))
+            implementation(project(":core:common"))
+            implementation(project(":core:platform"))
+            implementation(project(":core:analytics"))
+            // Features, as they land.
+            implementation(project(":feature:home"))
+            // initKoin returns Koin's KoinApplication and takes its KoinAppDeclaration.
+            api(libs.koin.core)
+            implementation(libs.navigation3.runtime)
+            implementation(libs.navigation3.ui)
+            implementation(libs.androidx.lifecycle.viewmodelNavigation3)
+            implementation(libs.androidx.savedstate) // the back stack's SavedStateConfiguration
+        }
+        named("androidHostTest").dependencies {
+            implementation(libs.koin.test)
         }
     }
 }
