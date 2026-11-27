@@ -119,3 +119,19 @@ internal object TestFonts {
     private const val GLYF_SIZE = 4000
     private const val HEAD_SIZE = 54
 }
+
+/** Serves every page, with optional overrides; records the order pages were asked for. */
+internal class FakeFontFetcher(
+    private val good: ByteArray,
+    val asked: MutableList<Int> = mutableListOf(),
+    val override: (page: Int, attempt: Int) -> FetchResult? = { _, _ -> null },
+) : FontFetcher {
+    private val attempts = mutableMapOf<Int, Int>()
+    var onFetch: (Int) -> Unit = {}
+    override suspend fun fetch(page: Int): FetchResult {
+        asked += page
+        onFetch(page)
+        val attempt = attempts.getOrElse(page) { 0 }.also { attempts[page] = it + 1 }
+        return override(page, attempt) ?: FetchResult.Downloaded(good)
+    }
+}

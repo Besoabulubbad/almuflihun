@@ -30,6 +30,9 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelNavigation3)
             implementation(libs.androidx.savedstate) // the back stack's SavedStateConfiguration
         }
+        androidMain.dependencies {
+            api(libs.androidx.work.runtime) // WorkManagerSetup returns WorkManager's Configuration
+        }
         named("androidHostTest").dependencies {
             implementation(libs.koin.test)
         }

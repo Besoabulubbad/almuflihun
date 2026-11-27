@@ -21,4 +21,5 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.koin.android) // androidContext()
     implementation(libs.koin.core) // initKoin's KoinAppDeclaration
+    implementation(libs.androidx.work.runtime) // Configuration.Provider
 }
