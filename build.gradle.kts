@@ -21,7 +21,7 @@ tasks.check {
 // `./gradlew buildHealth`. Applied per module by the convention plugins; the root aggregates. Every category fails.
 // Modules that are still skeletons warn instead; remove a module from this list in the PR that gives it code.
 val skeletonModules = (
-    listOf("model", "common", "ui", "navigation", "platform", "quran", "astronomy", "audio",
+    listOf("model", "navigation", "platform", "quran", "astronomy", "audio",
         "database", "firebase", "analytics", "update", "data", "domain").map { ":core:$it" } +
         listOf("home", "moon", "quran-hub", "mushaf", "hizb", "doors", "diyaa", "collections", "live", "community", "profile",
             "admin", "settings").map { ":feature:$it" }
@@ -37,6 +37,28 @@ dependencyAnalysis {
             listOf("runtime", "foundation", "ui", "material3", "animation").forEach {
                 includeGroup("androidx.compose.$it")
             }
+        }
+        // The JetBrains multiplatform forks of AndroidX resolve to Google's artifacts on Android (as in Sojourn).
+        bundle("lifecycle") {
+            includeGroup("org.jetbrains.androidx.lifecycle")
+            includeGroup("androidx.lifecycle")
+        }
+        bundle("savedstate") {
+            includeGroup("org.jetbrains.androidx.savedstate")
+            includeGroup("androidx.savedstate")
+        }
+        bundle("navigationevent") {
+            includeGroup("org.jetbrains.androidx.navigationevent")
+            includeGroup("androidx.navigationevent")
+        }
+        bundle("navigation3") {
+            includeGroup("org.jetbrains.androidx.navigation3")
+            includeGroup("androidx.navigation3")
+        }
+        // koinViewModel() is inline, so its bytecode points at koin-core-viewmodel.
+        bundle("koin-viewmodel") {
+            includeDependency("io.insert-koin:koin-compose-viewmodel")
+            includeDependency("io.insert-koin:koin-core-viewmodel")
         }
     }
     issues {
