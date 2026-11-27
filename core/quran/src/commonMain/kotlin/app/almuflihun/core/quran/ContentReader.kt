@@ -3,8 +3,13 @@ package app.almuflihun.core.quran
 import app.almuflihun.core.common.AppResult
 import app.almuflihun.core.common.DispatcherProvider
 import app.almuflihun.core.common.runCatchingApp
+import app.almuflihun.core.model.AnimalPair
 import app.almuflihun.core.model.Ayah
 import app.almuflihun.core.model.AyahKey
+import app.almuflihun.core.model.CompareItem
+import app.almuflihun.core.model.CountBar
+import app.almuflihun.core.model.Diyaa
+import app.almuflihun.core.model.DiyaaBlock
 import app.almuflihun.core.model.Door
 import app.almuflihun.core.model.DoorCard
 import app.almuflihun.core.model.DoorEntry
@@ -16,6 +21,10 @@ import app.almuflihun.core.model.Hizb
 import app.almuflihun.core.model.Passage
 import app.almuflihun.core.model.PassageStep
 import app.almuflihun.core.model.Slide
+import app.almuflihun.core.model.Station
+import app.almuflihun.core.model.SummaryLine
+import app.almuflihun.core.model.Trait
+import app.almuflihun.core.model.WordPlace
 import app.almuflihun.core.model.WordRange
 import app.almuflihun.core.quran.resources.Res
 import kotlinx.coroutines.sync.Mutex
@@ -34,6 +43,9 @@ interface ContentReader {
 
     /** The 60 hizbs. */
     suspend fun hizbs(): AppResult<List<Hizb>>
+
+    /** «الضياء», the journey through the verses on food. */
+    suspend fun diyaa(): AppResult<Diyaa>
 }
 
 /**
@@ -47,7 +59,10 @@ internal class BundledContentReader(
     private val onMismatch: (String) -> Unit = {},
 ) : ContentReader {
 
-    private val json = Json { ignoreUnknownKeys = true }
+    private val json = Json {
+        ignoreUnknownKeys = true
+        classDiscriminator = "type" // الضياء blocks
+    }
     private val mutex = Mutex()
     private val words = mutableMapOf<AyahKey, List<String>>()
     private var basmala: List<String>? = null
@@ -70,6 +85,66 @@ internal class BundledContentReader(
         json.decodeFromString<HizbsFile>(read("hizb-60.json")).hizbs.map { h ->
             Hizb(h.hizb, h.juz, key(h.start), key(h.end), h.quarters.map(::key))
         }
+    }
+
+    override suspend fun diyaa(): AppResult<Diyaa> = load {
+        val file = json.decodeFromString<DiyaaFile>(read("diyaa-food.json"))
+        Diyaa(
+            title = file.meta.title,
+            intro = file.meta.intro,
+            stations = file.stations.map { s ->
+                Station(
+                    number = s.n,
+                    title = s.title,
+                    illustration = s.illustration,
+                    tint = s.tint,
+                    blocks = s.blocks.mapNotNull { it.toBlock("الضياء station ${s.n}") },
+                )
+            },
+            summary = file.summary.map { SummaryLine(it.text, it.illustration) },
+        )
+    }
+
+    /** The block, or null when it is only a quote that did not place (reported, never shown). */
+    @Suppress("CyclomaticComplexMethod") // one branch per block type in the design
+    private suspend fun BlockDto.toBlock(where: String): DiyaaBlock? = when (this) {
+        is BlockDto.Verse -> DiyaaBlock.Verses(
+            keys = keys.map(::key),
+            highlights = highlight.mapIndexedNotNull { i, text ->
+                val declared = highlightWords.getOrNull(i)
+                place("$where highlight", declared?.key ?: keys.first(), text, declared?.words)
+            },
+        )
+        is BlockDto.Text -> DiyaaBlock.Note(text)
+        is BlockDto.Lang -> DiyaaBlock.Language(word, meaning)
+        is BlockDto.Rule -> DiyaaBlock.Rule(label, text)
+        is BlockDto.Heading -> DiyaaBlock.Heading(text)
+        is BlockDto.TraitCards -> DiyaaBlock.Traits(items.map { Trait(it.word, it.meaning, it.refs) })
+        is BlockDto.Contrast -> DiyaaBlock.Contrast(a, b)
+        is BlockDto.AnimalPairs -> DiyaaBlock.AnimalPairs(items.map { AnimalPair(it.name, it.illustration, it.label) })
+        is BlockDto.Compare -> DiyaaBlock.Compare(items.map { it.toItem(where) })
+        is BlockDto.Bullets -> DiyaaBlock.Bullets(items)
+        is BlockDto.CountBars -> DiyaaBlock.CountBars(unit, items.map { CountBar(it.name, it.count, it.illustration) })
+        is BlockDto.Steps -> DiyaaBlock.Steps(items)
+        is BlockDto.WordCount -> DiyaaBlock.WordCount(word, text, items.map { WordPlace(it.about, key(it.ref)) })
+        is BlockDto.NumberedList -> DiyaaBlock.NumberedList(title, items)
+        is BlockDto.ClosingQuote -> place("$where closing quote", ref, quote, null)?.let(DiyaaBlock::ClosingQuote)
+    }
+
+    /** A compared item's quotes; one without a verse key cannot be placed, so it is left out and reported. */
+    private suspend fun CompareDto.toItem(where: String): CompareItem {
+        val placed = buildList {
+            if (quote != null && ref != null) place("$where compare", ref, quote, null)?.let(::add)
+            quotes.forEach { text ->
+                val owner = ref
+                if (owner != null) {
+                    place("$where compare", owner, text, null)?.let(::add)
+                } else {
+                    onMismatch("$where compare «$about»: a quote has no verse key (docs/design-requests.md §4)")
+                }
+            }
+        }
+        return CompareItem(about, illustration, placed)
     }
 
     /** One load at a time, so the caches are never written from two coroutines at once. */
