@@ -21,3 +21,9 @@ The designer has not received the spec yet. It is [specs/screens.md → Home](sp
 - **Fallback note** on a Mushaf page drawn with Digital Khatt while its exact font downloads: «يُحمَّل المصحف المطابق للطبعة» (quiet, never blocking).
 - **Settings → «شكل المصحف»:** editions (مصحف المدينة ١٤٢١ default; مصحف التجويد الملوّن ١٤٤١ optional download), each with size, status, download, delete. The tajweed edition has light, dark and sepia palettes.
 - **Card font change:** Quran text on cards, the slider, the study panel and posts uses **Digital Khatt V2** (bundled, open licence) instead of KFGQPC HAFS Uthmanic Script, so cards never wait for a download.
+
+## 4. Four quotes in الضياء have no verse reference (2026-11-27)
+
+`design/data/diyaa-food.json`, station 9, block `compare`: the two items carry `quotes` without a `ref`, so the app cannot place them or show them with their full verse (DESIGN §1). One of them («من طيبات ما رزقناكم») occurs in four verses (2:57, 2:172, 7:160, 20:81). Please add the verse key to each quote, for example `{"key": "2:61", "quote": "…", "words": [a, b]}`.
+
+Until then the build lists these four as known gaps (`ContentPlacementTest`), and the screen must not show them.
