@@ -3,6 +3,7 @@ import java.security.MessageDigest
 plugins {
     id("almuflihun.kmp.library")
     id("almuflihun.koin")
+    id("org.jetbrains.kotlin.plugin.serialization")
     // Builds files/quran.db from sources/ into Compose Resources (ADR 0015).
     id("almuflihun.quran.database")
     id("app.cash.sqldelight")
@@ -30,10 +31,12 @@ kotlin {
             implementation(libs.compose.runtime)
             implementation(libs.sqldelight.runtime)
             implementation(libs.kotlinx.coroutines.core)
+            implementation(libs.kotlinx.serialization.json) // reads design/data
         }
         androidMain.dependencies {
             implementation(libs.sqldelight.androidDriver)
             implementation(libs.androidx.sqlite) // the driver's SupportSQLite types
+            implementation(libs.kotlinx.serialization.core) // the generated serializers' runtime types
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.nativeDriver)

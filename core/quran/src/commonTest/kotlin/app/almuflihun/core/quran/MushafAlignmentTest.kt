@@ -2,6 +2,7 @@ package app.almuflihun.core.quran
 
 import app.almuflihun.core.common.AppResult
 import app.almuflihun.core.model.AyahKey
+import app.almuflihun.core.model.WordRange
 import app.almuflihun.core.testing.TestDispatcherProvider
 import app.almuflihun.core.testing.runAppTest
 import kotlin.math.max

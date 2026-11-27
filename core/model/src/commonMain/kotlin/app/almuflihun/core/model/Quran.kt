@@ -50,3 +50,13 @@ data class MushafPage(val number: Int, val lines: List<MushafLine>) {
  * the basmala) and is never shown as is.
  */
 data class Ayah(val key: AyahKey, val page: Int, val words: List<QuranWord>, val tanzilText: String)
+
+/**
+ * Words [first]..[last] (1-based, inclusive) of an ayah, counted in the Tanzil text without pause marks or the
+ * leading basmala. A quote is a placed range: the app shows the shipped words in it, with its full verse (DESIGN §1).
+ */
+data class WordRange(val key: AyahKey, val first: Int, val last: Int) {
+    init {
+        require(first in 1..last) { "Bad range $first..$last in $key" }
+    }
+}
