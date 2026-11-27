@@ -1,6 +1,7 @@
 package app.almuflihun.core.quran
 
 import app.almuflihun.core.quran.font.FontFiles
+import app.almuflihun.core.quran.font.PageFontDownloader
 import app.almuflihun.core.quran.font.PageFontStore
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -22,6 +23,7 @@ val quranModule: Module = module {
                 .flatMapTo(HashSet()) { glyph -> glyph.map(Char::code) }
         }
     }
+    single { PageFontDownloader(get(), get()) }
 }
 
 /** The Mushaf edition whose page fonts are downloaded (ADR 0013): مصحف المدينة ١٤٢١, QPC V2. */
