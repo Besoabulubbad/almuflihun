@@ -2,6 +2,10 @@ package app.almuflihun.core.quran
 
 import android.content.Context
 import app.almuflihun.core.quran.db.QuranDatabase
+import app.almuflihun.core.quran.font.AndroidFontFiles
+import app.almuflihun.core.quran.font.AndroidPageFontCache
+import app.almuflihun.core.quran.font.FontFiles
+import app.almuflihun.core.quran.font.PageFontStore
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import org.koin.core.module.Module
@@ -36,4 +40,6 @@ internal class AndroidQuranStorage(
 
 internal actual val quranStorageModule: Module = module {
     single<QuranStorage> { AndroidQuranStorage(get()) }
+    single<FontFiles> { AndroidFontFiles(get(), MUSHAF_EDITION) }
+    single { AndroidPageFontCache(get<Context>(), get<PageFontStore>()) }
 }
