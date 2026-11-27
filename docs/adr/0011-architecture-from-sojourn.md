@@ -4,6 +4,7 @@
 - **Date:** 2026-11-26
 - **Deciders:** Mohammad Abu Lubad, Claude
 - **Tags:** architecture, build, testing, ci
+- **Amended by:** [0014](0014-language-ready.md) (language-ready, English later)
 
 ## Context and problem statement
 
