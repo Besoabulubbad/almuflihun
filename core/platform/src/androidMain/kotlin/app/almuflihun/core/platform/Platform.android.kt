@@ -24,4 +24,5 @@ internal class AndroidMotionSettings(private val context: Context) : MotionSetti
 actual val platformModule: Module = module {
     single<ShareSheet> { AndroidShareSheet(get()) }
     single<MotionSettings> { AndroidMotionSettings(get()) }
+    single<LocationProvider> { AndroidLocationProvider(get()) }
 }

@@ -22,4 +22,5 @@ internal class IosMotionSettings : MotionSettings {
 actual val platformModule: Module = module {
     single<ShareSheet> { IosShareSheet() }
     single<MotionSettings> { IosMotionSettings() }
+    single<LocationProvider> { IosLocationProvider() }
 }

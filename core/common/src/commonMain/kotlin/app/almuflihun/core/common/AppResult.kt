@@ -16,6 +16,9 @@ sealed interface AppError {
     /** The thing asked for does not exist (any more). */
     data class NotFound(val id: String) : AppError
 
+    /** The user has not allowed what the operation needs (for example location); the UI offers the alternative. */
+    data object PermissionDenied : AppError
+
     /** The input broke a rule before leaving the device. */
     data class Validation(val reason: String) : AppError
 
