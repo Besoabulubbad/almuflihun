@@ -23,6 +23,8 @@ class ArchitectureTest {
     fun `every file's package matches its module`() {
         scope.files
             .filter { it.path.contains("/src/") }
+            // Vendored upstream code keeps its own package so updates stay a clean copy (ADR 0017).
+            .filterNot { it.path.contains(VENDORED_ASTRONOMY_ENGINE) }
             .assertTrue(additionalMessage = "Packages follow app.almuflihun.<layer>.<module> (ADR 0009).") { file ->
                 val module = file.projectPath.removePrefix("/").substringBefore("/src/")
                 val expected = "app.almuflihun." + module.split('/').joinToString(".") { it.replace("-", "") }
@@ -178,3 +180,6 @@ class ArchitectureTest {
         )
     }
 }
+
+/** Astronomy Engine, vendored as upstream wrote it (ADR 0017). */
+private const val VENDORED_ASTRONOMY_ENGINE = "/io/github/cosinekitty/astronomy/"

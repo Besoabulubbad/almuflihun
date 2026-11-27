@@ -14,5 +14,7 @@ The MIT licence in [LICENSE](LICENSE) covers this project's source code only. Ev
 | Recitation audio and timings: علي جابر | [Quran Foundation](https://api-docs.quran.foundation/legal/developer-terms/) | Developer terms: streamed or downloaded on request, credited, not rehosted (ADR 0007) | Phase 8 |
 | IBM Plex Sans Arabic (UI font) | [IBM Plex](https://github.com/IBM/plex) via google/fonts | SIL Open Font License 1.1 | bundled (`core/designsystem/licenses/SOURCES.md`) |
 | Lucide icons (1.82.0) | [lucide.dev](https://lucide.dev) | ISC | bundled as vectors (`core/designsystem/licenses/SOURCES.md`) |
+| Astronomy Engine (moon, sun, planets) | [cosinekitty/astronomy](https://github.com/cosinekitty/astronomy), Kotlin source at commit `826e26f` | MIT (© Don Cross); vendored with three marked patches (ADR 0017) | vendored (`core/astronomy/.../SOURCE.md`) |
+| USNO rise/set and moon-phase reference data (tests only) | US Naval Observatory, as published with Astronomy Engine | US government work; used only in tests | `core/astronomy/src/androidHostTest/resources/usno` |
 | City list | [GeoNames](https://www.geonames.org/) | CC BY 4.0 | to add (Phase 4) |
 | الضياء illustrations | the project's designer (`design/illustrations/`) | project-owned | in `design/` |
