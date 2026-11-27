@@ -3,6 +3,7 @@ package app.almuflihun.core.quran
 import app.almuflihun.core.common.AppError
 import app.almuflihun.core.common.AppResult
 import app.almuflihun.core.model.AyahKey
+import app.almuflihun.core.model.DiyaaBlock
 import app.almuflihun.core.model.DoorLayout
 import app.almuflihun.core.testing.TestDispatcherProvider
 import app.almuflihun.core.testing.runAppTest
@@ -60,6 +61,22 @@ class ContentReaderTest : PlatformTest() {
         assertEquals(emptyList(), mismatches)
     }
 
+    @Test
+    fun diyaa_has_its_eleven_stations_with_every_block_type() = runAppTest {
+        val diyaa = content.diyaa().orFail()
+        assertEquals((1..11).toList(), diyaa.stations.map { it.number })
+        assertEquals(11, diyaa.summary.size)
+        val blocks = diyaa.stations.flatMap { it.blocks }
+        assertEquals(BLOCK_KINDS, blocks.map { it::class.simpleName }.toSet())
+        assertEquals(30, blocks.count { it is DiyaaBlock.Verses })
+        assertEquals(46, blocks.filterIsInstance<DiyaaBlock.Verses>().sumOf { it.highlights.size })
+        val compared = blocks.filterIsInstance<DiyaaBlock.Compare>().flatMap { it.items }
+        assertEquals(2, compared.sumOf { it.quotes.size }) // the four without a verse key are left out
+        // docs/design-requests.md §4: exactly the four quotes without a verse key are reported.
+        assertEquals(4, mismatches.size, mismatches.joinToString("\n"))
+        assertTrue(mismatches.all { "no verse key" in it })
+    }
+
     private fun <T> AppResult<T>.orFail(): T = when (this) {
         is AppResult.Success -> value
         is AppResult.Failure -> throw AssertionError(
@@ -79,5 +96,12 @@ class ContentReaderTest : PlatformTest() {
             assertEquals(hizb.start, hizb.quarters.first())
             assertEquals((hizb.number + 1) / 2, hizb.juz)
         }
+    }
+
+    private companion object {
+        val BLOCK_KINDS = setOf(
+            "Verses", "Note", "Language", "Rule", "Heading", "Traits", "Contrast", "AnimalPairs", "Compare",
+            "Bullets", "CountBars", "Steps", "WordCount", "NumberedList", "ClosingQuote",
+        )
     }
 }
