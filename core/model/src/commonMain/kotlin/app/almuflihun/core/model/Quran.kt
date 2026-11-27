@@ -113,3 +113,9 @@ data class AyahPosition(
 data class SharedPhrase(val here: WordRange, val elsewhere: List<WordRange>) {
     val words: Int get() = here.last - here.first + 1
 }
+
+/** Where the reader is in the Mushaf (docs/specs/screens.md §4). */
+data class MushafPosition(val page: Int, val ayah: AyahKey)
+
+/** Where the reader is in their hizb; separate from [MushafPosition]. */
+data class HizbPosition(val hizb: Int, val page: Int, val ayah: AyahKey)
