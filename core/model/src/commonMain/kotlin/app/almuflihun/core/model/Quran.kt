@@ -105,3 +105,11 @@ data class AyahPosition(
     val quarter: Int,
     val sajda: Boolean,
 )
+
+/**
+ * A phrase this ayah shares with other ayahs (ADR 0012, S4): at least four consecutive words, found from the text
+ * alone. [here] is where it is in this ayah; [elsewhere] every other place it appears, in Mushaf order.
+ */
+data class SharedPhrase(val here: WordRange, val elsewhere: List<WordRange>) {
+    val words: Int get() = here.last - here.first + 1
+}

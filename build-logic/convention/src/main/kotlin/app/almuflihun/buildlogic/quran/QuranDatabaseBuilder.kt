@@ -11,7 +11,7 @@ import java.sql.Connection
  */
 object QuranDatabaseBuilder {
 
-    const val SCHEMA_VERSION = 2
+    const val SCHEMA_VERSION = 3
     const val PAGES = 604
     const val AYAHS = 6236
     const val SURAHS = 114
@@ -55,6 +55,7 @@ object QuranDatabaseBuilder {
             db.insertWords(glyphs, texts, placement)
             db.insertAyahs(tanzil, glyphs, placement)
             db.insertMetadata(metadata)
+            db.insertPhrases(tanzil)
             db.insertMeta(sources)
             db.commit()
             db.autoCommit = true
@@ -194,6 +195,26 @@ object QuranDatabaseBuilder {
         }
     }
 
+    /** The repeated phrases (ADR 0012, S4), each with every place it appears; ids ordered longest first. */
+    private fun Connection.insertPhrases(tanzil: Map<Pair<Int, Int>, String>) {
+        val basmala = tanzil.getValue(1 to 1).split(' ')
+        val words = tanzil.entries.sortedWith(compareBy({ it.key.first }, { it.key.second })).associate { (key, text) ->
+            key to SharedPhrases.contentWords(key.first, key.second, text, basmala).map(SharedPhrases::searchForm)
+        }
+        val phrases = SharedPhrases.find(words)
+        check(phrases.all { places -> places.map { it.surah to it.ayah }.toSet().size >= 2 }) {
+            "a shared phrase appears in fewer than two ayahs"
+        }
+        batch("INSERT INTO phrase_place(phrase, surah, ayah, first_word, last_word) VALUES (?,?,?,?,?)",
+            phrases.withIndex().flatMap { (i, places) -> places.map { i + 1 to it } }) { st, (id, place) ->
+            st.setInt(1, id)
+            st.setInt(2, place.surah)
+            st.setInt(3, place.ayah)
+            st.setInt(4, place.first)
+            st.setInt(5, place.last)
+        }
+    }
+
     private fun Connection.insertLines(lines: List<Line>) = batch(
         "INSERT INTO line(page, line, kind, centered, first_word, last_word, surah) VALUES (?,?,?,?,?,?,?)",
         lines,
@@ -316,5 +337,11 @@ object QuranDatabaseBuilder {
         );
         CREATE TABLE quarter (number INTEGER NOT NULL PRIMARY KEY, surah INTEGER NOT NULL, ayah INTEGER NOT NULL);
         CREATE TABLE sajda (surah INTEGER NOT NULL, ayah INTEGER NOT NULL, PRIMARY KEY (surah, ayah)) WITHOUT ROWID;
+        CREATE TABLE phrase_place (
+            phrase INTEGER NOT NULL, surah INTEGER NOT NULL, ayah INTEGER NOT NULL,
+            first_word INTEGER NOT NULL, last_word INTEGER NOT NULL
+        );
+        CREATE INDEX phrase_place_by_ayah ON phrase_place (surah, ayah);
+        CREATE INDEX phrase_place_by_phrase ON phrase_place (phrase);
     """.trimIndent()
 }

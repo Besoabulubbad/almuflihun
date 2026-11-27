@@ -63,3 +63,21 @@ SELECT surah, ayah FROM quarter ORDER BY number;
 
 isSajda:
 SELECT COUNT(*) FROM sajda WHERE surah = ? AND ayah = ?;
+
+CREATE TABLE phrase_place (
+    phrase INTEGER NOT NULL, surah INTEGER NOT NULL, ayah INTEGER NOT NULL,
+    first_word INTEGER NOT NULL, last_word INTEGER NOT NULL
+);
+
+CREATE INDEX phrase_place_by_ayah ON phrase_place (surah, ayah);
+
+CREATE INDEX phrase_place_by_phrase ON phrase_place (phrase);
+
+phrasesInAyah:
+SELECT phrase, first_word, last_word FROM phrase_place WHERE surah = ? AND ayah = ? ORDER BY phrase, first_word;
+
+placesOfPhrase:
+SELECT surah, ayah, first_word, last_word FROM phrase_place WHERE phrase = ? ORDER BY surah, ayah, first_word;
+
+allPhrasePlaces:
+SELECT phrase, surah, ayah, first_word, last_word FROM phrase_place ORDER BY phrase;
