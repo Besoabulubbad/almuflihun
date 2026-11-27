@@ -83,7 +83,7 @@ Compose:
   active: true
   CompositionLocalAllowlist:
     active: true
-    allowedCompositionLocals: ['LocalReduceMotion', 'LocalAppColors', 'LocalAppText', 'LocalAppGround']
+    allowedCompositionLocals: ['LocalAppPalette', 'LocalAppTextStyles', 'LocalReduceMotion']
   ContentEmitterReturningValues:
     active: true
   ModifierMissing:

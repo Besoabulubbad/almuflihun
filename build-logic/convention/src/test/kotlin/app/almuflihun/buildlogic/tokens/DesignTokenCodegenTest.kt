@@ -40,6 +40,7 @@ class DesignTokenCodegenTest {
         val text = files.getValue("TextRoles.kt")
         assertTrue("val body: TextRoleSpec = TextRoleSpec(FontRole.Ui, 16f, 400, 1.9f)" in text, text)
         assertTrue("val quranBody: TextRoleSpec = TextRoleSpec(FontRole.Quran, 22f, 400, 2.15f)" in text)
+        assertTrue("    quranBody = TextRoles.quranBody.style(ui, quran)," in text, "every role gets a ready style")
     }
 
     @Test

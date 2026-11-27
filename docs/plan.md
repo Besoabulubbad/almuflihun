@@ -163,7 +163,7 @@ Live (TikTok schedules, reminders) and videos (YouTube in-app), Community (compo
 
 ## Out of scope for the first APK
 
-iOS distribution, الفرقان, «من نحن وكيف نفهم ديننا», «لماذا تقرأ القرآن», محمد أيوب's recitation, «استمع للكلمة» (unless a licensed source is found), the hidden doors, sharing as an image.
+iOS distribution, الفرقان, «من نحن وكيف نفهم ديننا», «لماذا تقرأ القرآن», محمد أيوب's recitation, «استمع للكلمة» (unless a licensed source is found), the hidden doors, sharing as an image. Planned for an update after the first APK: a «قراءة متصلة» (flowing text) reading mode with adjustable text size, drawn with Digital Khatt (owner, 2026-11-27).
 
 ## How to change this plan
 
