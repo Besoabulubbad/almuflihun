@@ -29,9 +29,10 @@ Design and content decisions made with the designer live in [`design/DECISIONS.m
 | [0010](0010-self-updating-apk.md) | The directly distributed APK updates itself | accepted | 2026-11-26 |
 | [0011](0011-architecture-from-sojourn.md) | Architecture and engineering setup reused from Sojourn | accepted | 2026-11-26 |
 | [0012](0012-study-engine.md) | A Quran study engine: collections, advanced search, word study, related verses | accepted | 2026-11-26 |
-| [0013](0013-mushaf-fonts-download.md) | The Mushaf: exact QPC page fonts downloaded once, Digital Khatt bundled as the fallback | accepted | 2026-11-27 |
+| [0013](0013-mushaf-fonts-download.md) | The Mushaf: exact QPC page fonts downloaded once, Digital Khatt bundled as the fallback | accepted, amended by 0016 | 2026-11-27 |
 | [0014](0014-language-ready.md) | Arabic first, built ready for English | accepted | 2026-11-27 |
 | [0015](0015-bundled-quran-database.md) | The Quran ships as one read-only database, built from the sources at compile time | accepted | 2026-11-27 |
+| [0016](0016-mushaf-fonts-woff.md) | Mushaf page fonts are downloaded as WOFF, not WOFF2 | accepted | 2026-11-27 |
 
 ## How these were decided
 
