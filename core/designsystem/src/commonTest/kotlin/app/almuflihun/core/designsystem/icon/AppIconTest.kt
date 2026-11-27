@@ -11,8 +11,14 @@ class AppIconTest {
         val mirrored = AppIcon.entries.filter { it.mirrorInRtl }.toSet()
         assertEquals(
             setOf(
-                AppIcon.Back, AppIcon.Forward, AppIcon.OpenExternal, AppIcon.PlayFromHere,
-                AppIcon.Previous, AppIcon.Next, AppIcon.Send, AppIcon.SignOut,
+                AppIcon.Back,
+                AppIcon.Forward,
+                AppIcon.OpenExternal,
+                AppIcon.PlayFromHere,
+                AppIcon.Previous,
+                AppIcon.Next,
+                AppIcon.Send,
+                AppIcon.SignOut,
             ),
             mirrored,
         )
