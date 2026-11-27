@@ -98,7 +98,17 @@ object DesignTokenCodegen {
     }.trimEnd() + "\n"
 
     private fun textRoles(root: JsonObject) = buildString {
-        append(header(listOf("androidx.compose.runtime.Immutable")))
+        append(
+            header(
+                listOf(
+                    "androidx.compose.runtime.Immutable",
+                    "androidx.compose.ui.text.TextStyle",
+                    "androidx.compose.ui.text.font.FontFamily",
+                    "androidx.compose.ui.text.font.FontWeight",
+                    "androidx.compose.ui.unit.sp",
+                ),
+            ),
+        )
         appendLine("/** Which bundled family a role uses: the UI font or the Quran font (DESIGN §3). */")
         appendLine("enum class FontRole { Ui, Quran }")
         appendLine()
@@ -124,6 +134,25 @@ object DesignTokenCodegen {
             )
         }
         appendLine("}")
+        appendLine()
+        val roles = root.getValue("text").jsonObject
+        appendLine("/** Every text role as a ready style, bound to the bundled fonts by the theme (DESIGN §3). */")
+        appendLine("@Immutable")
+        appendLine("class AppTextStyles(")
+        roles.keys.forEach { appendLine("    val ${identifier(it)}: TextStyle,") }
+        appendLine(")")
+        appendLine()
+        appendLine("/** Builds [AppTextStyles] from the role specs and the two font families. */")
+        appendLine("fun appTextStyles(ui: FontFamily, quran: FontFamily): AppTextStyles = AppTextStyles(")
+        roles.keys.forEach { appendLine("    ${identifier(it)} = TextRoles.${identifier(it)}.style(ui, quran),") }
+        appendLine(")")
+        appendLine()
+        appendLine("private fun TextRoleSpec.style(ui: FontFamily, quran: FontFamily): TextStyle = TextStyle(")
+        appendLine("    fontFamily = if (font == FontRole.Quran) quran else ui,")
+        appendLine("    fontSize = sizeSp.sp,")
+        appendLine("    fontWeight = FontWeight(weight),")
+        appendLine("    lineHeight = (sizeSp * lineHeight).sp,")
+        appendLine(")")
     }
 
     private fun motion(root: JsonObject) = buildString {
