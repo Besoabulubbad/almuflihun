@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     id("almuflihun.kmp.library")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 kotlin {
@@ -18,6 +19,8 @@ kotlin {
             api(project(":core:model"))
             api(project(":core:common"))
             implementation(project(":core:database"))
+            api(project(":core:quran")) // SearchHistoryRepository speaks SearchQuery
+            implementation(libs.kotlinx.serialization.json) // the stored search queries
             implementation(libs.sqldelight.coroutines)
             implementation(libs.sqldelight.runtime) // Query and transactions
             api(libs.kotlinx.coroutines.core)
@@ -27,6 +30,9 @@ kotlin {
             implementation(project(":core:testing"))
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.kotlinx.datetime) // FakeClock's TimeZone
+        }
+        androidMain.dependencies {
+            implementation(libs.kotlinx.serialization.core) // the generated serializers' runtime types
         }
         named("androidHostTest").dependencies {
             implementation(libs.sqldelight.androidDriver)

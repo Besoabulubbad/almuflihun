@@ -7,4 +7,5 @@ import org.koin.dsl.module
 val dataModule: Module = module {
     single<CollectionsRepository> { LocalCollectionsRepository(get(), get(), get()) }
     single<ReadingRepository> { LocalReadingRepository(get(), get(), get()) }
+    single<SearchHistoryRepository> { LocalSearchHistoryRepository(get(), get(), get()) }
 }
