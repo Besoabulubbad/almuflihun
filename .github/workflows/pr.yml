@@ -38,6 +38,13 @@ jobs:
         with:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
+      # ADR 0013: QPC page fonts come from Quran Foundation at runtime and must never be committed.
+      - name: No Mushaf page fonts in the repository
+        run: |
+          if git ls-files | grep -E "(^|/)(p[0-9]{1,3}|QCF[0-9_]*P?[0-9]{1,3})\.(ttf|otf|woff2?)$"; then
+            echo "::error::QPC page fonts must not be committed (ADR 0013)"; exit 1
+          fi
+
       - name: Static analysis (detekt, including the design and Quran rules)
         run: ./gradlew detekt --continue
 
