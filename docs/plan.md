@@ -76,7 +76,7 @@ Through a temporary local call (the secret stays on the owner's machine), fetch 
 - Read-time normalisation (basmala, ۞, pause marks); the letter-skeleton matcher that places every quote and highlight in the shipped text by its word range; the offline search index.
 - Content loaded from `design/data`: doors, slider, hizbs, الضياء.
 - **Build-time tests:** every verse key exists; every `quote`, `highlight` and `words` range is placed exactly; a failure fails the build.
-- **Station 6:** recount palm and grapes from the text with a written definition; publish `docs/content/station-6-counts.md`; set the verified numbers.
+- **Station 6:** recount palm and grapes from the text with a written definition; publish `docs/content/station-6-counts.md`; set the verified numbers. Done 2026-11-27: the delivered numbers (20, 11, 6, 3, 1) are verified and checked on every build.
 
 **Exit:** all 115 door quotes, 14 slider quotes and every الضياء highlight are placed in the shipped text by test; the station 6 document exists.
 
