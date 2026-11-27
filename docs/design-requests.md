@@ -14,3 +14,10 @@ The designer has not received the spec yet. It is [specs/screens.md → Home](sp
 
 - Roots and lemmas: the source is QUL morphology (ADR 0012), credited and part of the permission request; the mockups' «بيانات مثال» counts will be computed from it.
 - Motion tokens (`tokens.json → motion`) are generated into code with the rest of the tokens; detekt's `MotionTokensOnly` enforces them.
+
+## 3. The Mushaf download and editions (ADR 0013, 2026-11-27)
+
+- **First-launch download** of the exact Mushaf (≈94 MB), right after onboarding: what it is, size, progress, pause, the mobile-data question (shown once with the size), not-enough-space, and failure with retry. The rest of the app stays usable meanwhile.
+- **Fallback note** on a Mushaf page drawn with Digital Khatt while its exact font downloads: «يُحمَّل المصحف المطابق للطبعة» (quiet, never blocking).
+- **Settings → «شكل المصحف»:** editions (مصحف المدينة ١٤٢١ default; مصحف التجويد الملوّن ١٤٤١ optional download), each with size, status, download, delete. The tajweed edition has light, dark and sepia palettes.
+- **Card font change:** Quran text on cards, the slider, the study panel and posts uses **Digital Khatt V2** (bundled, open licence) instead of KFGQPC HAFS Uthmanic Script, so cards never wait for a download.
