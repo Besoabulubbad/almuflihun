@@ -75,10 +75,19 @@ class QuranDatabaseBuilderTest {
     }
 
     @Test
+    fun `repeated phrases are found from the text alone`() {
+        assertEquals("2181", scalar("SELECT COUNT(DISTINCT phrase) FROM phrase_place"))
+        assertEquals("6459", scalar("SELECT COUNT(*) FROM phrase_place"))
+        assertEquals("24", scalar("SELECT MAX(last_word - first_word + 1) FROM phrase_place"))
+        assertEquals("0", scalar("SELECT COUNT(*) FROM (SELECT phrase FROM phrase_place GROUP BY phrase HAVING COUNT(DISTINCT surah * 1000 + ayah) < 2)"))
+        assertEquals("89", scalar("SELECT MAX(n) FROM (SELECT COUNT(*) n FROM phrase_place GROUP BY phrase)"))
+    }
+
+    @Test
     fun `the text is copied, never edited`() {
         val line = sources.resolve("quran-simple.txt").readLines().first { it.startsWith("2|255|") }
         assertEquals(line.removePrefix("2|255|"), scalar("SELECT simple FROM ayah WHERE surah = 2 AND ayah = 255"))
-        assertEquals("2", scalar("SELECT value FROM meta WHERE key = 'schema_version'"))
+        assertEquals("3", scalar("SELECT value FROM meta WHERE key = 'schema_version'"))
         assertEquals("1", scalar("PRAGMA user_version"))
         val digest = java.security.MessageDigest.getInstance("SHA-256").digest(db.readBytes())
         assertEquals(digest.joinToString("") { "%02x".format(it) }, db.resolveSibling("quran.version").readText())
