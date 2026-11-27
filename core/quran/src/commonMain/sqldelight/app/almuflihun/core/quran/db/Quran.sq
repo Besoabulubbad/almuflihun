@@ -1,0 +1,39 @@
+-- The bundled, read-only Quran database (ADR 0015). The tables are created by QuranDatabaseBuilder in build-logic;
+-- they are declared here, identically, so SQLDelight can type the queries. The app never writes to this file.
+
+CREATE TABLE meta (key TEXT NOT NULL PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID;
+
+CREATE TABLE line (
+    page INTEGER NOT NULL, line INTEGER NOT NULL, kind TEXT NOT NULL, centered INTEGER NOT NULL,
+    first_word INTEGER, last_word INTEGER, surah INTEGER, PRIMARY KEY (page, line)
+) WITHOUT ROWID;
+
+CREATE TABLE word (
+    id INTEGER NOT NULL PRIMARY KEY, surah INTEGER NOT NULL, ayah INTEGER NOT NULL,
+    position INTEGER NOT NULL, page INTEGER NOT NULL, line INTEGER NOT NULL, is_end INTEGER NOT NULL,
+    glyph TEXT NOT NULL, text TEXT NOT NULL
+);
+
+CREATE INDEX word_by_ayah ON word (surah, ayah, position);
+
+CREATE TABLE ayah (
+    surah INTEGER NOT NULL, ayah INTEGER NOT NULL, page INTEGER NOT NULL, simple TEXT NOT NULL,
+    PRIMARY KEY (surah, ayah)
+) WITHOUT ROWID;
+
+CREATE INDEX ayah_by_page ON ayah (page);
+
+metaValue:
+SELECT value FROM meta WHERE key = ?;
+
+pageLines:
+SELECT line, kind, centered, first_word, last_word, surah FROM line WHERE page = ? ORDER BY line;
+
+wordsBetween:
+SELECT id, surah, ayah, position, line, is_end, glyph, text FROM word WHERE id BETWEEN ? AND ? ORDER BY id;
+
+ayahWords:
+SELECT id, surah, ayah, position, line, is_end, glyph, text FROM word WHERE surah = ? AND ayah = ? ORDER BY position;
+
+ayah:
+SELECT page, simple FROM ayah WHERE surah = ? AND ayah = ?;

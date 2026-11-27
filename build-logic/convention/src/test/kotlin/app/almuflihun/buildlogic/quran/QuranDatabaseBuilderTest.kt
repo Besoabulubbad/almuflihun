@@ -67,5 +67,8 @@ class QuranDatabaseBuilderTest {
         val line = sources.resolve("quran-simple.txt").readLines().first { it.startsWith("2|255|") }
         assertEquals(line.removePrefix("2|255|"), scalar("SELECT simple FROM ayah WHERE surah = 2 AND ayah = 255"))
         assertEquals("1", scalar("SELECT value FROM meta WHERE key = 'schema_version'"))
+        assertEquals("1", scalar("PRAGMA user_version"))
+        val digest = java.security.MessageDigest.getInstance("SHA-256").digest(db.readBytes())
+        assertEquals(digest.joinToString("") { "%02x".format(it) }, db.resolveSibling("quran.version").readText())
     }
 }

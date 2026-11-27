@@ -8,6 +8,7 @@ import app.almuflihun.core.common.DefaultDispatcherProvider
 import app.almuflihun.core.common.DispatcherProvider
 import app.almuflihun.core.common.SystemAppClock
 import app.almuflihun.core.platform.platformModule
+import app.almuflihun.core.quran.quranModule
 import app.almuflihun.feature.home.homeModule
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
@@ -27,6 +28,7 @@ val appModule: Module = module {
 val appModules: List<Module> = listOf(
     appModule,
     platformModule,
+    quranModule,
     homeModule,
 )
 

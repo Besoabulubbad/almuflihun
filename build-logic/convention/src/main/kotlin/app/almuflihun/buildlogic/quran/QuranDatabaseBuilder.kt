@@ -3,7 +3,6 @@ package app.almuflihun.buildlogic.quran
 import java.io.File
 import java.security.MessageDigest
 import java.sql.Connection
-import java.sql.DriverManager
 
 /**
  * Builds the app's read-only Quran database from the committed sources (core/quran/sources, ADR 0004 and ADR 0015).
@@ -16,6 +15,7 @@ object QuranDatabaseBuilder {
     const val PAGES = 604
     const val AYAHS = 6236
     const val SURAHS = 114
+    const val VERSION_FILE = "quran.version"
     private const val AYAH_END = '۝' // ۝ starts every ayah-end marker word
     private const val SHORT_PAGES = 2 // pages 1 and 2 have 8 lines
     private const val SHORT_PAGE_LINES = 8
@@ -39,7 +39,7 @@ object QuranDatabaseBuilder {
 
         output.parentFile.mkdirs()
         output.delete()
-        DriverManager.getConnection("jdbc:sqlite:${output.absolutePath}").use { db ->
+        connect("jdbc:sqlite:${output.absolutePath}").use { db ->
             db.autoCommit = false
             db.exec(SCHEMA)
             db.insertLines(lines)
@@ -48,8 +48,12 @@ object QuranDatabaseBuilder {
             db.insertMeta(sources)
             db.commit()
             db.autoCommit = true
+            // SQLDelight's drivers create the schema when user_version is 0; 1 tells them the file is ready.
+            db.exec("PRAGMA user_version = 1")
             db.exec("VACUUM")
         }
+        // The app reinstalls its copy when this changes (any source or schema change changes the file).
+        output.resolveSibling(VERSION_FILE).writeText(sha256(output))
     }
 
     private fun readLayout(file: File): List<Line> = query(file, LAYOUT_QUERY) { rs ->
@@ -212,12 +216,19 @@ object QuranDatabaseBuilder {
 
     private fun <T> query(file: File, sql: String, map: (java.sql.ResultSet) -> T): List<T> {
         require(file.exists()) { "Missing source ${file.path}" }
-        return DriverManager.getConnection("jdbc:sqlite:${file.absolutePath}?open_mode=1").use { db ->
+        return connect("jdbc:sqlite:${file.absolutePath}?open_mode=1").use { db ->
             db.createStatement().use { st ->
                 st.executeQuery(sql).use { rs -> buildList { while (rs.next()) add(map(rs)) } }
             }
         }
     }
+
+    /**
+     * Opens SQLite through the driver class itself: inside Gradle, plugins live in separate class loaders and
+     * `DriverManager` does not always see the driver.
+     */
+    private fun connect(url: String): Connection =
+        checkNotNull(org.sqlite.JDBC().connect(url, java.util.Properties())) { "Cannot open $url" }
 
     private fun sha256(file: File): String =
         MessageDigest.getInstance("SHA-256").digest(file.readBytes()).joinToString("") { "%02x".format(it) }

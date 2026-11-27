@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.roborazzi) apply false
+    alias(libs.plugins.sqldelight) apply false
     alias(libs.plugins.dependencyAnalysis)
 }
 
@@ -21,7 +22,7 @@ tasks.check {
 // `./gradlew buildHealth`. Applied per module by the convention plugins; the root aggregates. Every category fails.
 // Modules that are still skeletons warn instead; remove a module from this list in the PR that gives it code.
 val skeletonModules = (
-    listOf("model", "quran", "astronomy", "audio",
+    listOf("astronomy", "audio",
         "database", "firebase", "update", "data", "domain").map { ":core:$it" } +
         listOf("home", "moon", "quran-hub", "mushaf", "hizb", "doors", "diyaa", "collections", "live", "community", "profile",
             "admin", "settings").map { ":feature:$it" }

@@ -1,0 +1,52 @@
+package app.almuflihun.core.model
+
+/** An ayah's address: surah 1–114 and its ayah number, written `2:255`. */
+data class AyahKey(val surah: Int, val ayah: Int) {
+    init {
+        require(surah in 1..SURAH_COUNT) { "Surah $surah is not 1..$SURAH_COUNT" }
+        require(ayah >= 1) { "Ayah $ayah is not positive" }
+    }
+
+    override fun toString(): String = "$surah:$ayah"
+
+    companion object {
+        const val SURAH_COUNT = 114
+    }
+}
+
+/**
+ * One word of the printed Mushaf as the layout places it. [glyph] is its code in the exact page font (ADR 0013);
+ * [text] is the same word as Unicode Uthmani text, for the Digital Khatt fallback, copying and screen readers. The
+ * ayah-end marker is a word too, with [isAyahEnd].
+ */
+data class QuranWord(
+    val id: Int,
+    val ayah: AyahKey,
+    val position: Int,
+    val glyph: String,
+    val text: String,
+    val isAyahEnd: Boolean,
+)
+
+/** A line of a Mushaf page, numbered from 1 at the top. */
+sealed interface MushafLine {
+    val number: Int
+
+    data class SurahTitle(override val number: Int, val surah: Int) : MushafLine
+    data class Basmala(override val number: Int) : MushafLine
+    data class Words(override val number: Int, val centered: Boolean, val words: List<QuranWord>) : MushafLine
+}
+
+/** A page of مصحف المدينة: 15 lines, 8 on pages 1 and 2. */
+data class MushafPage(val number: Int, val lines: List<MushafLine>) {
+    companion object {
+        const val COUNT = 604
+    }
+}
+
+/**
+ * An ayah: its page, its words in order (the last is the ayah-end marker) and the Tanzil simple text, exactly as
+ * shipped. [tanzilText] is for matching and search; it is not normalised (the first ayah of most surahs starts with
+ * the basmala) and is never shown as is.
+ */
+data class Ayah(val key: AyahKey, val page: Int, val words: List<QuranWord>, val tanzilText: String)
