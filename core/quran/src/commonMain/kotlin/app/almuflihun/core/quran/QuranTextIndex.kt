@@ -20,6 +20,9 @@ internal data class IndexedAyah(
     val roots: List<String?>,
     val lemmas: List<String?>,
     val groups: List<IntRange>,
+    /** Per Mushaf word: how the Mushaf writes its stem (prefixes and suffixes off), and that shape's letters. */
+    val shapes: List<String>,
+    val shapeKeys: List<String>,
 ) {
     val juz: Int get() = quarter / QUARTERS_PER_JUZ + 1
     val hizb: Int get() = quarter / QUARTERS_PER_HIZB + 1
@@ -79,6 +82,8 @@ internal class QuranTextIndex(
                 roots = words.map { it.letters?.let(::rootForm) },
                 lemmas = words.map { it.clean?.let(QuranText::searchForm) },
                 groups = MushafAlignment.groups(key, tokens),
+                shapes = words.map { it.stem_text ?: it.text },
+                shapeKeys = words.map { QuranText.skeleton(it.stem_text ?: it.text) },
             )
         }
     }
