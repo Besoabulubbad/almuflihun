@@ -21,6 +21,7 @@ kotlin {
             implementation(project(":core:platform"))
             implementation(project(":core:analytics"))
             implementation(project(":core:quran"))
+            implementation(project(":core:astronomy"))
             implementation(project(":core:database"))
             implementation(project(":core:data"))
             implementation(project(":core:domain"))

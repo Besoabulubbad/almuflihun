@@ -3,6 +3,7 @@ package app.almuflihun.app.shared
 import app.almuflihun.core.analytics.Analytics
 import app.almuflihun.core.analytics.AnalyticsSink
 import app.almuflihun.core.analytics.NoAnalyticsSink
+import app.almuflihun.core.astronomy.astronomyModule
 import app.almuflihun.core.common.AppClock
 import app.almuflihun.core.common.DefaultDispatcherProvider
 import app.almuflihun.core.common.DispatcherProvider
@@ -32,6 +33,7 @@ val appModules: List<Module> = listOf(
     appModule,
     platformModule,
     quranModule,
+    astronomyModule,
     databaseModule,
     dataModule,
     domainModule,
