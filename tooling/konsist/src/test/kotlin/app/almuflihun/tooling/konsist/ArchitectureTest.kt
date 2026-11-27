@@ -92,6 +92,17 @@ class ArchitectureTest {
     }
 
     @Test
+    fun `every navigation key is registered for saving and restoring`() {
+        val navigation = scope.files.filter { it.path.contains("/core/navigation/src/commonMain/") }
+        val keys = navigation.flatMap { it.classes() + it.objects() }
+            .filter { it.hasParentWithName("AppNavKey") }
+            .map { it.name }
+        val registrations = navigation.joinToString("\n") { it.text }
+        val missing = keys.filterNot { "subclass($it::class" in registrations }
+        check(missing.isEmpty()) { "Navigation keys missing from appNavSerializersModule: $missing" }
+    }
+
+    @Test
     fun `koin component service locator is used only by the app shell`() {
         scope.files
             .filter { !it.path.contains("/app/shared/") }
