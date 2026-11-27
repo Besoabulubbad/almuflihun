@@ -14,6 +14,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":core:designsystem"))
+            implementation(project(":core:localization")) // AppTheme reads the UI language (ADR 0014)
         }
     }
 }

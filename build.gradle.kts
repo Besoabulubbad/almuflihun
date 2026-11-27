@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.roborazzi) apply false
     alias(libs.plugins.dependencyAnalysis)
 }
 
@@ -21,7 +22,7 @@ tasks.check {
 // Modules that are still skeletons warn instead; remove a module from this list in the PR that gives it code.
 val skeletonModules = (
     listOf("model", "common", "ui", "navigation", "platform", "quran", "astronomy", "audio",
-        "database", "firebase", "analytics", "update", "data", "domain", "testing").map { ":core:$it" } +
+        "database", "firebase", "analytics", "update", "data", "domain").map { ":core:$it" } +
         listOf("home", "moon", "quran-hub", "mushaf", "hizb", "doors", "diyaa", "collections", "live", "community", "profile",
             "admin", "settings").map { ":feature:$it" }
 )

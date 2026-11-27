@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.compose.gradlePlugin)
     implementation(libs.detekt.gradlePlugin)
     implementation(libs.dependencyAnalysis.gradlePlugin)
+    implementation(libs.roborazzi.gradlePlugin)
 
     // design/tokens.json → Kotlin (almuflihun.tokens, ADR 0001). Parsed as a JsonElement tree, so no serialization
     // compiler plugin is needed inside the build logic.

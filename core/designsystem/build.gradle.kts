@@ -2,6 +2,7 @@ plugins {
     id("almuflihun.kmp.library")
     id("almuflihun.compose")
     id("almuflihun.tokens")
+    id("almuflihun.screenshot")
 }
 
 kotlin {
