@@ -20,7 +20,7 @@ tasks.check {
 // `./gradlew buildHealth`. Applied per module by the convention plugins; the root aggregates. Every category fails.
 // Modules that are still skeletons warn instead; remove a module from this list in the PR that gives it code.
 val skeletonModules = (
-    listOf("model", "common", "localization", "designsystem", "ui", "navigation", "platform", "quran", "astronomy", "audio",
+    listOf("model", "common", "localization", "ui", "navigation", "platform", "quran", "astronomy", "audio",
         "database", "firebase", "analytics", "update", "data", "domain", "testing").map { ":core:$it" } +
         listOf("home", "moon", "quran-hub", "mushaf", "hizb", "doors", "diyaa", "collections", "live", "community", "profile",
             "admin", "settings").map { ":feature:$it" }
@@ -46,7 +46,11 @@ dependencyAnalysis {
                 // almuflihun.kmp.library gives every module kotlin-test, ready for its first test.
                 exclude("org.jetbrains.kotlin:kotlin-test")
             }
-            onUsedTransitiveDependencies { severity("fail") }
+            onUsedTransitiveDependencies {
+                severity("fail")
+                // The JUnit bridge and reflection come with the test runtime, not with our code (as in Sojourn).
+                exclude("org.jetbrains.kotlin:kotlin-test-junit", "org.jetbrains.kotlin:kotlin-reflect")
+            }
             onIncorrectConfiguration { severity("fail") }
             onCompileOnly { severity("fail") }
             onRuntimeOnly { severity("fail") }
