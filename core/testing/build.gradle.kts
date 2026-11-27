@@ -10,6 +10,8 @@ kotlin {
             api(project(":core:designsystem"))
             // runAppTest and TestDispatcherProvider for ViewModel and use-case tests.
             api(project(":core:common"))
+            // Fakes for the platform adapters.
+            api(project(":core:platform"))
             api(libs.kotlinx.coroutines.test)
             api(libs.kotlinx.coroutines.core)
         }
