@@ -1,13 +1,7 @@
 package app.almuflihun.core.quran
 
 import app.almuflihun.core.model.AyahKey
-
-/** Words [first]..[last] (1-based, inclusive) of an ayah, counted as [QuranText.words] counts them. */
-data class WordRange(val key: AyahKey, val first: Int, val last: Int) {
-    init {
-        require(first in 1..last) { "Bad range $first..$last in $key" }
-    }
-}
+import app.almuflihun.core.model.WordRange
 
 /**
  * Places quotes from the content (doors, slider, الضياء) in the shipped text (DESIGN §1: a quote appears only with its

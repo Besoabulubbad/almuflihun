@@ -1,6 +1,7 @@
 package app.almuflihun.core.quran
 
 import app.almuflihun.core.model.AyahKey
+import app.almuflihun.core.model.WordRange
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs

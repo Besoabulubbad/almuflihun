@@ -1,6 +1,7 @@
 package app.almuflihun.core.quran
 
 import app.almuflihun.core.model.AyahKey
+import app.almuflihun.core.model.WordRange
 
 /**
  * Lines up the content's words ([QuranText.words], from the Tanzil simple text) with the printed Mushaf's words (the
