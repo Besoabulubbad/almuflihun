@@ -33,6 +33,7 @@ Design and content decisions made with the designer live in [`design/DECISIONS.m
 | [0014](0014-language-ready.md) | Arabic first, built ready for English | accepted | 2026-11-27 |
 | [0015](0015-bundled-quran-database.md) | The Quran ships as one read-only database, built from the sources at compile time | accepted | 2026-11-27 |
 | [0016](0016-mushaf-fonts-woff.md) | Mushaf page fonts are downloaded as WOFF, not WOFF2 | accepted | 2026-11-27 |
+| [0017](0017-astronomy-engine-common-code.md) | Astronomy Engine, vendored as common Kotlin | accepted | 2026-11-27 |
 
 ## How these were decided
 

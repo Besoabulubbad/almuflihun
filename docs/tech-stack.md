@@ -44,7 +44,7 @@ Every library and tool, the version we intend to pin, and where it was checked. 
 | Item | Version | Notes |
 |---|---|---|
 | Media3 (ExoPlayer, session) | 1.11.1 | Android playback, background service, media controls; iOS uses AVPlayer behind the same `core:audio` interface |
-| Astronomy Engine | 2.1.19 (JitPack, Kotlin/JVM) | JVM-only build; Phase 4 decides between a common-code port of its maths and a KMP alternative |
+| Astronomy Engine | source at commit `826e26f` (2025-01-27), vendored as common Kotlin | ADR 0017: the JVM-only artifact is not used; checked against USNO data |
 | android-youtube-player | 13.1.0 | Android wrapper of YouTube's official IFrame player, for the videos section |
 | QPC V2 fonts, QUL layout, Tanzil text, King Fahd Hafs text | pinned by checksum | `SOURCES.md` beside each asset (ADR 0004) |
 
