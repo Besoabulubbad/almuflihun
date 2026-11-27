@@ -8,6 +8,7 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
+            api(project(":core:model")) // PageFont, in rememberMushafFontFamily's signature
             // The theme takes its layout direction from the UI language (ADR 0014).
             api(project(":core:localization"))
             // Generated Motion.kt exposes CubicBezierEasing; the palette and roles use runtime's @Immutable.
