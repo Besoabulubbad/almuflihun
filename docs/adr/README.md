@@ -29,6 +29,7 @@ Design and content decisions made with the designer live in [`design/DECISIONS.m
 | [0010](0010-self-updating-apk.md) | The directly distributed APK updates itself | accepted | 2026-11-26 |
 | [0011](0011-architecture-from-sojourn.md) | Architecture and engineering setup reused from Sojourn | accepted | 2026-11-26 |
 | [0012](0012-study-engine.md) | A Quran study engine: collections, advanced search, word study, related verses | accepted | 2026-11-26 |
+| [0013](0013-mushaf-fonts-download.md) | The Mushaf: exact QPC page fonts downloaded once, Digital Khatt bundled as the fallback | accepted | 2026-11-27 |
 
 ## How these were decided
 

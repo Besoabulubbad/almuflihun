@@ -4,6 +4,7 @@
 - **Date:** 2026-11-26
 - **Deciders:** Mohammad Abu Lubad, Claude
 - **Tags:** quran, licensing, build
+- **Partly superseded by:** [0013](0013-mushaf-fonts-download.md) (page fonts: downloaded from Quran Foundation, never committed)
 
 ## Context and problem statement
 
