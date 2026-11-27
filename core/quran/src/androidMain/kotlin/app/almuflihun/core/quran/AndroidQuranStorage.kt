@@ -1,6 +1,7 @@
 package app.almuflihun.core.quran
 
 import android.content.Context
+import app.almuflihun.core.model.PageFont
 import app.almuflihun.core.quran.db.QuranDatabase
 import app.almuflihun.core.quran.font.AndroidFontFetcher
 import app.almuflihun.core.quran.font.AndroidFontFiles
@@ -9,10 +10,14 @@ import app.almuflihun.core.quran.font.FontDownloadScheduler
 import app.almuflihun.core.quran.font.FontFetcher
 import app.almuflihun.core.quran.font.FontFiles
 import app.almuflihun.core.quran.font.FontWorkerFactory
+import app.almuflihun.core.quran.font.PageFontProvider
 import app.almuflihun.core.quran.font.PageFontStore
+import app.almuflihun.core.quran.font.StorePageFontProvider
 import app.almuflihun.core.quran.font.WorkManagerFontScheduler
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.io.File
@@ -49,5 +54,11 @@ internal actual val quranStorageModule: Module = module {
     single<FontFetcher> { AndroidFontFetcher() }
     single<FontDownloadScheduler> { WorkManagerFontScheduler(get()) }
     single { FontWorkerFactory(get()) }
+    single<PageFontProvider> {
+        val cache = get<AndroidPageFontCache>()
+        StorePageFontProvider(get(), get()) { page ->
+            withContext(Dispatchers.IO) { cache.ttf(page) }?.let { PageFont.Exact(page, file = it.path) }
+        }
+    }
     single { AndroidPageFontCache(get<Context>(), get<PageFontStore>()) }
 }

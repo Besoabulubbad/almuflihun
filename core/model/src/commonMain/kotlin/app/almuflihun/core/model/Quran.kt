@@ -60,3 +60,22 @@ data class WordRange(val key: AyahKey, val first: Int, val last: Int) {
         require(first in 1..last) { "Bad range $first..$last in $key" }
     }
 }
+
+/**
+ * The font a Mushaf page is drawn with (ADR 0013, 0016): the exact printed page when its font is on the device,
+ * otherwise Digital Khatt, which draws the same words from their Unicode text.
+ */
+sealed interface PageFont {
+    /** The page's own font: a TTF file on Android ([file]), the WOFF bytes on iOS ([bytes]). */
+    class Exact(val page: Int, val file: String? = null, val bytes: ByteArray? = null) : PageFont {
+        init {
+            require(file != null || bytes != null) { "An exact page font needs a file or bytes" }
+        }
+    }
+
+    /** Digital Khatt, bundled; shown with the quiet note that the exact page is on its way. */
+    data object Fallback : PageFont
+}
+
+/** What to draw for this word in [font]: its glyph code in the page's own font, or its Unicode text. */
+fun QuranWord.drawnWith(font: PageFont): String = if (font is PageFont.Exact) glyph else text

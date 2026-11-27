@@ -1,5 +1,6 @@
 package app.almuflihun.core.quran
 
+import app.almuflihun.core.model.PageFont
 import app.almuflihun.core.quran.db.QuranDatabase
 import app.almuflihun.core.quran.font.FontDownloadScheduler
 import app.almuflihun.core.quran.font.FontFetcher
@@ -7,6 +8,9 @@ import app.almuflihun.core.quran.font.FontFiles
 import app.almuflihun.core.quran.font.IosFontFetcher
 import app.almuflihun.core.quran.font.IosFontFiles
 import app.almuflihun.core.quran.font.IosFontScheduler
+import app.almuflihun.core.quran.font.PageFontProvider
+import app.almuflihun.core.quran.font.PageFontStore
+import app.almuflihun.core.quran.font.StorePageFontProvider
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import co.touchlab.sqliter.DatabaseConfiguration
@@ -14,6 +18,8 @@ import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import platform.Foundation.NSApplicationSupportDirectory
@@ -87,4 +93,10 @@ internal actual val quranStorageModule: Module = module {
     single<FontFiles> { IosFontFiles.forEdition(MUSHAF_EDITION) }
     single<FontFetcher> { IosFontFetcher() }
     single<FontDownloadScheduler> { IosFontScheduler(get()) }
+    single<PageFontProvider> {
+        val store = get<PageFontStore>()
+        StorePageFontProvider(store, get()) { page ->
+            withContext(Dispatchers.Default) { store.read(page) }?.let { PageFont.Exact(page, bytes = it) }
+        }
+    }
 }
