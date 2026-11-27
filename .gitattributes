@@ -1,0 +1,3 @@
+# Quran source data: byte-exact, never normalised by git
+core/quran/sources/*.txt -text
+core/quran/sources/*.db binary
