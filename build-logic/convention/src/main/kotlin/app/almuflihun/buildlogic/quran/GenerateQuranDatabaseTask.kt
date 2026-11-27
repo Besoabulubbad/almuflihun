@@ -34,6 +34,16 @@ abstract class GenerateQuranDatabaseTask : DefaultTask() {
     @get:InputFile @get:PathSensitive(PathSensitivity.NONE)
     abstract val metadata: RegularFileProperty
 
+    /** QUL's word roots, lemmas and stems. */
+    @get:InputFile @get:PathSensitive(PathSensitivity.NONE)
+    abstract val roots: RegularFileProperty
+
+    @get:InputFile @get:PathSensitive(PathSensitivity.NONE)
+    abstract val lemmas: RegularFileProperty
+
+    @get:InputFile @get:PathSensitive(PathSensitivity.NONE)
+    abstract val stems: RegularFileProperty
+
     /** `design/data`: the doors, slider, hizbs and الضياء, shipped unchanged as `files/content/<name>.json`. */
     @get:InputDirectory @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val content: DirectoryProperty
@@ -52,6 +62,9 @@ abstract class GenerateQuranDatabaseTask : DefaultTask() {
                 glyphWords = glyphWords.get().asFile,
                 textWords = textWords.get().asFile,
                 metadata = metadata.get().asFile,
+                roots = roots.get().asFile,
+                lemmas = lemmas.get().asFile,
+                stems = stems.get().asFile,
             ),
             out.resolve("files/quran.db"),
         )

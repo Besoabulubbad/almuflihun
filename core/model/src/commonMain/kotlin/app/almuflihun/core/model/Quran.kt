@@ -119,3 +119,12 @@ data class MushafPosition(val page: Int, val ayah: AyahKey)
 
 /** Where the reader is in their hizb; separate from [MushafPosition]. */
 data class HizbPosition(val hizb: Int, val page: Int, val ayah: AyahKey)
+
+/**
+ * A word's morphology (QUL, ADR 0012), by its place in the Mushaf's word list ([position], 1-based). Any part may be
+ * missing: particles have no root, some words no lemma.
+ */
+data class WordMorphology(val position: Int, val root: String?, val lemma: String?, val stem: String?)
+
+/** «الجذر ورد n مرة في m آية»: how often a root occurs, and in how many ayahs. */
+data class RootUsage(val root: String, val occurrences: Int, val ayahs: Int)

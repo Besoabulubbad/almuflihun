@@ -11,7 +11,7 @@ import java.sql.Connection
  */
 object QuranDatabaseBuilder {
 
-    const val SCHEMA_VERSION = 3
+    const val SCHEMA_VERSION = 4
     const val PAGES = 604
     const val AYAHS = 6236
     const val SURAHS = 114
@@ -28,6 +28,9 @@ object QuranDatabaseBuilder {
         val glyphWords: File,
         val textWords: File,
         val metadata: File,
+        val roots: File,
+        val lemmas: File,
+        val stems: File,
     )
 
     private data class Line(
@@ -45,6 +48,9 @@ object QuranDatabaseBuilder {
         val placement = validate(lines, glyphs, texts, tanzil)
         val metadata = QuranMetadata.read(sources.metadata)
         validateMetadata(metadata, tanzil)
+        val markers = texts.associate { "${it.surah}:${it.ayah}:${it.position}" to (it.text.firstOrNull() == AYAH_END) }
+        val morphology = Morphology.read(sources.roots, sources.lemmas, sources.stems) { connect("jdbc:sqlite:${it.absolutePath}?open_mode=1") }
+            .checked(markers)
 
         output.parentFile.mkdirs()
         output.delete()
@@ -56,6 +62,7 @@ object QuranDatabaseBuilder {
             db.insertAyahs(tanzil, glyphs, placement)
             db.insertMetadata(metadata)
             db.insertPhrases(tanzil)
+            db.insertMorphology(morphology)
             db.insertMeta(sources)
             db.commit()
             db.autoCommit = true
@@ -215,6 +222,33 @@ object QuranDatabaseBuilder {
         }
     }
 
+    /** Roots, lemmas and stems, and each word's, on the word itself (null where the source has none). */
+    private fun Connection.insertMorphology(m: Morphology) {
+        batch("INSERT INTO root(id, letters) VALUES (?,?)", m.roots.entries) { st, (id, letters) ->
+            st.setInt(1, id)
+            st.setString(2, letters)
+        }
+        batch("INSERT INTO lemma(id, text, clean) VALUES (?,?,?)", m.lemmas.entries) { st, (id, t) ->
+            st.setInt(1, id)
+            st.setString(2, t.first)
+            st.setString(3, t.second)
+        }
+        batch("INSERT INTO stem(id, text, clean) VALUES (?,?,?)", m.stems.entries) { st, (id, t) ->
+            st.setInt(1, id)
+            st.setString(2, t.first)
+            st.setString(3, t.second)
+        }
+        listOf("root" to m.wordRoot, "lemma" to m.wordLemma, "stem" to m.wordStem).forEach { (column, links) ->
+            batch("UPDATE word SET $column = ? WHERE surah = ? AND ayah = ? AND position = ?", links.entries) { st, (loc, id) ->
+                val (surah, ayah, position) = loc.split(':').map(String::toInt)
+                st.setInt(1, id)
+                st.setInt(2, surah)
+                st.setInt(3, ayah)
+                st.setInt(4, position)
+            }
+        }
+    }
+
     private fun Connection.insertLines(lines: List<Line>) = batch(
         "INSERT INTO line(page, line, kind, centered, first_word, last_word, surah) VALUES (?,?,?,?,?,?,?)",
         lines,
@@ -271,6 +305,9 @@ object QuranDatabaseBuilder {
             "glyph_words_sha256" to sha256(sources.glyphWords),
             "text_words_sha256" to sha256(sources.textWords),
             "metadata_sha256" to sha256(sources.metadata),
+            "roots_sha256" to sha256(sources.roots),
+            "lemmas_sha256" to sha256(sources.lemmas),
+            "stems_sha256" to sha256(sources.stems),
         ),
     ) { s, (k, v) ->
         s.setString(1, k)
@@ -323,8 +360,13 @@ object QuranDatabaseBuilder {
         CREATE TABLE word (
             id INTEGER NOT NULL PRIMARY KEY, surah INTEGER NOT NULL, ayah INTEGER NOT NULL,
             position INTEGER NOT NULL, page INTEGER NOT NULL, line INTEGER NOT NULL, is_end INTEGER NOT NULL,
-            glyph TEXT NOT NULL, text TEXT NOT NULL
+            glyph TEXT NOT NULL, text TEXT NOT NULL, root INTEGER, lemma INTEGER, stem INTEGER
         );
+        CREATE INDEX word_by_root ON word (root);
+        CREATE INDEX word_by_lemma ON word (lemma);
+        CREATE TABLE root (id INTEGER NOT NULL PRIMARY KEY, letters TEXT NOT NULL);
+        CREATE TABLE lemma (id INTEGER NOT NULL PRIMARY KEY, text TEXT NOT NULL, clean TEXT NOT NULL);
+        CREATE TABLE stem (id INTEGER NOT NULL PRIMARY KEY, text TEXT NOT NULL, clean TEXT NOT NULL);
         CREATE INDEX word_by_ayah ON word (surah, ayah, position);
         CREATE TABLE ayah (
             surah INTEGER NOT NULL, ayah INTEGER NOT NULL, page INTEGER NOT NULL, simple TEXT NOT NULL,
