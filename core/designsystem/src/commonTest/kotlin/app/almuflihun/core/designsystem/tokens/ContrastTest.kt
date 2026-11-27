@@ -47,7 +47,7 @@ class ContrastTest {
     private fun ratio(a: Color, b: Color): Double {
         val la = a.luminance() + 0.05
         val lb = b.luminance() + 0.05
-        return maxOf(la, lb).toDouble() / minOf(la, lb).toDouble()
+        return maxOf(la, lb) / minOf(la, lb)
     }
 
     private fun round(value: Double) = (value * 100).toInt() / 100.0

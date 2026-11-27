@@ -8,3 +8,7 @@
 | `digital_khatt_v2.otf` | QUL font 247, `https://static-cdn.tarteel.ai/qul/fonts/dk/DigitalKhattV2.otf`, 2026-11-27 | SIL OFL 1.1 (`DigitalKhatt-OFL.txt`) | `0935c48269a57c9808e52dfae47864c189396452901c689977156036a72dd217` |
 
 IBM Plex Sans Arabic is the UI font (DESIGN §3). Digital Khatt V2 is the Quran font for cards, the slider, the study panel and posts, and the Mushaf fallback (ADR 0013). The weight 500 is not bundled: the design uses only 400, 600 and 700.
+
+## Icons
+
+`src/commonMain/composeResources/drawable/ic_*.xml`: 67 Lucide icons and the filled `bookmark-check`, converted from `lucide-static` **1.82.0** (npm, 2026-11-27) by `tooling/scripts/lucide_to_vector.py` (stroke 1.75, DESIGN §7). Licence: ISC (`Lucide-ISC.txt`). Re-run the script after a version bump; `AppIcon` lists every icon by meaning.

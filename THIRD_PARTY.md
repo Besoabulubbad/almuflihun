@@ -11,6 +11,6 @@ The MIT licence in [LICENSE](LICENSE) covers this project's source code only. Ev
 | QPC page fonts (exact Mushaf) | [Quran Foundation](https://api-docs.quran.foundation/legal/developer-terms/) | Developer terms: downloaded at runtime, credited, never committed | Phase 3 (ADR 0013) |
 | Recitation audio and timings: علي جابر | [Quran Foundation](https://api-docs.quran.foundation/legal/developer-terms/) | Developer terms: streamed or downloaded on request, credited, not rehosted (ADR 0007) | Phase 8 |
 | IBM Plex Sans Arabic (UI font) | [IBM Plex](https://github.com/IBM/plex) via google/fonts | SIL Open Font License 1.1 | bundled (`core/designsystem/licenses/SOURCES.md`) |
-| Lucide icons | [lucide.dev](https://lucide.dev) | ISC | to add (Phase 2) |
+| Lucide icons (1.82.0) | [lucide.dev](https://lucide.dev) | ISC | bundled as vectors (`core/designsystem/licenses/SOURCES.md`) |
 | City list | [GeoNames](https://www.geonames.org/) | CC BY 4.0 | to add (Phase 4) |
 | الضياء illustrations | the project's designer (`design/illustrations/`) | project-owned | in `design/` |
