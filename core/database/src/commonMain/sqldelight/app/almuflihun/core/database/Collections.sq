@@ -1,0 +1,84 @@
+-- The reader's collections (ADR 0012, S1), on the device and the source of truth (docs/architecture/overview.md).
+-- Rows carry ids, update times and a deleted flag so Phase 7 can sync them without a migration. Times are epoch ms.
+
+CREATE TABLE collection (
+    id TEXT NOT NULL PRIMARY KEY,
+    -- Null for the default «محفوظاتي», which the UI names from its strings.
+    name TEXT,
+    is_default INTEGER NOT NULL DEFAULT 0,
+    position INTEGER NOT NULL,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    deleted INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE collection_verse (
+    collection_id TEXT NOT NULL,
+    surah INTEGER NOT NULL,
+    ayah INTEGER NOT NULL,
+    -- The quote's word range when a quote was saved from a door; null for the whole verse.
+    first_word INTEGER,
+    last_word INTEGER,
+    position INTEGER NOT NULL,
+    -- The private «تأمّلي (خاص بي)» note: never shared, never published.
+    note TEXT,
+    added_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    deleted INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (collection_id, surah, ayah)
+);
+
+CREATE INDEX collection_verse_by_verse ON collection_verse (surah, ayah);
+
+collections:
+SELECT c.id, c.name, c.is_default, c.updated_at, COUNT(v.surah) AS verses, MAX(v.updated_at) AS verses_updated_at
+FROM collection c LEFT JOIN collection_verse v ON v.collection_id = c.id AND v.deleted = 0
+WHERE c.deleted = 0
+GROUP BY c.id
+ORDER BY c.is_default DESC, c.position;
+
+defaultCollection:
+SELECT id FROM collection WHERE is_default = 1 AND deleted = 0;
+
+nextCollectionPosition:
+SELECT COALESCE(MAX(position), 0) + 1 FROM collection;
+
+insertCollection:
+INSERT INTO collection (id, name, is_default, position, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?);
+
+renameCollection:
+UPDATE collection SET name = ?, updated_at = ? WHERE id = ? AND is_default = 0;
+
+deleteCollection:
+UPDATE collection SET deleted = 1, updated_at = ? WHERE id = ? AND is_default = 0;
+
+deleteVersesOf:
+UPDATE collection_verse SET deleted = 1, updated_at = ? WHERE collection_id = ? AND deleted = 0;
+
+verses:
+SELECT surah, ayah, first_word, last_word, note, position FROM collection_verse
+WHERE collection_id = ? AND deleted = 0
+ORDER BY position;
+
+membership:
+SELECT collection_id FROM collection_verse WHERE surah = ? AND ayah = ? AND deleted = 0;
+
+nextVersePosition:
+SELECT COALESCE(MAX(position), 0) + 1 FROM collection_verse WHERE collection_id = ? AND deleted = 0;
+
+putVerse:
+INSERT OR REPLACE INTO collection_verse
+    (collection_id, surah, ayah, first_word, last_word, position, note, added_at, updated_at, deleted)
+VALUES (?, ?, ?, ?, ?, ?, NULL, ?, ?, 0);
+
+removeVerse:
+UPDATE collection_verse SET deleted = 1, updated_at = ? WHERE collection_id = ? AND surah = ? AND ayah = ?;
+
+setNote:
+UPDATE collection_verse SET note = ?, updated_at = ? WHERE collection_id = ? AND surah = ? AND ayah = ? AND deleted = 0;
+
+setPosition:
+UPDATE collection_verse SET position = ?, updated_at = ? WHERE collection_id = ? AND surah = ? AND ayah = ?;
+
+touchCollection:
+UPDATE collection SET updated_at = ? WHERE id = ?;
