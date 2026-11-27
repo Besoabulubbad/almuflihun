@@ -3,6 +3,7 @@ package app.almuflihun.core.data
 import app.almuflihun.core.common.AppClock
 import app.almuflihun.core.model.AyahKey
 import app.almuflihun.core.model.CollectedVerse
+import app.almuflihun.core.model.CollectionPlace
 import app.almuflihun.core.model.WordRange
 import app.almuflihun.core.testing.TestDispatcherProvider
 import app.almuflihun.core.testing.runAppTest
@@ -45,11 +46,11 @@ class CollectionsRepositoryTest : PlatformTest() {
         val study = repository.create("دراسة")
         repository.setMembership(kursi, setOf(saved, study))
         repository.setMembership(kursi, setOf(saved, study)) // again: still once
-        assertEquals(setOf(saved, study), repository.collectionsWith(kursi).first())
+        assertEquals(setOf(saved, study), repository.placesOf(kursi).first().map { it.collectionId }.toSet())
         assertEquals(listOf(1, 1), repository.collections().first().map { it.verseCount })
 
         repository.setMembership(kursi, setOf(study)) // unticked in «محفوظاتي»
-        assertEquals(setOf(study), repository.collectionsWith(kursi).first())
+        assertEquals(setOf(study), repository.placesOf(kursi).first().map { it.collectionId }.toSet())
         assertEquals(listOf(0, 1), repository.collections().first().map { it.verseCount })
     }
 
@@ -99,7 +100,20 @@ class CollectionsRepositoryTest : PlatformTest() {
         val all = repository.collections().first()
         assertEquals(listOf(saved), all.map { it.id })
         assertNull(all.single().name)
-        assertEquals(emptySet(), repository.collectionsWith(kursi).first())
+        assertEquals(emptySet(), repository.placesOf(kursi).first().map { it.collectionId }.toSet())
+    }
+
+    @Test
+    fun an_ayah_s_places_show_each_collection_and_its_note() = runAppTest {
+        val saved = repository.ensureDefault()
+        val study = repository.create("دراسة")
+        repository.setMembership(kursi, setOf(study, saved))
+        repository.setNote(study, kursi, "تأمّل")
+        assertEquals(
+            listOf(CollectionPlace(saved, null, true, null), CollectionPlace(study, "دراسة", false, "تأمّل")),
+            repository.placesOf(kursi).first(),
+        )
+        assertEquals(emptyList(), repository.placesOf(nur).first())
     }
 
     @Test

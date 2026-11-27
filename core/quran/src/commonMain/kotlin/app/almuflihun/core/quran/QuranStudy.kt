@@ -8,6 +8,7 @@ import app.almuflihun.core.model.AyahKey
 import app.almuflihun.core.model.Door
 import app.almuflihun.core.model.DoorInSurah
 import app.almuflihun.core.model.DoorLayout
+import app.almuflihun.core.model.DoorMention
 import app.almuflihun.core.model.RootCount
 import app.almuflihun.core.model.RootUsage
 import app.almuflihun.core.model.SharedPhrase
@@ -45,6 +46,9 @@ interface QuranStudy {
 
     /** Surah overview: facts, span, its [rootCount] most frequent roots, sajdas and the doors that quote it. */
     suspend fun surahOverview(surah: Int, rootCount: Int = TOP_ROOTS): AppResult<SurahOverview>
+
+    /** The doors that include this ayah (entries, cards, quotes), in door order; hidden doors flagged. */
+    suspend fun doorsQuoting(key: AyahKey): AppResult<List<DoorMention>>
 
     companion object {
         const val TOP_ROOTS = 10
@@ -161,9 +165,22 @@ internal class SqlQuranStudy(
         is AppResult.Failure -> throw Stop(error)
     }
 
-    /** The door's ayahs from [surah]: its entries' verses, its cards and every quote in its layout. */
+    override suspend fun doorsQuoting(key: AyahKey): AppResult<List<DoorMention>> = try {
+        val doors = content.doors().valueOrStop()
+        AppResult.Success(doors.filter { key in it.ayahKeys() }.map { DoorMention(it.id, it.title, it.visible) })
+    } catch (stop: Stop) {
+        AppResult.Failure(stop.error)
+    }
+
+    /** The door's ayahs from [surah], in order. */
     private fun Door.inSurah(surah: Int): DoorInSurah? {
-        val keys = buildSet {
+        val keys = ayahKeys().filter { it.surah == surah }.sortedBy { it.ayah }
+        return if (keys.isEmpty()) null else DoorInSurah(id, title, visible, keys)
+    }
+
+    /** Every ayah a door includes: its entries' verses, its cards and every quote in its layout. */
+    private fun Door.ayahKeys(): Set<AyahKey> {
+        return buildSet {
             entries.forEach { entry -> addAll(entry.verses) }
             cards.forEach { add(it.quote.key) }
             when (val design = layout) {
@@ -178,8 +195,7 @@ internal class SqlQuranStudy(
                 }
                 null -> Unit
             }
-        }.filter { it.surah == surah }.sortedBy { it.ayah }
-        return if (keys.isEmpty()) null else DoorInSurah(id, title, visible, keys)
+        }
     }
 
     private class Row(val surah: Long, val ayah: Long, val position: Long, val lemma: String?)

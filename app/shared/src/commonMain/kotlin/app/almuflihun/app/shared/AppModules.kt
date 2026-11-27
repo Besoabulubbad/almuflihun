@@ -9,6 +9,7 @@ import app.almuflihun.core.common.DispatcherProvider
 import app.almuflihun.core.common.SystemAppClock
 import app.almuflihun.core.data.dataModule
 import app.almuflihun.core.database.databaseModule
+import app.almuflihun.core.domain.domainModule
 import app.almuflihun.core.platform.platformModule
 import app.almuflihun.core.quran.quranModule
 import app.almuflihun.feature.home.homeModule
@@ -33,6 +34,7 @@ val appModules: List<Module> = listOf(
     quranModule,
     databaseModule,
     dataModule,
+    domainModule,
     homeModule,
 )
 

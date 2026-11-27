@@ -53,4 +53,11 @@ class SurahOverviewTest : PlatformTest() {
         assertEquals(4, isra["qawl"])
         assertEquals(AppResult.Failure(AppError.NotFound("surah 115")), study.surahOverview(115))
     }
+
+    @Test
+    fun the_doors_that_include_an_ayah() = runAppTest {
+        val doors = (study.doorsQuoting(AyahKey(16, 90)) as AppResult.Success).value
+        assertEquals(listOf("awamir", "nawahi"), doors.filter { it.visible }.map { it.doorId }.take(2))
+        assertEquals(emptyList(), (study.doorsQuoting(AyahKey(112, 1)) as AppResult.Success).value)
+    }
 }

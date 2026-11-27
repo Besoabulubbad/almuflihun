@@ -23,7 +23,7 @@ tasks.check {
 // Modules that are still skeletons warn instead; remove a module from this list in the PR that gives it code.
 val skeletonModules = (
     listOf("astronomy", "audio",
-        "firebase", "update", "domain").map { ":core:$it" } +
+        "firebase", "update").map { ":core:$it" } +
         listOf("home", "moon", "quran-hub", "mushaf", "hizb", "doors", "diyaa", "collections", "live", "community", "profile",
             "admin", "settings").map { ":feature:$it" }
 )
