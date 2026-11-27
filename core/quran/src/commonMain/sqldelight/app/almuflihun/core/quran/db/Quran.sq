@@ -40,3 +40,6 @@ SELECT page, simple FROM ayah WHERE surah = ? AND ayah = ?;
 
 allAyahs:
 SELECT surah, ayah, simple FROM ayah ORDER BY surah, ayah;
+
+pageGlyphs:
+SELECT glyph FROM word WHERE page = ?;

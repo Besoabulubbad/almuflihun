@@ -110,3 +110,10 @@ val verifyQuranSources = tasks.register("verifyQuranSources") {
 }
 
 tasks.named("check") { dependsOn(verifyQuranSources) }
+
+// QpcCorpusTest checks the real page fonts when QPC_WOFF_DIR names a folder of them (never committed, ADR 0013).
+val qpcWoffDir = providers.environmentVariable("QPC_WOFF_DIR").orElse("")
+tasks.withType<Test>().configureEach {
+    inputs.property("qpcWoffDir", qpcWoffDir)
+    environment("QPC_WOFF_DIR", qpcWoffDir.get())
+}
