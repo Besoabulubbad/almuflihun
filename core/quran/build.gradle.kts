@@ -37,6 +37,7 @@ kotlin {
             implementation(libs.sqldelight.androidDriver)
             implementation(libs.androidx.sqlite) // the driver's SupportSQLite types
             implementation(libs.kotlinx.serialization.core) // the generated serializers' runtime types
+            api(libs.androidx.work.runtime) // FontWorkerFactory is a WorkerFactory (ADR 0016)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.nativeDriver)
@@ -50,6 +51,7 @@ kotlin {
             implementation(libs.robolectric)
             implementation(libs.robolectric.annotations)
             implementation(libs.robolectric.shadowsFramework) // RuntimeEnvironment
+            implementation(libs.androidx.work.testing)
             implementation(libs.junit)
             implementation(libs.kotlinx.coroutines.test)
         }

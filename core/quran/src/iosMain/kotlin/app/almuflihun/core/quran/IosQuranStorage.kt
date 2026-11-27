@@ -1,10 +1,12 @@
 package app.almuflihun.core.quran
 
 import app.almuflihun.core.quran.db.QuranDatabase
+import app.almuflihun.core.quran.font.FontDownloadScheduler
 import app.almuflihun.core.quran.font.FontFetcher
 import app.almuflihun.core.quran.font.FontFiles
 import app.almuflihun.core.quran.font.IosFontFetcher
 import app.almuflihun.core.quran.font.IosFontFiles
+import app.almuflihun.core.quran.font.IosFontScheduler
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import co.touchlab.sqliter.DatabaseConfiguration
@@ -84,4 +86,5 @@ internal actual val quranStorageModule: Module = module {
     single<QuranStorage> { IosQuranStorage() }
     single<FontFiles> { IosFontFiles.forEdition(MUSHAF_EDITION) }
     single<FontFetcher> { IosFontFetcher() }
+    single<FontDownloadScheduler> { IosFontScheduler(get()) }
 }

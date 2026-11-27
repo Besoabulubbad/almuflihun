@@ -160,3 +160,14 @@ class PageFontDownloader(private val store: PageFontStore, private val fetcher: 
         val PAUSE = 2.seconds
     }
 }
+
+/**
+ * Starts and stops the page-font download in the background (ADR 0016). The caller applies [DownloadPolicy] first
+ * (space, and the reader's mobile-data answer) and passes that answer here.
+ */
+interface FontDownloadScheduler {
+    /** Downloads the missing pages: on any connection if [allowMobileData], otherwise only on Wi-Fi. */
+    fun start(allowMobileData: Boolean)
+
+    fun stop()
+}

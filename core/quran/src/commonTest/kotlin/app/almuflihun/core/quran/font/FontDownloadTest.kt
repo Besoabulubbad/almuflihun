@@ -11,22 +11,6 @@ class FontDownloadTest {
 
     private val woff = TestFonts.woff(TestFonts.tables(listOf(0xFC41)))
 
-    /** Serves every page, with optional overrides; records the order pages were asked for. */
-    private class FakeFetcher(
-        private val good: ByteArray,
-        val asked: MutableList<Int> = mutableListOf(),
-        val override: (page: Int, attempt: Int) -> FetchResult? = { _, _ -> null },
-    ) : FontFetcher {
-        private val attempts = mutableMapOf<Int, Int>()
-        var onFetch: (Int) -> Unit = {}
-        override suspend fun fetch(page: Int): FetchResult {
-            asked += page
-            onFetch(page)
-            val attempt = attempts.getOrElse(page) { 0 }.also { attempts[page] = it + 1 }
-            return override(page, attempt) ?: FetchResult.Downloaded(good)
-        }
-    }
-
     private fun store(files: MemoryFontFiles = MemoryFontFiles()) = PageFontStore(files) { setOf(0xFC41) }
 
     @Test
@@ -58,7 +42,7 @@ class FontDownloadTest {
         val files = MemoryFontFiles()
         val store = store(files)
         store.save(2, woff)
-        val fetcher = FakeFetcher(woff)
+        val fetcher = FakeFontFetcher(woff)
         val downloader = PageFontDownloader(store, fetcher)
         downloader.focusOn(300)
         assertEquals(DownloadOutcome.Complete, downloader.downloadAll())
@@ -69,7 +53,7 @@ class FontDownloadTest {
 
     @Test
     fun a_page_the_reader_opens_jumps_ahead() = runTest {
-        val fetcher = FakeFetcher(woff)
+        val fetcher = FakeFontFetcher(woff)
         val downloader = PageFontDownloader(store(), fetcher)
         fetcher.onFetch = { page -> if (page == 3) downloader.focusOn(500) }
         downloader.downloadAll()
@@ -78,7 +62,7 @@ class FontDownloadTest {
 
     @Test
     fun a_damaged_file_is_tried_again_and_a_missing_one_is_left_for_later() = runTest {
-        val fetcher = FakeFetcher(woff, override = { page, attempt ->
+        val fetcher = FakeFontFetcher(woff, override = { page, attempt ->
             when {
                 page == 10 && attempt == 0 -> FetchResult.Downloaded(woff.copyOf(woff.size - 8)) // damaged once
                 page == 20 -> FetchResult.Downloaded(woff.copyOf(100)) // always damaged
@@ -98,7 +82,7 @@ class FontDownloadTest {
     @Test
     fun losing_the_connection_ends_the_run_and_the_next_run_resumes() = runTest {
         var online = true
-        val fetcher = FakeFetcher(woff, override = { page, _ ->
+        val fetcher = FakeFontFetcher(woff, override = { page, _ ->
             if (page == 5) online = false
             if (!online) FetchResult.NoConnection else null
         })
@@ -107,7 +91,7 @@ class FontDownloadTest {
         assertEquals(DownloadOutcome.NoConnection, downloader.downloadAll())
         assertEquals(4, downloader.progress.value.present)
         online = true
-        val resumed = FakeFetcher(woff)
+        val resumed = FakeFontFetcher(woff)
         assertEquals(DownloadOutcome.Complete, PageFontDownloader(store, resumed).downloadAll())
         assertEquals(5, resumed.asked.first())
     }

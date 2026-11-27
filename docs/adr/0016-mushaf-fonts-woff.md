@@ -43,7 +43,7 @@ On Android, WOFF2 would need a Brotli decoder **and** WOFF2's glyph-table recons
 
 ### The download manager (unchanged from 0013, now concrete)
 
-- **Engine:** Android **WorkManager** (AndroidX; new dependency, recorded here): a unique, resumable job with network constraints and backoff, which survives the app being killed and reboots, and shows its progress in a notification. iOS: a **background `URLSession`**.
+- **Engine:** Android **WorkManager** (AndroidX; new dependency, recorded here): a unique, resumable job with network constraints and backoff, which survives the app being killed and reboots, and shows its progress in a notification. iOS: a **background `URLSession`**. Until iOS is distributed (ADR 0010), iOS downloads while the app is open, through the same engine, and resumes on the next launch; the background session needs Swift app-delegate wiring and real-device testing. The progress notification waits for the designer's copy (`docs/design-requests.md` §3).
 - **Order:** the reader's current page and its neighbours first, then outward; a page the reader opens jumps to the front.
 - **Network:** automatic on Wi-Fi; on mobile data the app asks once, showing the size, and remembers the answer.
 - **Space:** checks free storage before starting (≈130 MB with working space) and explains if it is short.
