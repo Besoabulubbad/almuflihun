@@ -9,7 +9,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.LayoutDirection
 import app.almuflihun.core.designsystem.resources.Res
 import app.almuflihun.core.designsystem.resources.digital_khatt_v2
 import app.almuflihun.core.designsystem.resources.ibm_plex_sans_arabic_bold
@@ -20,6 +19,8 @@ import app.almuflihun.core.designsystem.tokens.AppTextStyles
 import app.almuflihun.core.designsystem.tokens.DarkPalette
 import app.almuflihun.core.designsystem.tokens.LightPalette
 import app.almuflihun.core.designsystem.tokens.appTextStyles
+import app.almuflihun.core.localization.AppLanguage
+import app.almuflihun.core.localization.LocalAppLanguage
 import org.jetbrains.compose.resources.Font
 
 /** The three appearance choices in Settings → المظهر; the default follows the phone (DESIGN, theme rules). */
@@ -34,11 +35,16 @@ val LocalAppTextStyles = staticCompositionLocalOf<AppTextStyles> {
 }
 
 /**
- * The app's theme: the palette for [mode], the 19 text roles on the bundled fonts, and right to left everywhere
- * (DESIGN §2; the app is Arabic only). Material is not exposed: screens use the design-system components.
+ * The app's theme: the palette for [mode], the 19 text roles on the bundled fonts, and the layout direction of
+ * [language] (DESIGN §2; Arabic, right to left, today; ADR 0014). Material is not exposed: screens use the
+ * design-system components.
  */
 @Composable
-fun AppTheme(mode: ThemeMode = ThemeMode.System, content: @Composable () -> Unit) {
+fun AppTheme(
+    mode: ThemeMode = ThemeMode.System,
+    language: AppLanguage = LocalAppLanguage.current,
+    content: @Composable () -> Unit,
+) {
     val dark = when (mode) {
         ThemeMode.Light -> false
         ThemeMode.Dark -> true
@@ -54,7 +60,8 @@ fun AppTheme(mode: ThemeMode = ThemeMode.System, content: @Composable () -> Unit
     CompositionLocalProvider(
         LocalAppPalette provides if (dark) DarkPalette else LightPalette,
         LocalAppTextStyles provides styles,
-        LocalLayoutDirection provides LayoutDirection.Rtl,
+        LocalAppLanguage provides language,
+        LocalLayoutDirection provides language.direction,
         content = content,
     )
 }
