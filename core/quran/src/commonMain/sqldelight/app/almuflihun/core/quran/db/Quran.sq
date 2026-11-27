@@ -124,3 +124,16 @@ SELECT w.surah, w.ayah, w.position, l.text FROM word w LEFT JOIN lemma l ON l.id
 
 wordsOfStem:
 SELECT w.surah, w.ayah, w.position, l.text FROM word w LEFT JOIN lemma l ON l.id = w.lemma WHERE w.stem = ? ORDER BY w.id;
+
+surahSpan:
+SELECT MIN(page) AS first_page, MAX(page) AS last_page, SUM(is_end = 0) AS words FROM word WHERE surah = ?;
+
+surahRoots:
+SELECT r.letters, COUNT(*) AS occurrences FROM word w JOIN root r ON r.id = w.root
+WHERE w.surah = ?
+GROUP BY w.root
+ORDER BY occurrences DESC, r.letters
+LIMIT ?;
+
+sajdasIn:
+SELECT ayah FROM sajda WHERE surah = ? ORDER BY ayah;

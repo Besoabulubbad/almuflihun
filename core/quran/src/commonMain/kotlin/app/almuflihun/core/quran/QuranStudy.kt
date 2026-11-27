@@ -5,9 +5,14 @@ import app.almuflihun.core.common.AppResult
 import app.almuflihun.core.common.DispatcherProvider
 import app.almuflihun.core.common.runCatchingApp
 import app.almuflihun.core.model.AyahKey
+import app.almuflihun.core.model.Door
+import app.almuflihun.core.model.DoorInSurah
+import app.almuflihun.core.model.DoorLayout
+import app.almuflihun.core.model.RootCount
 import app.almuflihun.core.model.RootUsage
 import app.almuflihun.core.model.SharedPhrase
 import app.almuflihun.core.model.StudyBasis
+import app.almuflihun.core.model.SurahOverview
 import app.almuflihun.core.model.WordForm
 import app.almuflihun.core.model.WordMorphology
 import app.almuflihun.core.model.WordOccurrence
@@ -37,12 +42,21 @@ interface QuranStudy {
      * its morphology and every occurrence of its root (else lemma, else stem). NotFound for no such word.
      */
     suspend fun wordStudy(key: AyahKey, position: Int): AppResult<WordStudy>
+
+    /** Surah overview: facts, span, its [rootCount] most frequent roots, sajdas and the doors that quote it. */
+    suspend fun surahOverview(surah: Int, rootCount: Int = TOP_ROOTS): AppResult<SurahOverview>
+
+    companion object {
+        const val TOP_ROOTS = 10
+    }
 }
 
 internal class SqlQuranStudy(
     private val provider: QuranDatabaseProvider,
     private val dispatchers: DispatcherProvider,
     private val index: QuranTextIndex = QuranTextIndex(provider, dispatchers),
+    private val reader: QuranReader = SqlQuranReader(provider, dispatchers),
+    private val content: ContentReader = BundledContentReader(reader, dispatchers),
 ) : QuranStudy {
 
     override suspend fun sharedPhrases(key: AyahKey): AppResult<List<SharedPhrase>> = withContext(dispatchers.io) {
@@ -111,6 +125,61 @@ internal class SqlQuranStudy(
                 )
             }
         }
+    }
+
+    override suspend fun surahOverview(surah: Int, rootCount: Int): AppResult<SurahOverview> = try {
+        val info = reader.surahs().valueOrStop().firstOrNull { it.number == surah }
+            ?: throw Stop(AppError.NotFound("surah $surah"))
+        val firstJuz = reader.position(AyahKey(surah, 1)).valueOrStop().juz
+        val lastJuz = reader.position(AyahKey(surah, info.ayahCount)).valueOrStop().juz
+        val doors = content.doors().valueOrStop()
+        withContext(dispatchers.io) {
+            runCatchingApp {
+                val queries = provider.get().quranQueries
+                val span = queries.surahSpan(surah.toLong()).executeAsOne()
+                SurahOverview(
+                    surah = info,
+                    pages = span.first_page!!.toInt()..span.last_page!!.toInt(),
+                    juz = firstJuz..lastJuz,
+                    wordCount = span.words!!.toInt(),
+                    topRoots = queries.surahRoots(surah.toLong(), rootCount.toLong()).executeAsList()
+                        .map { RootCount(it.letters, it.occurrences.toInt()) },
+                    sajdas = queries.sajdasIn(surah.toLong()).executeAsList().map { AyahKey(surah, it.toInt()) },
+                    doors = doors.mapNotNull { door -> door.inSurah(surah) },
+                )
+            }
+        }
+    } catch (stop: Stop) {
+        AppResult.Failure(stop.error)
+    }
+
+    /** Carries a failed step's error out unchanged. */
+    private class Stop(val error: AppError) : Exception()
+
+    private fun <T> AppResult<T>.valueOrStop(): T = when (this) {
+        is AppResult.Success -> value
+        is AppResult.Failure -> throw Stop(error)
+    }
+
+    /** The door's ayahs from [surah]: its entries' verses, its cards and every quote in its layout. */
+    private fun Door.inSurah(surah: Int): DoorInSurah? {
+        val keys = buildSet {
+            entries.forEach { entry -> addAll(entry.verses) }
+            cards.forEach { add(it.quote.key) }
+            when (val design = layout) {
+                is DoorLayout.Evidence -> design.sections.forEach { section ->
+                    section.items.forEach { add(it.quote.key) }
+                }
+                is DoorLayout.Passages -> design.passages.forEach { p ->
+                    add(p.opens.key)
+                    p.closes?.let { add(it.key) }
+                    p.verdict?.let { add(it.key) }
+                    p.steps.forEach { add(it.quote.key) }
+                }
+                null -> Unit
+            }
+        }.filter { it.surah == surah }.sortedBy { it.ayah }
+        return if (keys.isEmpty()) null else DoorInSurah(id, title, visible, keys)
     }
 
     private class Row(val surah: Long, val ayah: Long, val position: Long, val lemma: String?)

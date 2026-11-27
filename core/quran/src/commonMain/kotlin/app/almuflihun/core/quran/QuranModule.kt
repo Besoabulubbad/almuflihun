@@ -17,7 +17,7 @@ val quranModule: Module = module {
     single<ContentReader> { BundledContentReader(get(), get()) }
     single { QuranTextIndex(get(), get()) }
     single<QuranSearch> { IndexedQuranSearch(get(), get(), get(), get()) }
-    single<QuranStudy> { SqlQuranStudy(get(), get(), get()) }
+    single<QuranStudy> { SqlQuranStudy(get(), get(), get(), get(), get()) }
     single {
         val provider = get<QuranDatabaseProvider>()
         PageFontStore(get<FontFiles>()) { page ->

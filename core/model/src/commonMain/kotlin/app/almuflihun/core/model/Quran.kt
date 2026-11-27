@@ -156,3 +156,23 @@ data class WordStudy(
     /** «في m آية» */
     val ayahCount: Int get() = occurrences.map { it.range.key }.distinct().size
 }
+
+/** A root and how often it occurs (in a surah, for the overview). */
+data class RootCount(val root: String, val occurrences: Int)
+
+/** A door that quotes a surah: its ayahs from that surah, in order. Hidden doors are included with [visible] false. */
+data class DoorInSurah(val doorId: String, val title: String, val visible: Boolean, val ayahs: List<AyahKey>)
+
+/**
+ * Surah overview (ADR 0012, S6): its facts, the pages and juz it spans, its most frequent roots, where the Mushaf
+ * marks a sajda in it, and the doors that quote it.
+ */
+data class SurahOverview(
+    val surah: Surah,
+    val pages: IntRange,
+    val juz: IntRange,
+    val wordCount: Int,
+    val topRoots: List<RootCount>,
+    val sajdas: List<AyahKey>,
+    val doors: List<DoorInSurah>,
+)
