@@ -55,6 +55,15 @@ jobs:
           check_name: Test results
           detailed_summary: true
 
+      - name: Screenshot diffs
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: screenshot-diffs
+          path: "**/build/outputs/roborazzi/**"
+          if-no-files-found: ignore
+          retention-days: 7
+
   ios:
     name: iOS framework and app (macOS)
     runs-on: macos-latest
