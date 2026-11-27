@@ -5,6 +5,7 @@ import app.almuflihun.core.common.DispatcherProvider
 import app.almuflihun.core.common.runCatchingApp
 import app.almuflihun.core.model.AyahKey
 import app.almuflihun.core.model.MushafPage
+import app.almuflihun.core.model.Surah
 import app.almuflihun.core.model.WordRange
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -28,11 +29,15 @@ interface QuranSearch {
     suspend fun words(query: String, limit: Int = DEFAULT_LIMIT): AppResult<SearchResult>
 
     /**
-     * A jump typed as `2:255` or as a page word and a number (`صفحة 50`); Arabic-Indic digits are accepted.
-     * [pageWords] come from the UI's strings, so the parser carries no copy. Null when the text is not a jump or
-     * points nowhere (2:300, page 700).
+     * A jump typed as `2:255`, as a surah's name and an ayah (`البقرة 255`), or as a page word and a number
+     * (`صفحة 50`); Arabic-Indic digits are accepted. [pageWords] and [surahWords] (an optional word before the name,
+     * `سورة`) come from the UI's strings, so the parser carries no copy. Null when the text is not a jump or points
+     * nowhere (2:300, page 700).
      */
-    suspend fun jump(text: String, pageWords: Set<String>): AppResult<Jump?>
+    suspend fun jump(text: String, pageWords: Set<String>, surahWords: Set<String> = emptySet()): AppResult<Jump?>
+
+    /** Surahs whose name contains [query] by letters (with or without «ال»), or whose number it is. */
+    suspend fun surahs(query: String): AppResult<List<Surah>>
 
     companion object {
         /** DESIGN «Advanced search»: show the first 200 and ask to narrow. */
@@ -65,15 +70,42 @@ internal class IndexedQuranSearch(
         }
     }
 
-    override suspend fun jump(text: String, pageWords: Set<String>): AppResult<Jump?> = runCatchingApp {
-        val latin = text.trim().map(::latinDigit).joinToString("")
-        AYAH.matchEntire(latin)?.let { m ->
-            return@runCatchingApp existingAyah(m.groupValues[1].toInt(), m.groupValues[2].toInt())?.let(Jump::ToAyah)
+    override suspend fun jump(text: String, pageWords: Set<String>, surahWords: Set<String>): AppResult<Jump?> =
+        runCatchingApp {
+            val latin = text.trim().map(::latinDigit).joinToString("")
+            AYAH.matchEntire(latin)?.let { m ->
+                return@runCatchingApp existingAyah(m.groupValues[1].toInt(), m.groupValues[2].toInt())
+                    ?.let(Jump::ToAyah)
+            }
+            val parts = latin.split(WHITESPACE).filter { it.isNotEmpty() }
+            val number = parts.lastOrNull()?.toIntOrNull()
+            val words = parts.dropLast(1).dropWhile { it in surahWords }
+            when {
+                number == null || words.isEmpty() -> null
+                words.size == 1 && words[0] in pageWords ->
+                    number.takeIf { it in 1..MushafPage.COUNT }?.let(Jump::ToPage)
+                else ->
+                    surahNamed(words.joinToString(" "))?.let { existingAyah(it.number, number) }?.let(Jump::ToAyah)
+            }
         }
-        val parts = latin.split(WHITESPACE)
-        val page = parts.takeIf { it.size == 2 && it[0] in pageWords }?.get(1)?.toIntOrNull()
-        page?.takeIf { it in 1..MushafPage.COUNT }?.let(Jump::ToPage)
+
+    override suspend fun surahs(query: String): AppResult<List<Surah>> = runCatchingApp {
+        val all = (reader.surahs() as? AppResult.Success)?.value ?: error("surahs unavailable")
+        val latin = query.trim().map(::latinDigit).joinToString("")
+        latin.toIntOrNull()?.let { n -> return@runCatchingApp all.filter { it.number == n } }
+        val wanted = nameForm(latin)
+        if (wanted.isEmpty()) emptyList() else all.filter { nameForm(it.name).contains(wanted) }
     }
+
+    /** The surah whose whole name is [name], by letters, with or without «ال». */
+    private suspend fun surahNamed(name: String): Surah? {
+        val wanted = nameForm(name)
+        return (reader.surahs() as? AppResult.Success)?.value?.firstOrNull { nameForm(it.name) == wanted }
+    }
+
+    /** A surah name for comparison: its search form without spaces and without a leading «ال». */
+    private fun nameForm(name: String): String =
+        QuranText.searchForm(name).filterNot { it == ' ' }.removePrefix(ARTICLE)
 
     private suspend fun existingAyah(surah: Int, ayah: Int): AyahKey? {
         if (surah !in 1..AyahKey.SURAH_COUNT || ayah < 1) return null
@@ -128,6 +160,7 @@ internal class IndexedQuranSearch(
     }
 
     private companion object {
+        const val ARTICLE = "ال"
         val WHITESPACE = Regex("\\s+")
         val AYAH = Regex("(\\d{1,3})\\s*[:：]\\s*(\\d{1,3})")
     }

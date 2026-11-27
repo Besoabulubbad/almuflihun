@@ -30,6 +30,10 @@ abstract class GenerateQuranDatabaseTask : DefaultTask() {
     @get:InputFile @get:PathSensitive(PathSensitivity.NONE)
     abstract val textWords: RegularFileProperty
 
+    /** Tanzil's quran-data.js: surahs, juz and hizb quarters, sajdas. */
+    @get:InputFile @get:PathSensitive(PathSensitivity.NONE)
+    abstract val metadata: RegularFileProperty
+
     /** `design/data`: the doors, slider, hizbs and الضياء, shipped unchanged as `files/content/<name>.json`. */
     @get:InputDirectory @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val content: DirectoryProperty
@@ -47,6 +51,7 @@ abstract class GenerateQuranDatabaseTask : DefaultTask() {
                 layout = layout.get().asFile,
                 glyphWords = glyphWords.get().asFile,
                 textWords = textWords.get().asFile,
+                metadata = metadata.get().asFile,
             ),
             out.resolve("files/quran.db"),
         )

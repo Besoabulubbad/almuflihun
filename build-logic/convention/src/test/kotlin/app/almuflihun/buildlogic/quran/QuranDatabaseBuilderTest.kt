@@ -18,6 +18,7 @@ class QuranDatabaseBuilderTest {
                     layout = sources.resolve("qpc-v2-15-lines.db"),
                     glyphWords = sources.resolve("qpc-v2.db"),
                     textWords = sources.resolve("digital-khatt-v2.db"),
+                    metadata = sources.resolve("quran-data.js"),
                 ),
                 out,
             )
@@ -63,10 +64,21 @@ class QuranDatabaseBuilderTest {
     }
 
     @Test
+    fun `surahs, quarters and sajdas come from Tanzil's metadata`() {
+        assertEquals("114", scalar("SELECT COUNT(*) FROM surah"))
+        assertEquals("6236", scalar("SELECT SUM(ayahs) FROM surah"))
+        assertEquals("286|medinan|87", scalar("SELECT ayahs || '|' || place || '|' || revelation_order FROM surah WHERE number = 2"))
+        assertEquals("240", scalar("SELECT COUNT(*) FROM quarter"))
+        assertEquals("2:142", scalar("SELECT surah || ':' || ayah FROM quarter WHERE number = 9")) // juz 2
+        assertEquals("15", scalar("SELECT COUNT(*) FROM sajda"))
+        assertEquals("0", scalar("SELECT COUNT(*) FROM pragma_table_info('sajda') WHERE name = 'kind'"))
+    }
+
+    @Test
     fun `the text is copied, never edited`() {
         val line = sources.resolve("quran-simple.txt").readLines().first { it.startsWith("2|255|") }
         assertEquals(line.removePrefix("2|255|"), scalar("SELECT simple FROM ayah WHERE surah = 2 AND ayah = 255"))
-        assertEquals("1", scalar("SELECT value FROM meta WHERE key = 'schema_version'"))
+        assertEquals("2", scalar("SELECT value FROM meta WHERE key = 'schema_version'"))
         assertEquals("1", scalar("PRAGMA user_version"))
         val digest = java.security.MessageDigest.getInstance("SHA-256").digest(db.readBytes())
         assertEquals(digest.joinToString("") { "%02x".format(it) }, db.resolveSibling("quran.version").readText())

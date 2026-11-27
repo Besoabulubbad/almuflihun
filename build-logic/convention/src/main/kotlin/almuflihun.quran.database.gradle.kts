@@ -16,6 +16,7 @@ val generateQuranDatabase = tasks.register("generateQuranDatabase", GenerateQura
     layout.set(sources.file("qpc-v2-15-lines.db"))
     glyphWords.set(sources.file("qpc-v2.db"))
     textWords.set(sources.file("digital-khatt-v2.db"))
+    metadata.set(sources.file("quran-data.js"))
     content.set(rootProject.layout.projectDirectory.dir("design/data"))
     outputDirectory.set(project.layout.buildDirectory.dir("generated/quran/composeResources"))
 }

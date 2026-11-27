@@ -79,3 +79,29 @@ sealed interface PageFont {
 
 /** What to draw for this word in [font]: its glyph code in the page's own font, or its Unicode text. */
 fun QuranWord.drawnWith(font: PageFont): String = if (font is PageFont.Exact) glyph else text
+
+/** Where a surah was revealed (Tanzil metadata). */
+enum class RevelationPlace { Meccan, Medinan }
+
+/** A surah: its Arabic name, length, place and order of revelation (Tanzil, CC BY 3.0), and its first page. */
+data class Surah(
+    val number: Int,
+    val name: String,
+    val ayahCount: Int,
+    val place: RevelationPlace,
+    val revelationOrder: Int,
+    val firstPage: Int,
+)
+
+/**
+ * Where an ayah sits in the Mushaf's divisions. [quarter] is 1–4 within the [hizb]. [sajda] says the printed Mushaf
+ * marks a prostration here; whether it is obligatory is a ruling, not the text, and is not given (DESIGN §1).
+ */
+data class AyahPosition(
+    val key: AyahKey,
+    val page: Int,
+    val juz: Int,
+    val hizb: Int,
+    val quarter: Int,
+    val sajda: Boolean,
+)
