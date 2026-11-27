@@ -79,8 +79,14 @@ class ContentPlacementTest : PlatformTest() {
     fun every_quote_and_highlight_is_placed_in_the_shipped_text() = runAppTest {
         val all = quotes()
         val failures = all.mapNotNull { q ->
-            (QuotePlacer.place(q.key, words(q.key), q.text, q.range) as? QuotePlacer.Result.Mismatch)
-                ?.let { "${q.where}: ${it.reason}" }
+            when (val result = QuotePlacer.place(q.key, words(q.key), q.text, q.range)) {
+                is QuotePlacer.Result.Mismatch -> "${q.where}: ${result.reason}"
+                is QuotePlacer.Result.Placed -> {
+                    // Every placed quote can also be highlighted on the Mushaf page.
+                    MushafAlignment.mushafPositions(result.range, words(q.key))
+                    null
+                }
+            }
         }
         assertTrue(failures.isEmpty(), "Quotes not placed:\n" + failures.joinToString("\n"))
         assertEquals(EXPECTED_QUOTES, all.size)
