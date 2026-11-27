@@ -36,5 +36,25 @@ object QuranText {
         }
     }
 
+    /**
+     * The form search compares (docs/specs/screens.md §11): the [skeleton] with letter forms unified, so a reader
+     * typing without hamza or with a plain alef still finds the word: أ إ آ ٱ → ا، ى → ي، ة → ه، ؤ → و، ئ → ي, and a
+     * standalone ء dropped. Applied the same way to the text and to the query.
+     */
+    fun searchForm(text: String): String = buildString {
+        skeleton(text).forEach { c ->
+            when (c) {
+                in ALEF_FORMS -> append('ا')
+                'ى', 'ئ' -> append('ي')
+                'ة' -> append('ه')
+                'ؤ' -> append('و')
+                'ء' -> Unit
+                else -> append(c)
+            }
+        }
+    }
+
+    private const val ALEF_FORMS = "أإآٱ"
+
     private fun isMarkOnly(c: Char): Boolean = c in quranicMarks || c == RUB_EL_HIZB
 }
