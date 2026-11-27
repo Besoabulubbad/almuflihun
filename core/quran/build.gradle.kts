@@ -2,11 +2,17 @@ import java.security.MessageDigest
 
 plugins {
     id("almuflihun.kmp.library")
+    id("almuflihun.koin")
     // Builds files/quran.db from sources/ into Compose Resources (ADR 0015).
     id("almuflihun.quran.database")
+    id("app.cash.sqldelight")
 }
 
 kotlin {
+    compilerOptions {
+        // PlatformTest is an expect class: the tests share one Robolectric runner on Android.
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
     android {
         androidResources {
             // Compose Resources ship as Android assets.
@@ -15,16 +21,55 @@ kotlin {
     }
     sourceSets {
         commonMain.dependencies {
+            api(project(":core:model"))
+            api(libs.koin.core) // quranModule is public
+            api(project(":core:common"))
             // Reads the bundled quran.db on Android and iOS. Resources only: core:quran has no UI.
             implementation(libs.compose.components.resources)
             // The Compose compiler, required by the Compose plugin, needs the runtime on the classpath.
             implementation(libs.compose.runtime)
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.kotlinx.coroutines.core)
+        }
+        androidMain.dependencies {
+            implementation(libs.sqldelight.androidDriver)
+            implementation(libs.androidx.sqlite) // the driver's SupportSQLite types
+        }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.nativeDriver)
+        }
+        commonTest.dependencies {
+            implementation(project(":core:testing"))
+            implementation(libs.kotlinx.coroutines.test) // runAppTest's TestScope
+        }
+        named("androidHostTest").dependencies {
+            implementation(libs.robolectric)
+            implementation(libs.robolectric.annotations)
+            implementation(libs.robolectric.shadowsFramework) // RuntimeEnvironment
+            implementation(libs.junit)
+            implementation(libs.kotlinx.coroutines.test)
+        }
+        named("androidDeviceTest").dependencies {
+            implementation(libs.androidx.testExt.junit)
+            implementation(libs.androidx.testMonitor)
+            runtimeOnly(libs.androidx.testRunner) // AndroidJUnitRunner
+            implementation(libs.junit)
+            implementation(libs.kotlinx.coroutines.test)
         }
     }
 }
 
 compose.resources {
     packageOfResClass = "app.almuflihun.core.quran.resources"
+}
+
+// The bundled database is read-only: SQLDelight only types the queries; there are no migrations (ADR 0015).
+sqldelight {
+    databases {
+        create("QuranDatabase") {
+            packageName.set("app.almuflihun.core.quran.db")
+        }
+    }
 }
 
 // Every Quran source file is byte-exact and listed in SOURCES.md with its checksum (ADR 0004). Fails the build if a

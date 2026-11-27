@@ -20,6 +20,7 @@ kotlin {
             implementation(project(":core:common"))
             implementation(project(":core:platform"))
             implementation(project(":core:analytics"))
+            implementation(project(":core:quran"))
             // Features, as they land.
             implementation(project(":feature:home"))
             // initKoin returns Koin's KoinApplication and takes its KoinAppDeclaration.
