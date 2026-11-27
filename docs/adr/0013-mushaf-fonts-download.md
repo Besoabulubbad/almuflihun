@@ -5,6 +5,7 @@
 - **Deciders:** Mohammad Abu Lubad (delegated the choice to Claude, with the condition "implemented the right way, users never face issues"), Claude
 - **Tags:** quran, mushaf, licensing, offline
 - **Supersedes:** the page-font parts of [0004](0004-quran-assets-in-repo.md); changes `design/DECISIONS.md` #3, #4, #12, #14
+- **Amended by:** [0016](0016-mushaf-fonts-woff.md) (download WOFF, not WOFF2; Android inflates to TTF with zlib)
 
 ## Context and problem statement
 
