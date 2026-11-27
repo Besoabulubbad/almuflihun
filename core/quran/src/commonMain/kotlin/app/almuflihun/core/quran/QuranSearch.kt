@@ -7,8 +7,6 @@ import app.almuflihun.core.model.AyahKey
 import app.almuflihun.core.model.MushafPage
 import app.almuflihun.core.model.Surah
 import app.almuflihun.core.model.WordRange
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 /** An ayah that matched, with every match placed as a word range for highlighting. */
@@ -99,30 +97,11 @@ interface QuranSearch {
 }
 
 internal class IndexedQuranSearch(
-    private val provider: QuranDatabaseProvider,
+    provider: QuranDatabaseProvider,
     private val reader: QuranReader,
     private val dispatchers: DispatcherProvider,
+    private val textIndex: QuranTextIndex = QuranTextIndex(provider, dispatchers),
 ) : QuranSearch {
-
-    /** One ayah's words in search form (and joined by spaces, with where each starts), and its divisions. */
-    private data class IndexedAyah(
-        val key: AyahKey,
-        val words: List<String>,
-        val text: String,
-        val starts: IntArray,
-        val quarter: Int,
-        val meccan: Boolean,
-        /** Per Mushaf word: its root and lemma (comparison forms), and the content words it is written as. */
-        val roots: List<String?>,
-        val lemmas: List<String?>,
-        val groups: List<IntRange>,
-    ) {
-        val juz: Int get() = quarter / QUARTERS_PER_JUZ + 1
-        val hizb: Int get() = quarter / QUARTERS_PER_HIZB + 1
-    }
-
-    private val mutex = Mutex()
-    private var index: List<IndexedAyah>? = null
 
     override suspend fun words(query: String, limit: Int): AppResult<SearchResult> = withContext(dispatchers.default) {
         runCatchingApp {
@@ -260,9 +239,6 @@ internal class IndexedQuranSearch(
             .map { WordRange(key, groups[it].first + 1, groups[it].last + 1) }
             .ifEmpty { null }
 
-    private fun AyahKey.isBefore(other: AyahKey): Boolean =
-        surah < other.surah || (surah == other.surah && ayah < other.ayah)
-
     private suspend fun existingAyah(surah: Int, ayah: Int): AyahKey? {
         if (surah !in 1..AyahKey.SURAH_COUNT || ayah < 1) return null
         val key = AyahKey(surah, ayah)
@@ -290,44 +266,7 @@ internal class IndexedQuranSearch(
         return low
     }
 
-    /** Built once, on first search, from the shipped text. */
-    private suspend fun index(): List<IndexedAyah> = mutex.withLock {
-        index ?: withContext(dispatchers.io) {
-            val rows = provider.get().quranQueries.allAyahs().executeAsList()
-            val basmala = rows.first().simple.split(' ')
-            val queries = provider.get().quranQueries
-            val quarters = queries.quarters().executeAsList().map { AyahKey(it.surah.toInt(), it.ayah.toInt()) }
-            val meccan = queries.surahs { number, _, _, place, _, _ -> number.toInt() to (place == "meccan") }
-                .executeAsList().toMap()
-            val morphology = queries.allWordMorphology().executeAsList()
-                .groupBy { AyahKey(it.surah.toInt(), it.ayah.toInt()) }
-            var quarter = 0
-            rows.map { row ->
-                val key = AyahKey(row.surah.toInt(), row.ayah.toInt())
-                while (quarter + 1 < quarters.size && !key.isBefore(quarters[quarter + 1])) quarter++
-                val tokens = QuranText.words(key, row.simple, basmala)
-                val forms = tokens.map(QuranText::searchForm)
-                val words = morphology[key].orEmpty()
-                val starts = IntArray(forms.size)
-                var offset = 0
-                forms.forEachIndexed { i, word ->
-                    starts[i] = offset
-                    offset += word.length + 1
-                }
-                IndexedAyah(
-                    key = key,
-                    words = forms,
-                    text = forms.joinToString(" "),
-                    starts = starts,
-                    quarter = quarter,
-                    meccan = meccan.getValue(key.surah),
-                    roots = words.map { it.letters?.let(::rootForm) },
-                    lemmas = words.map { it.clean?.let(QuranText::searchForm) },
-                    groups = MushafAlignment.groups(key, tokens),
-                )
-            }
-        }.also { index = it }
-    }
+    private suspend fun index(): List<IndexedAyah> = textIndex.ayahs()
 
     private fun latinDigit(c: Char): Char = when (c) {
         in '٠'..'٩' -> '0' + (c - '٠')
@@ -336,8 +275,6 @@ internal class IndexedQuranSearch(
     }
 
     private companion object {
-        const val QUARTERS_PER_HIZB = 4
-        const val QUARTERS_PER_JUZ = 8
         const val ARTICLE = "ال"
         val WHITESPACE = Regex("\\s+")
         val AYAH = Regex("(\\d{1,3})\\s*[:：]\\s*(\\d{1,3})")
