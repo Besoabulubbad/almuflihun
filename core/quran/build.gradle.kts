@@ -30,7 +30,7 @@ kotlin {
             // The Compose compiler, required by the Compose plugin, needs the runtime on the classpath.
             implementation(libs.compose.runtime)
             implementation(libs.sqldelight.runtime)
-            implementation(libs.kotlinx.coroutines.core)
+            api(libs.kotlinx.coroutines.core) // PageFontDownloader.progress is a StateFlow
             implementation(libs.kotlinx.serialization.json) // reads design/data
         }
         androidMain.dependencies {
