@@ -1,5 +1,7 @@
 package app.almuflihun.core.model
 
+import kotlin.time.Instant
+
 /**
  * A door (باب): a word of the Quran and the places it occurs (design/data/abwab-4.json). Only [visible] doors are
  * shown for now (DESIGN, «الأبواب»). Every quote in it is already placed in the shipped text.
@@ -81,3 +83,18 @@ data class Slide(val id: String, val order: Int, val door: String, val entry: St
 
 /** One of the 60 hizbs, with the ayahs where its four quarters start. */
 data class Hizb(val number: Int, val juz: Int, val start: AyahKey, val end: AyahKey, val quarters: List<AyahKey>)
+
+/**
+ * A collection of verses (ADR 0012, S1). [name] is null for the default «محفوظاتي» ([isDefault]), which the UI names
+ * from its strings. [changedAt] is the last change to it or its verses, for «آخر تغيير».
+ */
+data class VerseCollection(
+    val id: String,
+    val name: String?,
+    val isDefault: Boolean,
+    val verseCount: Int,
+    val changedAt: Instant,
+)
+
+/** A verse in a collection, in the reader's order: the whole verse, or the [quote] saved from a door. */
+data class CollectedVerse(val key: AyahKey, val quote: WordRange?, val note: String?)
