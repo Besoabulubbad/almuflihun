@@ -17,6 +17,7 @@ kotlin {
             api(libs.compose.uiTestJunit4)
             implementation(libs.roborazzi)
             implementation(libs.roborazzi.core)
+            implementation(libs.differ) // RoborazziOptions.CompareOptions (the screenshot tolerance)
             // Registers the test activity for the compose rule under Robolectric; needed at runtime only.
             runtimeOnly(libs.compose.uiTestManifest)
         }

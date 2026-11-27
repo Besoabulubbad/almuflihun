@@ -140,6 +140,8 @@ robolectric-annotations = { module = "org.robolectric:annotations", version.ref 
 robolectric-shadowsFramework = { module = "org.robolectric:shadows-framework", version.ref = "robolectric" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 roborazzi-core = { module = "io.github.takahirom.roborazzi:roborazzi-core", version.ref = "roborazzi" }
+# Image comparison used by Roborazzi's CompareOptions (the pixel tolerance).
+differ = { module = "com.dropbox.differ:differ", version = "0.3.0" }
 roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "roborazzi" }
 roborazzi-composeIos = { module = "io.github.takahirom.roborazzi:roborazzi-compose-ios", version.ref = "roborazzi" }
 roborazzi-compose = { module = "io.github.takahirom.roborazzi:roborazzi-compose", version.ref = "roborazzi" }
