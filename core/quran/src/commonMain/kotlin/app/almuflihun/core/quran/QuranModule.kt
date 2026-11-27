@@ -12,4 +12,5 @@ val quranModule: Module = module {
     single { QuranDatabaseProvider(get()) }
     single<QuranReader> { SqlQuranReader(get(), get()) }
     single<ContentReader> { BundledContentReader(get(), get()) }
+    single<QuranSearch> { IndexedQuranSearch(get(), get(), get()) }
 }
