@@ -11,8 +11,19 @@ CREATE TABLE line (
 CREATE TABLE word (
     id INTEGER NOT NULL PRIMARY KEY, surah INTEGER NOT NULL, ayah INTEGER NOT NULL,
     position INTEGER NOT NULL, page INTEGER NOT NULL, line INTEGER NOT NULL, is_end INTEGER NOT NULL,
-    glyph TEXT NOT NULL, text TEXT NOT NULL
+    glyph TEXT NOT NULL, text TEXT NOT NULL, root INTEGER, lemma INTEGER, stem INTEGER
 );
+
+CREATE INDEX word_by_root ON word (root);
+
+CREATE INDEX word_by_lemma ON word (lemma);
+
+-- QUL's word morphology (ADR 0012): root letters without spaces; lemma and stem in the Mushaf's script.
+CREATE TABLE root (id INTEGER NOT NULL PRIMARY KEY, letters TEXT NOT NULL);
+
+CREATE TABLE lemma (id INTEGER NOT NULL PRIMARY KEY, text TEXT NOT NULL, clean TEXT NOT NULL);
+
+CREATE TABLE stem (id INTEGER NOT NULL PRIMARY KEY, text TEXT NOT NULL, clean TEXT NOT NULL);
 
 CREATE INDEX word_by_ayah ON word (surah, ayah, position);
 
@@ -81,3 +92,21 @@ SELECT surah, ayah, first_word, last_word FROM phrase_place WHERE phrase = ? ORD
 
 allPhrasePlaces:
 SELECT phrase, surah, ayah, first_word, last_word FROM phrase_place ORDER BY phrase;
+
+rootUsage:
+SELECT COUNT(*) AS occurrences, COUNT(DISTINCT w.surah * 1000 + w.ayah) AS ayahs FROM word w JOIN root r ON r.id = w.root WHERE r.letters = ?;
+
+rootLetters:
+SELECT letters FROM root;
+
+wordMorphology:
+SELECT w.position, r.letters, l.text, s.text
+FROM word w LEFT JOIN root r ON r.id = w.root LEFT JOIN lemma l ON l.id = w.lemma LEFT JOIN stem s ON s.id = w.stem
+WHERE w.surah = ? AND w.ayah = ? AND w.is_end = 0
+ORDER BY w.position;
+
+allWordMorphology:
+SELECT w.surah, w.ayah, r.letters, l.clean
+FROM word w LEFT JOIN root r ON r.id = w.root LEFT JOIN lemma l ON l.id = w.lemma
+WHERE w.is_end = 0
+ORDER BY w.id;

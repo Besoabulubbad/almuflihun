@@ -23,13 +23,19 @@ sealed interface Jump {
     data class ToPage(val page: Int) : Jump
 }
 
-/** How a term is matched (DESIGN «Advanced search»: كلمة / جذر / لفظ / عبارة). Root and lemma come with morphology. */
+/** How a term is matched (DESIGN «Advanced search»: كلمة / جذر / لفظ / عبارة). */
 enum class TermMode {
     /** كلمة: the letters anywhere, so «الصبر» also finds «بالصبر». */
     Letters,
 
     /** عبارة: these whole words, in this order. */
     Phrase,
+
+    /** جذر: every word from this root («صبر» or «ص ب ر»), whatever its form (QUL morphology). */
+    Root,
+
+    /** لفظ: every word of this lemma, as word study names it (QUL morphology). */
+    Lemma,
 }
 
 /** How a term joins the result of the terms above it: «و», «أو», «ليس». */
@@ -99,13 +105,17 @@ internal class IndexedQuranSearch(
 ) : QuranSearch {
 
     /** One ayah's words in search form (and joined by spaces, with where each starts), and its divisions. */
-    private class IndexedAyah(
+    private data class IndexedAyah(
         val key: AyahKey,
         val words: List<String>,
         val text: String,
         val starts: IntArray,
         val quarter: Int,
         val meccan: Boolean,
+        /** Per Mushaf word: its root and lemma (comparison forms), and the content words it is written as. */
+        val roots: List<String?>,
+        val lemmas: List<String?>,
+        val groups: List<IntRange>,
     ) {
         val juz: Int get() = quarter / QUARTERS_PER_JUZ + 1
         val hizb: Int get() = quarter / QUARTERS_PER_HIZB + 1
@@ -170,7 +180,8 @@ internal class IndexedQuranSearch(
                 val scoped = index().filter { it.isIn(query.scope) }
                 var result: LinkedHashMap<AyahKey, MutableList<WordRange>>? = null
                 query.terms.filter { term -> term.text.isNotBlank() }.forEach { term ->
-                    val found = scoped.mapNotNull { ayah -> ayah.matches(term)?.let { ayah.key to it } }.toMap()
+                    val prepared = prepare(term) ?: return@forEach
+                    val found = scoped.mapNotNull { ayah -> ayah.matches(prepared)?.let { ayah.key to it } }.toMap()
                     result = combine(result, found, if (result == null) Join.Or else term.join)
                 }
                 group(result.orEmpty(), limit)
@@ -219,18 +230,35 @@ internal class IndexedQuranSearch(
         SearchScope.Medinan -> !meccan
     }
 
-    /** This ayah's matches for [term], or null when it has none. */
-    private fun IndexedAyah.matches(term: SearchTerm): List<WordRange>? {
-        val wanted = term.text.trim().split(WHITESPACE).map(QuranText::searchForm).filter { it.isNotEmpty() }
-        if (wanted.isEmpty()) return null
-        return when (term.mode) {
-            TermMode.Letters -> match(wanted.joinToString(" "))?.matches
-            TermMode.Phrase -> (0..words.size - wanted.size)
-                .filter { words.subList(it, it + wanted.size) == wanted }
-                .map { WordRange(key, it + 1, it + wanted.size) }
-                .ifEmpty { null }
+    /** A term normalised once, before it is compared with every ayah. */
+    private class PreparedTerm(val mode: TermMode, val words: List<String>, val joined: String, val value: String)
+
+    private fun prepare(term: SearchTerm): PreparedTerm? {
+        val words = term.text.trim().split(WHITESPACE).map(QuranText::searchForm).filter { it.isNotEmpty() }
+        if (words.isEmpty()) return null
+        val value = when (term.mode) {
+            TermMode.Root -> rootForm(term.text)
+            else -> words.joinToString("")
         }
+        return PreparedTerm(term.mode, words, words.joinToString(" "), value)
     }
+
+    /** This ayah's matches for [term], or null when it has none. */
+    private fun IndexedAyah.matches(term: PreparedTerm): List<WordRange>? = when (term.mode) {
+        TermMode.Letters -> match(term.joined)?.matches
+        TermMode.Phrase -> (0..words.size - term.words.size)
+            .filter { words.subList(it, it + term.words.size) == term.words }
+            .map { WordRange(key, it + 1, it + term.words.size) }
+            .ifEmpty { null }
+        TermMode.Root -> mushafMatches(roots, term.value)
+        TermMode.Lemma -> mushafMatches(lemmas, term.value)
+    }
+
+    /** The content words of each Mushaf word whose value is [wanted]. */
+    private fun IndexedAyah.mushafMatches(values: List<String?>, wanted: String): List<WordRange>? =
+        values.indices.filter { values[it] == wanted && it < groups.size }
+            .map { WordRange(key, groups[it].first + 1, groups[it].last + 1) }
+            .ifEmpty { null }
 
     private fun AyahKey.isBefore(other: AyahKey): Boolean =
         surah < other.surah || (surah == other.surah && ayah < other.ayah)
@@ -271,18 +299,32 @@ internal class IndexedQuranSearch(
             val quarters = queries.quarters().executeAsList().map { AyahKey(it.surah.toInt(), it.ayah.toInt()) }
             val meccan = queries.surahs { number, _, _, place, _, _ -> number.toInt() to (place == "meccan") }
                 .executeAsList().toMap()
+            val morphology = queries.allWordMorphology().executeAsList()
+                .groupBy { AyahKey(it.surah.toInt(), it.ayah.toInt()) }
             var quarter = 0
             rows.map { row ->
                 val key = AyahKey(row.surah.toInt(), row.ayah.toInt())
                 while (quarter + 1 < quarters.size && !key.isBefore(quarters[quarter + 1])) quarter++
-                val forms = QuranText.words(key, row.simple, basmala).map(QuranText::searchForm)
+                val tokens = QuranText.words(key, row.simple, basmala)
+                val forms = tokens.map(QuranText::searchForm)
+                val words = morphology[key].orEmpty()
                 val starts = IntArray(forms.size)
                 var offset = 0
                 forms.forEachIndexed { i, word ->
                     starts[i] = offset
                     offset += word.length + 1
                 }
-                IndexedAyah(key, forms, forms.joinToString(" "), starts, quarter, meccan.getValue(key.surah))
+                IndexedAyah(
+                    key = key,
+                    words = forms,
+                    text = forms.joinToString(" "),
+                    starts = starts,
+                    quarter = quarter,
+                    meccan = meccan.getValue(key.surah),
+                    roots = words.map { it.letters?.let(::rootForm) },
+                    lemmas = words.map { it.clean?.let(QuranText::searchForm) },
+                    groups = MushafAlignment.groups(key, tokens),
+                )
             }
         }.also { index = it }
     }

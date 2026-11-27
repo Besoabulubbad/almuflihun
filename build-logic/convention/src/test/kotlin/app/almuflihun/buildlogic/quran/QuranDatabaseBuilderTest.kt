@@ -19,6 +19,9 @@ class QuranDatabaseBuilderTest {
                     glyphWords = sources.resolve("qpc-v2.db"),
                     textWords = sources.resolve("digital-khatt-v2.db"),
                     metadata = sources.resolve("quran-data.js"),
+                    roots = sources.resolve("word-root.db"),
+                    lemmas = sources.resolve("word-lemma.db"),
+                    stems = sources.resolve("word-stem.db"),
                 ),
                 out,
             )
@@ -84,10 +87,28 @@ class QuranDatabaseBuilderTest {
     }
 
     @Test
+    fun `each word carries its root, lemma and stem`() {
+        assertEquals("1642", scalar("SELECT COUNT(*) FROM root"))
+        assertEquals("50298", scalar("SELECT COUNT(root) FROM word"))
+        assertEquals("72507", scalar("SELECT COUNT(lemma) FROM word")) // three marker links dropped
+        assertEquals("77427", scalar("SELECT COUNT(stem) FROM word"))
+        assertEquals("0", scalar("SELECT COUNT(*) FROM word WHERE is_end = 1 AND (root IS NOT NULL OR lemma IS NOT NULL OR stem IS NOT NULL)"))
+        assertEquals("0", scalar("SELECT COUNT(*) FROM root WHERE letters LIKE '% %'"))
+    }
+
+    @Test
+    fun `chosen roots match published concordance counts`() {
+        val counts = mapOf("صبر" to 103, "رحم" to 339, "علم" to 854, "كتب" to 319, "قول" to 1722, "ذكر" to 292, "امر" to 248, "نهي" to 56)
+        counts.forEach { (letters, expected) ->
+            assertEquals(expected.toString(), scalar("SELECT COUNT(*) FROM word w JOIN root r ON r.id = w.root WHERE r.letters = '$letters'"), letters)
+        }
+    }
+
+    @Test
     fun `the text is copied, never edited`() {
         val line = sources.resolve("quran-simple.txt").readLines().first { it.startsWith("2|255|") }
         assertEquals(line.removePrefix("2|255|"), scalar("SELECT simple FROM ayah WHERE surah = 2 AND ayah = 255"))
-        assertEquals("3", scalar("SELECT value FROM meta WHERE key = 'schema_version'"))
+        assertEquals("4", scalar("SELECT value FROM meta WHERE key = 'schema_version'"))
         assertEquals("1", scalar("PRAGMA user_version"))
         val digest = java.security.MessageDigest.getInstance("SHA-256").digest(db.readBytes())
         assertEquals(digest.joinToString("") { "%02x".format(it) }, db.resolveSibling("quran.version").readText())
