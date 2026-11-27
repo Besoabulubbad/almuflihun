@@ -11,7 +11,7 @@ import java.sql.Connection
  */
 object QuranDatabaseBuilder {
 
-    const val SCHEMA_VERSION = 1
+    const val SCHEMA_VERSION = 2
     const val PAGES = 604
     const val AYAHS = 6236
     const val SURAHS = 114
@@ -20,8 +20,15 @@ object QuranDatabaseBuilder {
     private const val SHORT_PAGES = 2 // pages 1 and 2 have 8 lines
     private const val SHORT_PAGE_LINES = 8
     private const val PAGE_LINES = 15
+    private const val QUARTERS_PER_JUZ = 8
 
-    data class Sources(val tanzil: File, val layout: File, val glyphWords: File, val textWords: File)
+    data class Sources(
+        val tanzil: File,
+        val layout: File,
+        val glyphWords: File,
+        val textWords: File,
+        val metadata: File,
+    )
 
     private data class Line(
         val page: Int, val line: Int, val kind: String, val centered: Boolean,
@@ -36,6 +43,8 @@ object QuranDatabaseBuilder {
         val texts = readWords(sources.textWords)
         val tanzil = readTanzil(sources.tanzil)
         val placement = validate(lines, glyphs, texts, tanzil)
+        val metadata = QuranMetadata.read(sources.metadata)
+        validateMetadata(metadata, tanzil)
 
         output.parentFile.mkdirs()
         output.delete()
@@ -45,6 +54,7 @@ object QuranDatabaseBuilder {
             db.insertLines(lines)
             db.insertWords(glyphs, texts, placement)
             db.insertAyahs(tanzil, glyphs, placement)
+            db.insertMetadata(metadata)
             db.insertMeta(sources)
             db.commit()
             db.autoCommit = true
@@ -139,6 +149,51 @@ object QuranDatabaseBuilder {
         return placement
     }
 
+    /** Tanzil's metadata must agree with the Tanzil text: ayah counts, start indexes, quarters in order. */
+    private fun validateMetadata(meta: QuranMetadata, tanzil: Map<Pair<Int, Int>, String>) {
+        val counts = tanzil.keys.groupingBy { it.first }.eachCount()
+        var start = 0
+        meta.surahs.forEachIndexed { i, s ->
+            val n = i + 1
+            check(s.ayahs == counts[n]) { "quran-data.js: surah $n has ${s.ayahs} ayahs, the text ${counts[n]}" }
+            check(s.start == start) { "quran-data.js: surah $n starts at ${s.start}, expected $start" }
+            check(s.place == "Meccan" || s.place == "Medinan") { "quran-data.js: surah $n place ${s.place}" }
+            start += s.ayahs
+        }
+        check(meta.surahs.map { it.order }.sorted() == (1..SURAHS).toList()) { "revelation order is not 1..$SURAHS" }
+        val order = compareBy<Pair<Int, Int>>({ it.first }, { it.second })
+        check(meta.quarterStarts == meta.quarterStarts.sortedWith(order)) { "hizb quarters out of order" }
+        check(meta.quarterStarts.first() == (1 to 1)) { "the first quarter does not start at 1:1" }
+        check(meta.juzStarts == meta.quarterStarts.filterIndexed { i, _ -> i % QUARTERS_PER_JUZ == 0 }) {
+            "juz starts are not every eighth quarter"
+        }
+        (meta.quarterStarts + meta.sajdas.map { it.surah to it.ayah }).forEach { key ->
+            check(key in tanzil) { "quran-data.js names ${key.first}:${key.second}, which is not in the text" }
+        }
+    }
+
+    private fun Connection.insertMetadata(meta: QuranMetadata) {
+        batch("INSERT INTO surah(number, name, ayahs, place, revelation_order) VALUES (?,?,?,?,?)",
+            meta.surahs.withIndex()) { st, (i, s) ->
+            st.setInt(1, i + 1)
+            st.setString(2, s.name)
+            st.setInt(3, s.ayahs)
+            st.setString(4, s.place.lowercase())
+            st.setInt(5, s.order)
+        }
+        batch("INSERT INTO quarter(number, surah, ayah) VALUES (?,?,?)", meta.quarterStarts.withIndex()) { st, (i, q) ->
+            st.setInt(1, i + 1)
+            st.setInt(2, q.first)
+            st.setInt(3, q.second)
+        }
+        // Only where the sajdas are, as the printed Mushaf marks them. Tanzil also labels each one "obligatory" or
+        // "recommended": a ruling of the schools, not the text, so it is not copied (DESIGN §1).
+        batch("INSERT INTO sajda(surah, ayah) VALUES (?,?)", meta.sajdas) { st, s ->
+            st.setInt(1, s.surah)
+            st.setInt(2, s.ayah)
+        }
+    }
+
     private fun Connection.insertLines(lines: List<Line>) = batch(
         "INSERT INTO line(page, line, kind, centered, first_word, last_word, surah) VALUES (?,?,?,?,?,?,?)",
         lines,
@@ -194,6 +249,7 @@ object QuranDatabaseBuilder {
             "layout_sha256" to sha256(sources.layout),
             "glyph_words_sha256" to sha256(sources.glyphWords),
             "text_words_sha256" to sha256(sources.textWords),
+            "metadata_sha256" to sha256(sources.metadata),
         ),
     ) { s, (k, v) ->
         s.setString(1, k)
@@ -254,5 +310,11 @@ object QuranDatabaseBuilder {
             PRIMARY KEY (surah, ayah)
         ) WITHOUT ROWID;
         CREATE INDEX ayah_by_page ON ayah (page);
+        CREATE TABLE surah (
+            number INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, ayahs INTEGER NOT NULL, place TEXT NOT NULL,
+            revelation_order INTEGER NOT NULL
+        );
+        CREATE TABLE quarter (number INTEGER NOT NULL PRIMARY KEY, surah INTEGER NOT NULL, ayah INTEGER NOT NULL);
+        CREATE TABLE sajda (surah INTEGER NOT NULL, ayah INTEGER NOT NULL, PRIMARY KEY (surah, ayah)) WITHOUT ROWID;
     """.trimIndent()
 }

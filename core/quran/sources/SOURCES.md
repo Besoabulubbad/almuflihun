@@ -8,8 +8,11 @@ Committed per ADR 0004 (layout and word data) and ADR 0013 (the page fonts are *
 | `qpc-v2-15-lines.db` | KFGQPC V2 (1421H) Madani layout: 604 pages, 15 lines, `pages(page_number, line_number, line_type, is_centered, first_word_id, last_word_id, surah_number)` | QUL, [mushaf-layout/10](https://qul.tarteel.ai/resources/mushaf-layout/10), 2026-11-26 | QUL: "no copyright information"; credited; permission request planned (ADR 0004) | `e4df98f35dd3b8927ff096337c8739e0f0b12c8ba622834c345eaa4c3e28dd8c` |
 | `qpc-v2.db` | 83,668 words (6,236 ayahs) as QPC V2 page-font glyph codes: `words(id, location, surah, ayah, word, text)` | QUL, the glyph words of the QPC V2 font ([font/249](https://qul.tarteel.ai/resources/font/249)), 2026-11-26 | as above | `4bf9549dfcfd367d4d4b151bd58b51af63b677d1c980cf5e52541c2f981d7e6d` |
 | `digital-khatt-v2.db` | The same 83,668 words as Unicode Uthmani text, for the Digital Khatt fallback, cards and screen readers | QUL, Digital Khatt V2 words ([font/247](https://qul.tarteel.ai/resources/font/247)), 2026-11-26 | as above | `071c0f43e30819b8b6427194c2f4c97ff05340da3808092c590967913b0382a6` |
+| `quran-data.js` | Tanzil Quran Metadata 1.0: per surah its start, ayah count, revelation order, Arabic name and Meccan/Medinan; juz and hizb-quarter starts; sajdas | [tanzil.net/docs/quran_metadata](https://tanzil.net/docs/quran_metadata) (`res/text/metadata/quran-data.js`), 2026-11-27 | CC BY 3.0, verbatim, with attribution | `9e9930c592aaa34b5c7a79ff4e99ffdc782263a266090bfe2c49e4ed4bac4ca4` |
 
 ## Checked facts
+
+- `quran-data.js` agrees with the rest: its 114 ayah counts equal the layout's; its 240 hizb-quarter starts equal `design/data/hizb-60.json`; its juz starts are every eighth quarter. Its **page** starts follow an older print (25 of 604 differ from the QPC V2 layout), so pages always come from `qpc-v2-15-lines.db` and Tanzil's page list is not used.
 
 - QUL's Digital Khatt layout (`digital-khatt-15-lines.db`) has exactly the same `pages` rows as the QPC V2 layout; only its `info` row differs. So one layout serves both fonts and the second file is not committed.
 - `qpc-v2.db` and `digital-khatt-v2.db` have the same word ids and locations, row for row.

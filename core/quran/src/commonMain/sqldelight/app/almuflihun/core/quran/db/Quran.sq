@@ -43,3 +43,23 @@ SELECT surah, ayah, simple FROM ayah ORDER BY surah, ayah;
 
 pageGlyphs:
 SELECT glyph FROM word WHERE page = ?;
+
+CREATE TABLE surah (
+    number INTEGER NOT NULL PRIMARY KEY, name TEXT NOT NULL, ayahs INTEGER NOT NULL, place TEXT NOT NULL,
+    revelation_order INTEGER NOT NULL
+);
+
+CREATE TABLE quarter (number INTEGER NOT NULL PRIMARY KEY, surah INTEGER NOT NULL, ayah INTEGER NOT NULL);
+
+CREATE TABLE sajda (surah INTEGER NOT NULL, ayah INTEGER NOT NULL, PRIMARY KEY (surah, ayah)) WITHOUT ROWID;
+
+surahs:
+SELECT s.number, s.name, s.ayahs, s.place, s.revelation_order, a.page
+FROM surah s JOIN ayah a ON a.surah = s.number AND a.ayah = 1
+ORDER BY s.number;
+
+quarters:
+SELECT surah, ayah FROM quarter ORDER BY number;
+
+isSajda:
+SELECT COUNT(*) FROM sajda WHERE surah = ? AND ayah = ?;
