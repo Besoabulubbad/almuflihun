@@ -7,7 +7,9 @@ import app.almuflihun.core.testing.TestDispatcherProvider
 import app.almuflihun.core.testing.runAppTest
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -39,57 +41,67 @@ class ContentPlacementTest : PlatformTest() {
     private suspend fun content(name: String): JsonObject =
         Json.parseToJsonElement(Res.readBytes("files/content/$name").decodeToString()).jsonObject
 
-    private data class Quote(val where: String, val key: AyahKey, val text: String, val range: IntRange?)
+    private data class Quote(val where: String, val key: AyahKey?, val text: String, val range: IntRange?)
 
-    private suspend fun quotes(): List<Quote> {
-        val doors = content("abwab-4.json")["abwab"]!!.jsonArray.map { it.jsonObject }
-        val fromDoors = doors.flatMap { door ->
-            val id = door.string("id")
-            val cards = door["cards"]?.jsonArray.orEmpty().map { card ->
-                val c = card.jsonObject
-                Quote("door $id card", key(c.string("ref")), c.string("text"), null)
+    /**
+     * Every quote in the content, found by walking the files rather than by listing layouts, so a new layout cannot be
+     * skipped: any `quote` or `quotes` with its `key` or `ref`, the door `cards`, and the الضياء `highlight` lists.
+     * Quotes without a verse key are returned with a null key.
+     */
+    private suspend fun quotes(): List<Quote> = listOf("abwab-4.json", "dhikr-slider.json", "diyaa-food.json")
+        .flatMap { file -> collect(content(file), file) }
+
+    private fun collect(element: JsonElement, where: String): List<Quote> = when (element) {
+        is JsonArray -> element.flatMapIndexed { i, child -> collect(child, "$where[$i]") }
+        is JsonObject -> {
+            // Only a quote's own key: entries also carry a display `ref` such as 13:21-22, which is not a quote key.
+            val key = if ("quote" in element || "quotes" in element) {
+                (element["key"] ?: element["ref"])?.let { it as? JsonPrimitive }?.content?.let(::key)
+            } else {
+                null
             }
-            val items = door["design"]?.let { it as? JsonObject }?.get("sections")?.jsonArray.orEmpty()
-                .flatMap { it.jsonObject["items"]?.jsonArray.orEmpty() }
-                .map { it.jsonObject }
-                .filter { "quote" in it }
-                .map { Quote("door $id ${it.string("entry")}", key(it.string("key")), it.string("quote"), it.range()) }
-            cards + items
-        }
-        val slider = content("dhikr-slider.json")["items"]!!.jsonArray.map { it.jsonObject }.map {
-            Quote("slider ${it.string("id")}", key(it.string("key")), it.string("quote"), it.range())
-        }
-        val diyaa = content("diyaa-food.json")["stations"]!!.jsonArray.flatMap { station ->
-            val n = station.jsonObject["n"]!!.jsonPrimitive.int
-            station.jsonObject["blocks"]!!.jsonArray.map { it.jsonObject }
-                .filter { it["type"]?.jsonPrimitive?.content == "verse" }
-                .flatMap { block ->
-                    val ranges = block["highlight_words"]?.jsonArray.orEmpty().map { it.jsonObject }
-                    block["highlight"]?.jsonArray.orEmpty().mapIndexed { i, h ->
+            val own = buildList {
+                (element["quote"] as? JsonPrimitive)?.let { add(Quote(where, key, it.content, element.range())) }
+                (element["quotes"] as? JsonArray)?.forEach { add(Quote(where, key, it.jsonPrimitive.content, null)) }
+                (element["cards"] as? JsonArray)?.forEachIndexed { i, card ->
+                    val c = card.jsonObject
+                    add(Quote("$where/cards[$i]", key(c.string("ref")), c.string("text"), null))
+                }
+                (element["highlight"] as? JsonArray)?.let { highlights ->
+                    val ranges = element["highlight_words"]?.jsonArray.orEmpty().map { it.jsonObject }
+                    val first = element["keys"]!!.jsonArray.first().jsonPrimitive.content
+                    highlights.forEachIndexed { i, h ->
                         val declared = ranges.getOrNull(i)
-                        val k = declared?.string("key") ?: block["keys"]!!.jsonArray.first().jsonPrimitive.content
-                        Quote("الضياء station $n", key(k), h.jsonPrimitive.content, declared?.range())
+                        val k = key(declared?.string("key") ?: first)
+                        add(Quote("$where/highlight[$i]", k, h.jsonPrimitive.content, declared?.range()))
                     }
                 }
+            }
+            own + element.entries
+                .filterNot { (name, _) -> name in setOf("cards", "highlight", "highlight_words") }
+                .flatMap { (name, child) -> collect(child, "$where/$name") }
         }
-        return fromDoors + slider + diyaa
+        else -> emptyList()
     }
 
     @Test
     fun every_quote_and_highlight_is_placed_in_the_shipped_text() = runAppTest {
-        val all = quotes()
-        val failures = all.mapNotNull { q ->
-            when (val result = QuotePlacer.place(q.key, words(q.key), q.text, q.range)) {
+        val (keyed, unkeyed) = quotes().partition { it.key != null }
+        val failures = keyed.mapNotNull { q ->
+            val key = q.key!!
+            when (val result = QuotePlacer.place(key, words(key), q.text, q.range)) {
                 is QuotePlacer.Result.Mismatch -> "${q.where}: ${result.reason}"
                 is QuotePlacer.Result.Placed -> {
                     // Every placed quote can also be highlighted on the Mushaf page.
-                    MushafAlignment.mushafPositions(result.range, words(q.key))
+                    MushafAlignment.mushafPositions(result.range, words(key))
                     null
                 }
             }
         }
         assertTrue(failures.isEmpty(), "Quotes not placed:\n" + failures.joinToString("\n"))
-        assertEquals(EXPECTED_QUOTES, all.size)
+        assertEquals(EXPECTED_QUOTES, keyed.size)
+        // docs/design-requests.md §4: known quotes without a verse key; the screen must not show them.
+        assertEquals(KNOWN_UNKEYED, unkeyed.map { it.where }, "Quotes without a verse key")
     }
 
     @Test
@@ -135,7 +147,9 @@ class ContentPlacementTest : PlatformTest() {
     private fun key(text: String): AyahKey = text.split(':').let { AyahKey(it[0].toInt(), it[1].toInt()) }
 
     private companion object {
-        const val EXPECTED_QUOTES = 225
+        const val EXPECTED_QUOTES = 256
+        val KNOWN_UNKEYED = List(2) { "diyaa-food.json/stations[8]/blocks[2]/items[0]" } +
+            List(2) { "diyaa-food.json/stations[8]/blocks[2]/items[1]" }
         const val EXPECTED_POINTS = 663
     }
 }
