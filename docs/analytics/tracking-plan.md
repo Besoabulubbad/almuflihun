@@ -74,7 +74,7 @@ The words of a Quran search that found nothing are the clearest sign of what rea
 - After the app's forgiving normalisation (diacritics removed, letter forms unified, the same as search, #91) it is 2 to 50 characters of Arabic letters and spaces.
 - The same normalised query is sent at most once per device per day.
 
-**What protects it.** `search_zero` is **not a Firebase Analytics event**, because Analytics attaches an app-instance id to every event, which would be the install link ADR 0020 forbids. It goes through the same `Analytics` wrapper and consent gate to a separate sink: a create-only record holding exactly `query`, `kind` and the month (`2026-11`), with no auth uid, installation id, device data, timestamp finer than the month, or request log of the payload. It cannot be joined to `search` events or to anyone. Records are deleted after 6 months; the analyst reads them only in aggregate (the monthly review lists queries with their counts) and never copies them into issues or docs with anything that could identify the person who typed them.
+**What protects it.** `search_zero` is **not a Firebase Analytics event**, because Analytics attaches an app-instance id to every event, which would be the install link ADR 0020 forbids. It goes through the same `Analytics` wrapper and consent gate to a separate sink: **a callable Cloud Function** (owner, 2026-11-28) that stores a record no client can read, list or change, holding exactly `query`, `kind` and the month (`2026-11`), with no auth uid, installation id, device data, timestamp finer than the month, or request log of the payload. It cannot be joined to `search` events or to anyone. The function also limits the rate and drops repeats on the server, and logs nothing of the payload. Records are deleted after **6 months** (owner, 2026-11-28); the analyst reads them only in aggregate (the monthly review lists queries with their counts) and never copies them into issues or docs with anything that could identify the person who typed them.
 
 ## Remote settings (Firebase Remote Config)
 
@@ -92,6 +92,7 @@ Rules:
 - **Everyone gets the same settings at the same time.** Conditions may use only app version and platform; never percentages, random percentiles, Analytics audiences or user properties.
 - **Effects are read before and after a change**, by date, from the change log below. `position` on `dhikr_card_open` and `ayah_action` records the order the person actually saw, so a reorder is readable without knowing which file was active. That is why no `config` user property is needed.
 - Remote Config fetches carry the Firebase installation ID as Firebase requires; we never read, store or export it.
+- **The fetch may happen before consent** (owner, 2026-11-28), like the update check, so everyone gets the same layout from the first launch. «ما نجمعه» says so in one line: the app downloads its layout settings and sends nothing about you.
 
 | Date | Setting | From → to | Question it tests |
 |---|---|---|---|
@@ -231,7 +232,7 @@ The wrapper's allow-list and its test must include every event, parameter and va
 - Post, comment, moderator-message, note and feedback text; collection names; the number of verses or notes a person holds.
 - Names, emails, account, Auth, Google or installation IDs, who wrote a post or whose profile was opened.
 - Exact location, contacts, the advertising ID.
-- Which audience filter a person picks in البثوث (للأخوات and the others would reveal something personal); interest by audience is read from `show_id`, joined to the show's data in the analysis only.
+- Which audience filter a person picks in البثوث (للأخوات and the others would reveal something personal; owner, 2026-11-28); interest by audience is read from `show_id`, joined to the show's data in the analysis only.
 - وقتي مع القرآن, the WeekStrip's days, any "days in a row".
 - Anything for experiments: no random install id, no variant assignment.
 
