@@ -1,6 +1,6 @@
 # Plan
 
-How المفلحون goes from an empty Kotlin Multiplatform skeleton to the first signed APK handed to people. Phases are ordered by dependency. Each has an **exit criterion** that can be seen in the repository (a green workflow, a passing test, a measured number), not a feeling of done.
+How مجتمع القرآن goes from an empty Kotlin Multiplatform skeleton to the first signed APK handed to people. Phases are ordered by dependency. Each has an **exit criterion** that can be seen in the repository (a green workflow, a passing test, a measured number), not a feeling of done.
 
 The order is deliberate: **foundations → Quran and astronomy engines → design system → offline screens → backend → audio → online screens → release**. Everything that works offline comes first, so it can be used and tested early; the networked parts build on a finished base. Two risky questions are answered by **spikes** before the phases that depend on them.
 
@@ -21,7 +21,7 @@ All taken on 2026-11-26, one question at a time; each has an ADR. Per-screen dec
 | Community | Review by default, trust granted by moderators, roles as data, points and grades | [0006](adr/0006-community-users-and-permissions.md) |
 | Audio | Quran Foundation API through our backend; علي جابر first | [0007](adr/0007-recitation-audio-quran-foundation.md) |
 | Analytics | Opt-in, purpose-limited Firebase Analytics and Crashlytics; remote settings and zero-result searches with consent; no A/B tests | [0008](adr/0008-analytics-and-crash-reporting.md), [0020](adr/0020-analytics-v7.md) |
-| Identity | Shown as «مجتمع القرآن»; codename `almuflihun`, application ID `app.almuflihun`, MIT licence | [0009](adr/0009-app-identity.md), [0019](adr/0019-app-name.md) |
+| Identity | Shown as «مجتمع القرآن»; codename `qurancommunity`, application ID `app.qurancommunity`, MIT licence | [0009](adr/0009-app-identity.md), [0019](adr/0019-app-name.md) |
 | Updates | The direct APK updates itself; `play` flavour for later | [0010](adr/0010-self-updating-apk.md) |
 | Architecture | Sojourn's setup, adapted | [0011](adr/0011-architecture-from-sojourn.md) |
 | Study engine | Collections, advanced search, word study, related verses, study panel, surah overview | [0012](adr/0012-study-engine.md) |
@@ -31,7 +31,7 @@ All taken on 2026-11-26, one question at a time; each has an ADR. Per-screen dec
 ### Phase 0: repository and documentation
 
 - `git init` (done), `.gitignore`, the MIT `LICENSE` (done), `THIRD_PARTY.md`.
-- **Public GitHub repository `almuflihun`** on the owner's account; branch protection on `main` (PR only, required checks, linear history).
+- **Public GitHub repository `qurancommunity`** on the owner's account; branch protection on `main` (PR only, required checks, linear history).
 - `README.md`, `CLAUDE.md` (the agent contract), `CONTRIBUTING.md`, PR template with the quality-bar checklist, issue templates, `CODEOWNERS`, `.editorconfig`, `.mcp.json` (Context7, GitHub).
 - Docs: architecture overview, modules, tech stack with versions verified on the day, guides (local setup, adding a feature, testing, release), the ADRs, specs, research, the tracking plan.
 - `mkdocs.yml` and `docs.yml` publishing the site to GitHub Pages; `claude-review.yml` reviewing every PR against `CLAUDE.md`, the ADRs and the quality bar.
@@ -40,7 +40,7 @@ All taken on 2026-11-26, one question at a time; each has an ADR. Per-screen dec
 
 ### Phase 1: build system and quality gates
 
-- `build-logic` convention plugins (`almuflihun.kmp.library`, `.kmp.feature`, `.compose`, `.android.application` with `direct` and `play` flavours, `.koin`, `.sqldelight`, `.screenshot`, `.detekt`, `.dokka`, `.tokens`).
+- `build-logic` convention plugins (`qurancommunity.kmp.library`, `.kmp.feature`, `.compose`, `.android.application` with `direct` and `play` flavours, `.koin`, `.sqldelight`, `.screenshot`, `.detekt`, `.dokka`, `.tokens`).
 - Version catalog verified against official sources; Gradle and AGP brought to the newest pair inside Kotlin's documented window.
 - detekt with Compose rules and the custom rule set adapted to this design's tokens; Konsist module and naming rules; dependency analysis; Renovate.
 - Empty skeletons for every module in ADR 0011, each with a README.
@@ -111,7 +111,7 @@ The v7 structure (ADR 0018): four tabs, each with its own back stack, and the mi
 
 ### Phase 7: Firebase backend
 
-- The owner creates the Firebase project `almuflihun` on Blaze with a budget alert; Google sign-in; the API key restricted to the package and signing fingerprint.
+- The owner creates the Firebase project `quran-community` on Blaze with a budget alert; Google sign-in; the API key restricted to the package and signing fingerprint.
 - Firestore schema and **security rules** with emulator tests (users, posts, threads, reviews, reports, points log, roles, trust grants, saved, lives and schedules, videos, feedback, `app/latest`).
 - Cloud Functions (TypeScript, tested in the emulator): permission claims, points and grades, review-queue and report pushes, post and reply pushes, scheduled live pushes, announcements with rate limits, account deletion, update push.
 - The owner-bootstrap script (sets the owner role once).

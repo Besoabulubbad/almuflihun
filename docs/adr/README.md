@@ -37,6 +37,7 @@ Design and content decisions made with the designer live in [`design/DECISIONS.m
 | [0018](0018-design-v7.md) | Design v7 is adopted as a UI change; decided product behaviour stands | accepted | 2026-11-28 |
 | [0019](0019-app-name.md) | The app is called «مجتمع القرآن» | accepted | 2026-11-28 |
 | [0020](0020-analytics-v7.md) | Analytics for design v7: remote settings, more events, zero-result searches; no A/B tests | accepted | 2026-11-28 |
+| [0021](0021-rename-to-qurancommunity.md) | The codebase, application id and repository are renamed to `qurancommunity` | accepted | 2026-11-28 |
 
 ## How these were decided
 

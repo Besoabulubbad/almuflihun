@@ -1,6 +1,6 @@
 # `:tooling:detekt-rules`
 
-The design's rules (`design/DESIGN.md`) and the Quran rules (`CLAUDE.md`) as detekt rules: a rule without enforcement is a wish. Loaded into every module by `almuflihun.detekt`; scopes in `config/detekt/detekt.yml` under `almuflihun:`.
+The design's rules (`design/DESIGN.md`) and the Quran rules (`CLAUDE.md`) as detekt rules: a rule without enforcement is a wish. Loaded into every module by `qurancommunity.detekt`; scopes in `config/detekt/detekt.yml` under `qurancommunity:`.
 
 | Rule | Enforces | Flags | Applies to |
 |---|---|---|---|

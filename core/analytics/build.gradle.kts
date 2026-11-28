@@ -1,5 +1,5 @@
 plugins {
-    id("almuflihun.kmp.library")
+    id("qurancommunity.kmp.library")
 }
 
 kotlin {

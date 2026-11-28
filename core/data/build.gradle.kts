@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    id("almuflihun.kmp.library")
+    id("qurancommunity.kmp.library")
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 

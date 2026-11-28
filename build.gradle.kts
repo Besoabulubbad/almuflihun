@@ -67,7 +67,7 @@ dependencyAnalysis {
             onAny { severity("warn") }
             onUnusedDependencies {
                 severity("fail")
-                // almuflihun.kmp.library gives every module kotlin-test, ready for its first test.
+                // qurancommunity.kmp.library gives every module kotlin-test, ready for its first test.
                 exclude("org.jetbrains.kotlin:kotlin-test")
             }
             onUsedTransitiveDependencies {

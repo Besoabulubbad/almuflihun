@@ -1,4 +1,4 @@
-# Contributing to المفلحون
+# Contributing to مجتمع القرآن
 
 Thank you for wanting to help. This is a non-profit app used by real people to read the Quran, so correctness and care come before speed.
 

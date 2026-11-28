@@ -1,7 +1,7 @@
 plugins {
-    id("almuflihun.kmp.feature")
+    id("qurancommunity.kmp.feature")
 }
 
 compose.resources {
-    packageOfResClass = "app.almuflihun.feature.home.resources"
+    packageOfResClass = "app.qurancommunity.feature.home.resources"
 }

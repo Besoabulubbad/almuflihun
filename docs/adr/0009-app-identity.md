@@ -1,7 +1,7 @@
 # 0009 — App identity: `almuflihun`, application ID `app.almuflihun`
 
 - **Status:** accepted
-- **Later change:** Display name superseded by [0019](0019-app-name.md) («مجتمع القرآن»); package and repository unchanged
+- **Later change:** Display name superseded by [0019](0019-app-name.md) («مجتمع القرآن»); package, application id and repository renamed to `qurancommunity` by [0021](0021-rename-to-qurancommunity.md)
 - **Date:** 2026-11-26
 - **Deciders:** Mohammad Abu Lubad, Claude
 - **Tags:** identity, release

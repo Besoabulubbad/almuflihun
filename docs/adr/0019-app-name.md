@@ -5,6 +5,7 @@
 - **Deciders:** Mohammad Abu Lubad (owner)
 - **Tags:** identity, brand
 - **Supersedes:** the display-name part of [0009](0009-app-identity.md) (the package and repository names stand)
+- **Later change:** the package, application id and repository were renamed too, in [0021](0021-rename-to-qurancommunity.md)
 
 ## Decision
 

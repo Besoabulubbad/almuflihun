@@ -1,11 +1,11 @@
 import java.security.MessageDigest
 
 plugins {
-    id("almuflihun.kmp.library")
-    id("almuflihun.koin")
+    id("qurancommunity.kmp.library")
+    id("qurancommunity.koin")
     id("org.jetbrains.kotlin.plugin.serialization")
     // Builds files/quran.db from sources/ into Compose Resources (ADR 0015).
-    id("almuflihun.quran.database")
+    id("qurancommunity.quran.database")
     id("app.cash.sqldelight")
 }
 
@@ -66,14 +66,14 @@ kotlin {
 }
 
 compose.resources {
-    packageOfResClass = "app.almuflihun.core.quran.resources"
+    packageOfResClass = "app.qurancommunity.core.quran.resources"
 }
 
 // The bundled database is read-only: SQLDelight only types the queries; there are no migrations (ADR 0015).
 sqldelight {
     databases {
         create("QuranDatabase") {
-            packageName.set("app.almuflihun.core.quran.db")
+            packageName.set("app.qurancommunity.core.quran.db")
         }
     }
 }

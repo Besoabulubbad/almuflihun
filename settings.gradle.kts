@@ -1,4 +1,4 @@
-rootProject.name = "almuflihun"
+rootProject.name = "qurancommunity"
 
 pluginManagement {
     includeBuild("build-logic")

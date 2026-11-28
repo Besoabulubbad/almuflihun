@@ -1,4 +1,4 @@
-// Included build that provides the `almuflihun.*` convention plugins (ADR 0003).
+// Included build that provides the `qurancommunity.*` convention plugins (ADR 0003).
 rootProject.name = "build-logic"
 
 pluginManagement {
