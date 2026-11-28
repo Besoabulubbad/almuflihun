@@ -1,187 +1,196 @@
-# Screens
+# Screens (v7)
 
-There are 79 approved screens and state boards. Each one has a PNG image in `screens/{Name}.png` and an HTML mockup in `mockups/`, which you can open in a browser. The mockups use the canvas template syntax: `{{ }}`, `<sc-for>`, `<sc-if>`. Read them as layout references, not as code to ship.
+Each screen has a code that matches `screens/<code>.png` and the board (`board/index.html`). Build them only from the components in `DESIGN-SYSTEM.md` §6 and §10.
 
-Navigation map:
+## Navigation
 
 ```
-Home ─┬─ Settings
-      ├─ Moon
-      ├─ الذكر (Quran hub) ─┬─ Mushaf ── MushafPlay
-      │                     ├─ Hizb
-      │                     ├─ الأبواب (doors) ── 7 door screens ── كل الآيات
-      │                     ├─ Live
-      │                     ├─ Community
-      │                     └─ Saved
-      ├─ الضياء (food) ── 11 stations (sequential)
-      └─ الفرقان  (not designed yet)
+TabBar: الذكر │ المجتمع │ القرآن │ الإعدادات      (each tab keeps its own back stack)
+MiniPlayer: above the TabBar on every tab and sub-screen; at the bottom in full-screen reading.
+AyahSheet: from any verse, anywhere.
+
+الذكر (A1) ─┬─ تلاوة card → Reader at the right page (C2)
+            ├─ Moon row → Moon page (A2, always dark)
+            ├─ ادرس (A3) → Door (A4) → كل الآيات
+            ├─ الضياء (A5) → Station 1–11 (A6)
+            └─ الفرقان (قريبًا)
+المجتمع ─┬─ النقاش (B1) → Thread, Profile; FAB → Compose (B6)
+         ├─ البثوث (B2) → Live details (B3)
+         ├─ الفيديوهات (B4)
+         └─ المشرفون (B5)
+         Sign-in sheet (B7) whenever a signed-out user acts.
+القرآن (C1) ─┬─ Search: typing (C5) → results with spelling forms (C6) → options sheet (C7)
+             ├─ تابع القراءة → Reader (C2), word tap (C3), تلاوة finished (C4)
+             ├─ Index: السور / الأجزاء / الأحزاب
+             └─ مجموعاتي (C8) → Collection (C9)
+الإعدادات (D1) ─┬─ Profile (my posts, sign in/out, delete)
+                ├─ التلاوة اليومية (D2)
+                ├─ وقتي مع القرآن (the old 7-day chart)
+                ├─ القارئ، الصوت دون اتصال، المظهر، الإشعارات، الموقع والقمر، عن التطبيق
+                └─ الإدارة (moderators only)
+Outside the app: widgets (E1, E2), notification player (E3), lock screen (E4), notifications (E5).
 ```
 
-## Home and Moon
+## Tab 1 · الذكر
 
-**HomeB · الرئيسية**
-- **Night sky:**
-  - The app name, and a profile button.
-  - The moon drawn at today's phase.
-  - The lunar night in words («الليلة السادسة عشرة»), then the phase and illumination.
-  - A 30-dot strip for the lunar month (past, today, future).
-  - Three small cards: moonrise, moonset, and days until the new moon (المحاق).
-  - Tapping the moon opens the Moon page.
-- **Paper sheet:**
-  - The «دليل اليوم» card, with today's verse from a door.
-  - Three portals with icons: الذكر، الضياء، الفرقان.
-- The top-left button opens Settings.
-- **No Gregorian date.**
+**A1 الذكر.** The cards come from remote config, in this order:
+1. Title and the lunar night («السبت ، الليلة ١٨ من الشهر»). No Gregorian date.
+2. SearchField «ابحث في القرآن», which opens the القرآن search.
+3. **TilawaCard**: today's portion, a ring of pages read, the reminder time, «أكمل من الصفحة n».
+4. **WeekStrip**: «هذا الأسبوع», days read, total time.
+5. MoonRow, computed for today.
+6. تذكرة: a VerseCard (`quranHero`) with the quoted words highlighted and its door named. Swipe for the next of the 14 in `data/dhikr-slider.json`.
+7. SectionTiles: ادرس (٧ أبواب), الضياء, الفرقان (قريبًا).
 
-**Moon · القمر**
-- Today's moon in detail: phase, illumination, distance, and its relation to the sun.
-- Rise and set times with azimuths, shown as a compass.
-- A strip of the 30 lunar nights.
-- How late the moonrise is from night to night (a bar chart).
-- Notable events: harvest moon, winter full moon, perigee.
-- All values are computed for the user's location. The mockup uses Jerash, 26 Nov 2026, lunar day 16.
+**A2 Moon page (always dark)**
+- Tonight's moon, phase and age; lit %, distance, nights until the new moon.
+- The 30 nights.
+- The rise and set compass. Location is used on the device only; without it, «لا نعرف».
+- How much later it rises each night.
+- Coming full moon and new moon, counted in nights.
 
-## الذكر (Quran)
+**A3 ادرس.** The 7 visible doors in `meta.visible_doors` order, with their counts.
 
-**Quran · الذكر (hub)**, in this order:
-1. **Night header:** the title, and a settings button that opens Settings.
-2. **Slider:** 14 curated verses from `data/dhikr-slider.json`.
-3. **HizbCard «حزبك».**
-4. **Four tiles:** المصحف والاستماع، الأبواب، المجتمع، المحفوظات.
-5. **البثوث:** horizontal LiveCards, plus «الكل».
-6. **وقتك مع القرآن:** today, this week, and a 7-day bar chart.
-7. **«لماذا تقرأ القرآن»:** an empty dashed placeholder. Its content comes later.
+**A4 Door.** One template for all doors:
+- the summary
+- sections of VerseCards with the `words` ranges highlighted
+- «كل الآيات»
 
-**Mushaf · المصحف: تحديد آية**
-- **Printed Madani pages** (604), drawn with the QPC page fonts. quran.com's Android app is the visual reference only; its code is GPL and is not reused (DECISIONS.md #5).
-- Shows the selected ayah and the AyahSheet.
-- The list icon opens **MushafIndex**.
+**A5 الضياء hub.**
+- Illustration and intro.
+- The 11 stations.
+- «ابدأ من المحطة ١».
+- الخلاصة.
 
-**MushafPlay · أثناء الاستماع**
-- The playing ayah is highlighted. Earlier ayahs are dimmed.
-- The word tooltip and the PlayerBar.
-- Audio with ayah-level timing comes from an open-source source (check the licence).
+**A6 Station.**
+- Blocks from `data/diyaa-food.json` in order.
+- Previous and next.
+- Station 11 keeps only «لحم الخنزير».
 
-**Hizb · الحزب**
-- The printed pages of one hizb (hizb 2 = pages 11–21). Ayahs before the start are dimmed, and «۞ الحزب ٢» marks the start.
-- A page progress bar, the PlayerBar, «الحزب السابق» and «الحزب التالي».
-- The position is saved. Hizbs run in order 1 → 60.
+## Tab 2 · المجتمع (visible to all; sign-in only to act)
 
-**MushafIndex · الفهرس**
-- Search, plus the tabs السور / الأحزاب / الأجزاء.
-- The hizb grid marks the current hizb. Surah rows show the ayah count and the start page.
+**B1 النقاش**
+- Title with a post-search icon.
+- CommunitySegments.
+- LiveBanner, only when a live is on or within 24 h.
+- RuleBox line «كل جواب يُرفق آية».
+- PostCards.
+- FAB «اسأل أو شارك».
 
-**Live · البثوث** (Firebase list, DECISIONS.md #1)
-- The in-app YouTube player at the top, then the filter الكل / تلاوة / أسئلة / تدبّر, then the LiveCards.
-- YouTube plays inside the app. TikTok opens the TikTok app.
-- Upcoming streams have «ذكّرني».
+**B2 البثوث**
+- Audience filter.
+- A live-now card: host, audience, topic, length, «افتح في تيك توك».
+- «هذا الأسبوع» LiveRows.
+- Weekly schedules.
 
-**Community · المجتمع** (Firebase, DECISIONS.md #1–2)
-- Buttons: شارك آية / اسأل / تأمّل.
-- The rules box.
-- Posts with **attached verses** (key + word range), shown in full.
-- Every answer must attach a verse. Every reflection carries «فهم شخصي، ليس نصاً».
-- Posts can be reported.
+**B3 Live details**
+- Tags, title, time and platform.
+- Host card.
+- Rows: لمن، عن ماذا (links to the verses), المدة، يتكرر.
+- «اكتب سؤالك» (Compose with those verses) and «ذكّرني».
 
-**Saved · المحفوظات**
-- A filter by type: ayahs from the mushaf, and quotes from doors.
-- Each item links back to its source.
+**B4 الفيديوهات**
+- In-app YouTube player, title, «افتح الآية», «في يوتيوب».
+- VideoRows.
+- The MiniPlayer hides and pauses while a video plays.
 
-## الأبواب (Doors)
+**B5 المشرفون (new)**
+- ModeratorInbox: سؤال / بلاغ / اقتراح, the message, «أرفق آية», «أرسل».
+- «رسائلك» with status.
+- Replies arrive in the `moderator_replies` channel.
+- Admin side: الإدارة gains an inbox.
 
-Data: `data/abwab-4.json`.
-- Show only `meta.visible_doors`, in that order: awamir، nawahi، infaq، dhikr، shukr، qawl، hikma.
-- The other doors stay in the file with `visible: false`.
+**B6 Compose**
+- Type: شارك آية / اسأل / تأمّل.
+- The text.
+- The attached VerseCard with «غيّر» (the verse picker).
+- The moderation note and «أرسل».
 
-**RemindB · الأبواب**
-- Night top: «دليل اليوم», a full verse with the quote large, and the buttons افتح الباب / احفظ / شارك.
-- Paper sheet: 7 DoorTiles.
+**B7 SignInSheet**
+- When a signed-out user taps اسأل، أجب، أرسل, or messages the moderators.
+- Google sign-in, then back to the same place.
 
-** الأوامر، النواهي، الإنفاق، ذكر الله، الشكر، القول الحسن**
-- Each one renders `abwab[].design` (`type: "evidence"`): sections in order, then EvidenceItems.
-- الإنفاق starts with «قل العفو» (2:219), and its 2:261 item has the parable illustration.
-- Each door ends with a link to «كل الآيات».
+**Admin form for lives:** add «لمن» (للجميع / للمبتدئين / للأخوات / للأطفال) and «عن ماذا» (a verse range, a door id or text).
 
-**Hikma · الحكمة** (`type: "passages"`)
-- A chain of passages.
-- Tapping a passage opens **HikmaPassage**, which shows the passage verses in sequence. The mockup shows مقطع الإسراء.
+## Tab 3 · القرآن (the Quran engine)
 
-**BabAll · كل الآيات**
-- Every verse of the door (`abwab[].all_verses`) in mushaf order, with an optional note.
-- The door comes from where the user came from.
+**C1 القرآن**
+- SearchField with the options icon.
+- ContinueCard.
+- مجموعاتي row.
+- Segmented السور / الأجزاء / الأحزاب.
+- Index rows with play.
 
-## الضياء (Food in the Quran)
+**C2 Reader (full-screen)**
+- Printed Madani pages with QPC page fonts; pinch to zoom.
+- The TabBar hides; the MiniPlayer stays.
+- HizbProgress when reading the تلاوة portion.
+- Tap an ayah to get the AyahSheet: استمع، من هنا، احفظ، شارك، انسخ, «اسأل عنها في المجتمع», and its doors.
 
-Data: `data/diyaa-food.json`. It is built from `data/food-app-page-2.source.md`, verse by verse.
+**C3 Word tap.** «استمع للكلمة» | «ابحث بجذرها».
 
-**Diyaa · الطعام في القرآن (hub)**
-- A dawn hero illustration, the title and the intro.
-- The journey map: 11 stations. Each is tappable and opens its station.
-- The button «ابدأ الرحلة من المحطة ١».
-- The summary (الخلاصة): 11 lines, each with its illustration.
+**C4 تلاوة finished**
+- «أتممت تلاوة اليوم», the time, and tomorrow's start.
+- «تابع إلى الحزب n الآن» (counts toward tomorrow), «يكفي اليوم».
 
-**DiyaaS1…S11:** one station per screen.
-- StationHeader, then the station's `blocks` rendered in order, then StationNav (previous / next).
-- The stations:
-  1. ماذا أُحلّ لنا؟
-  2. كُلوا من الطيبات
-  3. أصحاب الكهف: أيها أزكى طعاماً
-  4. اللحوم: بهيمة الأنعام
-  5. طعام البحر
-  6. الفاكهة والنخيل والثمرات
-  7. العسل: فيه شفاء للناس
-  8. الحبوب
-  9. الأدنى
-  10. كلوا واشربوا ولا تسرفوا
-  11. المحرّمات
-- Station 11 keeps only the «لحم الخنزير: فإنه رجس» explanation under «صفاتها بكلمات القرآن». The group removed the other two lines, so do not add them back.
+**C5 While typing.** Phrase suggestions with counts, surah names, references, and recent searches (on the device only).
 
-**Counting note:** the tree counts in station 6 (النخل ٢٠، الأعناب ١١، الزيتون ٦، الرمان ٣، التين ١) were recounted against the verse text. The source file says ١٩ and ١٠. The JSON keeps both numbers under `count_bars` (`differs_from_source_file`), so the content owners can confirm.
+**C6 Results with spelling forms**
+- Count and «خيارات البحث».
+- SpellingForms: «كيف كُتبت في المصحف», one card per written form with its count.
+- VerseCards grouped by surah in Mushaf order, each match marked by its form.
+- Real example: «عباد» = 12 places: عِبَادُ ×11 (e.g. الفرقان ٦٣, الأنبياء ٢٦) and عِبَٰدُ ×1 (الزخرف ١٩).
 
-## Settings
-**Settings · الإعدادات**
-- المظهر: عادي / ليلي / حسب الجهاز.
-- التذكير: morning and evening, off by default.
-- الموقع والقمر: location switch, city fallback, and «بداية الشهر القمري: حساب فلكي» with its rule.
-- الاستماع: reciter, offline audio.
-- حسابي في المجتمع: the Google account, sign out, «الإدارة» for moderators, and delete account and posts.
-- عن التطبيق: who we are, text and audio sources with their licences, version.
+**C7 Search options**
+- Type: عبارة / كلمة كاملة / جذر / مطابق.
+- Range.
+- «أظهر أشكال الكتابة» (on by default).
+- مع / أو / بدون.
+- «اعرض n آية».
 
-**Admin · الإدارة** (moderators only, from Settings)
-- Add or edit streams with type, title, link, host and time.
-- The reports tab.
+**C8 مجموعاتي / C9 Collection.** As in v5:
+- create and rename collections
+- drag to order
+- private notes
+- شارك نصًا / انشر / استمع
 
-## Dark mode
-- Every paper screen has a dark version from `tokens.json → color.dark`.
-- In the prototype, switch with «ليلي» in the side panel or in Settings.
+## Tab 4 · الإعدادات
 
-## Added in v4
-Screens and state boards. A «لوحة حالات» (states board) shows the variants of one area with labels. See `REQUESTS-ANSWERED.md` for what each one answers.
-- **Home and Moon:** HomeStates, MoonStates, Prompts (consent, notification pre-prompt, update banner and sheet).
-- **الذكر:**
-  - QuranStates.
-  - Mushaf (reading header, ribbon, AyahSheet v2), MushafPlay (PlayerBar v2), PlayerSheet, MushafFull, MushafSearch.
-  - Hizb (night header «قراءة حزبك»), HizbEnd.
-  - SavedStates.
-- **الأبواب:** RemindB (تذكرة, tiles without verses), RemindStates.
-- **البثوث:** Live (TikTok, weekly), LiveVideos, VideoPlayer.
-- **المجتمع:** Community, CommunityCompose, VersePicker, CommunityThread, CommunityStates, Profile, ProfileMine, Grades.
-- **Settings:** Settings v4, CityPicker, WhatWeCollect, Feedback.
-- **Admin:** Admin hub, AdminReview, AdminLive, AdminUser, AdminAnnounce, AdminFeedback, AdminRoles.
+**D1 الإعدادات**
+- The profile card at the top (signed out: «سجّل الدخول»).
+- القراءة: التلاوة اليومية, وقتي مع القرآن.
+- الاستماع: القارئ, الصوت دون اتصال.
+- التطبيق: المظهر, الإشعارات, الموقع والقمر, عن التطبيق (ما نجمعه, أرسل ملاحظة, من نحن, المصادر, تحديث التطبيق).
+- الإدارة for moderators.
 
-## Added in v5
-- **First launch:** Onboard1–4.
-- **Study:**
-  - Collections, CollectionPage, CollectionStates.
-  - SearchAdvanced, SearchStates.
-  - WordStudy, AyahStudy, SurahOverview.
-  - The AyahSheet has 6 actions. PlayerSheet has «استمع حتى» and a sleep timer. MushafIndex has «آخر الصفحات».
-- **System boards:** Motion, LoadingStates, ErrorStates, UpdateStates, UpdateRequired.
-- **Settings:** the row «تحديث التطبيق», and the gear dot on HomeB and Quran.
-- **Replaced:** «المحفوظات» (`Saved`, `SavedStates`) is now «مجموعاتي».
+**D2 التلاوة اليومية**
+- Amount: ربع حزب / نصف حزب / حزب (default) / جزء, with the time to finish the Quran.
+- Start point and «ابدأ ختمة جديدة».
+- Reminder on/off, time and days.
+- Sync note.
+
+## Outside the app
+
+**E1 / E2 Widgets** (light and dark): the quick bar 4×1, تلاوة 2×2, moon 2×2, تذكرة 4×2, and المجتمع 4×2. Full specs are in DESIGN-SYSTEM §10.
+
+**E3 Notification player.** The system media notification:
+- Collapsed: previous, play/pause, next.
+- Expanded: adds repeat and speed, and the progress.
+- Artwork: the surah name on paper.
+
+**E4 Lock screen.** The Android media notification; on iOS, Now Playing with the same content.
+
+**E5 Notifications:** the تلاوة reminder, live reminders, answers, and moderator replies.
+
+## First launch
+
+**F1** has four steps: welcome → usage-data consent (equal buttons) → location or city → theme. «تخطَّ» is on steps 2–4. Notifications are asked later, in context.
+
+## System boards (from v5, restyle only)
+
+Loading, errors, update available and update required, the Admin suite, and the state boards.
 
 ## Not designed yet
-- «أوقات التسبيح» on Home (waits for its spec).
-- الفرقان (boycott list and economic awareness).
-- Onboarding (location permission, theme, reminder opt-in).
-- The content of «لماذا تقرأ القرآن».
+
+- «أوقات التسبيح» (waits for its spec).
+- الفرقان content.

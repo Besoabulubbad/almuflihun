@@ -1,6 +1,7 @@
 # 0002 — The first APK ships every designed area, including Live and Community
 
 - **Status:** accepted
+- **Later change:** Amended by [0018](0018-design-v7.md) (first APK adds widgets, the notification player, the moderators' inbox and live details)
 - **Date:** 2026-11-26
 - **Deciders:** Mohammad Abu Lubad, Claude
 - **Tags:** scope, release

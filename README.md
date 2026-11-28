@@ -1,4 +1,6 @@
-# المفلحون
+# مجتمع القرآن
+
+<sub>Codename `almuflihun`.</sub>
 
 An open-source, non-profit Quran app for daily reading, listening and reflection. Arabic only. The Quran is its only source.
 

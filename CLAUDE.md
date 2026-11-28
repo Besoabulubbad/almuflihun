@@ -1,15 +1,15 @@
-# CLAUDE.md: working in المفلحون
+# CLAUDE.md: working in مجتمع القرآن (`almuflihun`)
 
 This file is the contract between the codebase and any AI agent (Claude Code, the PR-review action, or a contributor's assistant). Read it fully before changing anything. Humans: it is also the shortest accurate summary of how this repo works.
 
 ## What this is
 
-المفلحون (`almuflihun`) is an open-source, non-profit, **Arabic-only, Quran-only** Kotlin Multiplatform app with one shared Compose Multiplatform UI (Android first; iOS is built, not distributed). It has a printed-page Mushaf with recitation, curated doors of verses, الضياء (food in the Quran), the moon and the Quranic times of tasbih computed on the device, and a moderated community. It is a production app used by real people: the bar is [docs/guides/quality-bar.md](docs/guides/quality-bar.md).
+«مجتمع القرآن» (codename `almuflihun`, ADR 0019) is an open-source, non-profit, **Arabic-only, Quran-only** Kotlin Multiplatform app with one shared Compose Multiplatform UI (Android first; iOS is built, not distributed). It has a printed-page Mushaf with recitation, curated doors of verses, الضياء (food in the Quran), the moon and the Quranic times of tasbih computed on the device, and a moderated community. It is a production app used by real people: the bar is [docs/guides/quality-bar.md](docs/guides/quality-bar.md).
 
 ## Before you change anything
 
 1. Read [docs/plan.md](docs/plan.md) and the ADR index [docs/adr/README.md](docs/adr/README.md). Accepted ADRs are binding; if a change contradicts one, stop and propose a superseding ADR.
-2. Read the design: `design/DESIGN.md` (strict), `design/SCREENS.md`, `design/DECISIONS.md`, `design/COPY.md`, and our per-screen decisions in [docs/specs/screens.md](docs/specs/screens.md). The design wins over screenshots; data wins over both.
+2. Read the design (v7, ADR 0018): `design/DESIGN-SYSTEM.md` (strict), `design/SCREENS.md`, `design/DECISIONS.md`, `design/UX-STRATEGY.md`, `design/ICONS.md`, `design/COPY.md`, and our per-screen decisions in [docs/specs/screens.md](docs/specs/screens.md). The design is the UI; product decisions in the ADRs win over it (ADR 0018–0020). The design wins over screenshots; data wins over both.
 3. For any library, follow its **official documentation for the version pinned** in `gradle/libs.versions.toml`. Use Context7 (`.mcp.json`) for version-exact docs. Do not rely on memory for APIs.
 
 ## Non-negotiable rules

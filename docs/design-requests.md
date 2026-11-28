@@ -31,3 +31,16 @@ Until then the build lists these four as known gaps (`ContentPlacementTest`), an
 ## 5. Search results «حسب الرسم» (owner, 2026-11-27)
 
 Advanced search can group results by how the Mushaf writes the word (docs/specs/screens.md §13): for example «إِبْرَٰهِيمَ» 54 and «إِبْرَٰهِۦمَ» 15. Please design the switch between «حسب السورة» and «حسب الرسم» on SearchAdvanced and the shape group header (the Mushaf spelling in the Quran font, with its count). The engine is ready.
+
+## 6. Align the v7 files with the owner's decisions (ADR 0018, 2026-11-28)
+
+v7 is adopted as the UI. Where its files say otherwise on these points, the owner's decisions win; please update `DESIGN-SYSTEM.md`, `SCREENS.md`, `DECISIONS.md` and the affected screens:
+
+1. **Fonts (ADR 0013/0016 stand):** verses outside the Mushaf use **Digital Khatt** (bundled), not KFGQPC HAFS. Mushaf page fonts are **downloaded once**, not bundled; while a page's font downloads, the page is drawn in Digital Khatt with the quiet note «يُحمَّل المصحف المطابق للطبعة» (not skeleton lines). Replaces v7 #14, #35 and DESIGN-SYSTEM's font section. A small screen for the download (size, Wi-Fi / mobile data, progress) is still needed (request §3).
+2. **Word tap is off for now.** C3 is not built. Tapping anywhere on an ayah selects it and opens the AyahSheet as in C2. Word study and ayah study come back later, with their entry points designed together.
+3. **«تلاوة» keeps the decided behaviour:** its own memory, «read from where you left», moving only when the reader reads (no daily schedule, no "behind"). The unit is the **hizb** (no ربع / نصف / جزء choice). Reminders are the two **sun-based** ones, morning «قبل طلوع الشمس» and evening «قبل الغروب», off by default, not a clock time. Please adjust A1 (the «٥:٣٠ ص» time), C4 and D2.
+4. **Player:** v7's mini bar, plus **play scope** («استمع حتى»: end of the surah, hizb, quarter, or a chosen ayah) and the **sleep timer** as small options (a long press on the bar or a row in Settings, your choice).
+5. **Search options:** six types: كلمة (forgiving, default), كلمة كاملة، عبارة، جذر، **لفظ**، مطابق.
+6. **Spelling forms example:** «عباد = 12 (11 + 1)» does not reproduce. The standalone word gives 10 + 1 (الزخرف ١٩ with the small alif); with prefixes 20 + 1; v7 lists الفرقان ٦٣ («وَعِبَادُ», prefixed) among the 11. The app computes the real counts; only the sample needs fixing.
+7. **Word ranges** in `data/*.json` count words in the **Tanzil simple text** (pause marks and the basmala prefix removed), as the build checks them, not in KFGQPC word order (DESIGN-SYSTEM §highlight). The app maps them onto the Mushaf's words.
+8. **Name:** «مجتمع القرآن» is now the app's name (ADR 0019).

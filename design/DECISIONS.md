@@ -60,3 +60,49 @@ Still open: the content of «من نحن وكيف نفهم ديننا», onboard
 | 34 | Pull to refresh | Community, Live and Admin lists only. | Design |
 | 35 | Late page font | Show skeleton lines. **Never** draw Quran text in a fallback font. | Design |
 | 36 | Update dot | It stays until the update is installed. Dismissing the banner does not clear it. | Owner (ADR 0010) |
+
+---
+
+## v6 redesign decisions (2026-11-28)
+
+These come from the redesign review with the owner. They override anything above that is about look, layout or navigation. Decisions above about data, Firebase, fonts, licences, sign-in, analytics and the lunar month still stand.
+
+| # | Decision | Owner |
+|---|---|---|
+| 37 | Working name «مجتمع القرآن». No branding. One calm look (DESIGN-SYSTEM.md). | Owner |
+| 38 | Structure stays: Home → الذكر / الضياء / الفرقان. ادرس lives inside الذكر and holds only the doors for now. | Owner |
+| 39 | Nothing beyond the v5 features, except small shortcuts that link existing features. | Owner |
+| 40 | Search sits at the top of Home. The default search forgives tashkeel and hamza forms («يا ايها الذين امنوا» → 89 ayahs). Advanced options are one level deeper. | Owner |
+| 41 | The player is one bar: play/pause, previous, next, repeat, speed. No player sheet, no «استمع حتى», no sleep timer. Reciter is in Settings. | Owner |
+| 42 | «تذكرة» moves from Home into الذكر. | Owner |
+| 43 | The moon is a small row on Home with today's real phase. The Moon page keeps all v5 content and is always dark. | Owner |
+| 44 | الذكر shows a live banner (only when live or within 24 h), the next 3 lives, and 3 videos, each with «الكل». YouTube plays in the app. | Owner |
+| 45 | Lives show host, audience (للجميع / للمبتدئين / للأخوات / للأطفال), topic, time and repeat. The admin form gains «لمن» and «عن ماذا». A live details screen is added (B4). | Owner |
+| 46 | AyahSheet keeps the v5 five actions, plus «اسأل عنها في المجتمع» and the doors the ayah is in. No word study, root cards, meanings or ayah study for now. | Owner |
+| 47 | Word tap: «استمع للكلمة» and «ابحث بجذرها» only. | Owner |
+| 48 | Mushaf stays printed pages with pinch to zoom; no flowing-text mode. | Design |
+| 49 | «لماذا تقرأ القرآن» is removed until its content exists. «وقتك مع القرآن» is a row in الذكر. | Design |
+| 50 | Settings opens from the profile icon on Home; the gear and the Home bell are removed. | Design |
+| 51 | The design is validated after release with opt-in analytics, monthly reviews, quarterly usability rounds and flag-based experiments (UX-STRATEGY.md). | Owner |
+| 52 | Zero-result search queries: collect the normalised text with consent, or the count only? Conflicts with #23 as written. | **Owner, open** |
+
+## v7 decisions (2026-11-28)
+
+These override v6 where they differ (#38, #42, #43, #44, #50 are replaced).
+
+| # | Decision | Owner |
+|---|---|---|
+| 53 | Four tabs with a tab bar: الذكر (first), المجتمع، القرآن، الإعدادات. Each tab keeps its own back stack. Replaces the Home → sections structure (#38). | Owner |
+| 54 | الذكر holds: تلاوة اليوم (with reminder and progress), the week, the moon, تذكرة, and tiles for ادرس، الضياء، الفرقان. Lives leave الذكر. | Owner |
+| 55 | The daily reading is called «تلاوة». Default one hizb a day, in order (the whole Quran in about 60 days); options ربع حزب / نصف حزب / حزب / جزء. Progress as a week strip; no streaks or badges. | Owner (default amount and no-streaks by design, easy to change) |
+| 56 | المجتمع: النقاش، البثوث، الفيديوهات، المشرفون. Visible to everyone; sign-in only when acting. A direct line to the moderators (سؤال / بلاغ / اقتراح). | Owner |
+| 57 | القرآن is the Quran engine: search with options, continue reading, the index, مجموعاتي. "Smarter" means smarter about the text (forgiving search, spelling forms, phrases, roots, ranges), never AI explanations. | Owner + design |
+| 58 | Search results show how each word is written in the Mushaf (spelling forms), each form with its own mark and count; tapping a form filters. | Owner |
+| 59 | الإعدادات holds the profile, التلاوة اليومية, the reciter, theme, notifications, location, about. | Owner |
+| 60 | A mini player (one row: repeat, previous, play/pause, next, speed) sits above the tab bar everywhere. The Quran search box sits on الذكر and القرآن; المجتمع has its own post search. | Owner (search placement by design) |
+| 61 | Full-screen reading hides the tab bar; the mini player stays. | Design |
+| 62 | Home-screen widgets: quick bar, تلاوة, moon, تذكرة, المجتمع. Android Glance and iOS WidgetKit. No logos. | Owner |
+| 63 | Notification player: the system media notification and lock screen, with ayah-level previous/next, plus repeat and speed when expanded. | Owner |
+| 64 | Notifications: تلاوة reminder, live reminder, answers, moderator replies; each its own channel, all off until turned on in context. | Design (from #29) |
+| 65 | The mark is the letter ق (option C, refined): paper on accent for the app icon; used only for the app icon, splash, notification icon, stores and «عن التطبيق». No sacred text or places in any icon. | Owner (choice), design (rules) |
+| 66 | Lucide is the only icon set; the full map is in ICONS.md. | Design |
