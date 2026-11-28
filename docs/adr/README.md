@@ -34,6 +34,9 @@ Design and content decisions made with the designer live in [`design/DECISIONS.m
 | [0015](0015-bundled-quran-database.md) | The Quran ships as one read-only database, built from the sources at compile time | accepted | 2026-11-27 |
 | [0016](0016-mushaf-fonts-woff.md) | Mushaf page fonts are downloaded as WOFF, not WOFF2 | accepted | 2026-11-27 |
 | [0017](0017-astronomy-engine-common-code.md) | Astronomy Engine, vendored as common Kotlin | accepted | 2026-11-27 |
+| [0018](0018-design-v7.md) | Design v7 is adopted as a UI change; decided product behaviour stands | accepted | 2026-11-28 |
+| [0019](0019-app-name.md) | The app is called «مجتمع القرآن» | accepted | 2026-11-28 |
+| [0020](0020-analytics-v7.md) | Analytics for design v7: remote settings, more events, zero-result searches; no A/B tests | accepted | 2026-11-28 |
 
 ## How these were decided
 

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ SplashScreen API (core-splashscreen). Mark only, no text, no branding image. -->
+<resources>
+  <style name="Theme.QuranCommunity.Splash" parent="Theme.SplashScreen">
+    <item name="windowSplashScreenBackground">@color/splash_background</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/splash_mark</item>
+    <item name="windowSplashScreenAnimationDuration">0</item>
+    <item name="postSplashScreenTheme">@style/Theme.QuranCommunity</item>
+  </style>
+</resources>

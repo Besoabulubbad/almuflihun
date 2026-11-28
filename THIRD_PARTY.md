@@ -16,5 +16,6 @@ The MIT licence in [LICENSE](LICENSE) covers this project's source code only. Ev
 | Lucide icons (1.82.0) | [lucide.dev](https://lucide.dev) | ISC | bundled as vectors (`core/designsystem/licenses/SOURCES.md`) |
 | Astronomy Engine (moon, sun, planets) | [cosinekitty/astronomy](https://github.com/cosinekitty/astronomy), Kotlin source at commit `826e26f` | MIT (© Don Cross); vendored with three marked patches (ADR 0017) | vendored (`core/astronomy/.../SOURCE.md`) |
 | USNO rise/set and moon-phase reference data (tests only) | US Naval Observatory, as published with Astronomy Engine | US government work; used only in tests | `core/astronomy/src/androidHostTest/resources/usno` |
+| Design board preview fonts (`design/board/fonts`): Amiri Quran, IBM Plex Sans Arabic | the design handoff v7 | SIL Open Font License 1.1; used only by the design board page, not shipped in the app | in `design/board` |
 | City list | [GeoNames](https://www.geonames.org/) | CC BY 4.0 | to add (Phase 4) |
 | الضياء illustrations | the project's designer (`design/illustrations/`) | project-owned | in `design/` |

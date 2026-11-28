@@ -14,14 +14,14 @@ All taken on 2026-11-26, one question at a time; each has an ADR. Per-screen dec
 
 | Area | Decision | ADR |
 |---|---|---|
-| Design | `design/` (v4) binding, enforced with Sojourn's machinery | [0001](adr/0001-design-handoff-and-enforcement.md) |
-| Scope | First APK ships every designed area, including Live, Community, Admin | [0002](adr/0002-first-apk-scope.md) |
+| Design | `design/` (v7) binding as the UI; decided product behaviour stands | [0001](adr/0001-design-handoff-and-enforcement.md), [0018](adr/0018-design-v7.md) |
+| Scope | First APK ships every designed area, including Live, Community, Admin, plus widgets, the notification player, the moderators' inbox and live details (v7) | [0002](adr/0002-first-apk-scope.md), [0018](adr/0018-design-v7.md) |
 | Quran assets | QUL page fonts, layout and data committed to the repo, credited | [0004](adr/0004-quran-assets-in-repo.md) |
 | Backend | Firebase on Blaze, Cloud Functions, push for live, posts, replies, updates, announcements | [0005](adr/0005-firebase-blaze-push-notifications.md) |
 | Community | Review by default, trust granted by moderators, roles as data, points and grades | [0006](adr/0006-community-users-and-permissions.md) |
 | Audio | Quran Foundation API through our backend; علي جابر first | [0007](adr/0007-recitation-audio-quran-foundation.md) |
-| Analytics | Opt-in, purpose-limited Firebase Analytics and Crashlytics | [0008](adr/0008-analytics-and-crash-reporting.md) |
-| Identity | `almuflihun`, application ID `app.almuflihun`, MIT licence | [0009](adr/0009-app-identity.md) |
+| Analytics | Opt-in, purpose-limited Firebase Analytics and Crashlytics; remote settings and zero-result searches with consent; no A/B tests | [0008](adr/0008-analytics-and-crash-reporting.md), [0020](adr/0020-analytics-v7.md) |
+| Identity | Shown as «مجتمع القرآن»; codename `almuflihun`, application ID `app.almuflihun`, MIT licence | [0009](adr/0009-app-identity.md), [0019](adr/0019-app-name.md) |
 | Updates | The direct APK updates itself; `play` flavour for later | [0010](adr/0010-self-updating-apk.md) |
 | Architecture | Sojourn's setup, adapted | [0011](adr/0011-architecture-from-sojourn.md) |
 | Study engine | Collections, advanced search, word study, related verses, study panel, surah overview | [0012](adr/0012-study-engine.md) |
@@ -99,13 +99,13 @@ Through a temporary local call (the secret stays on the owner's machine), fetch 
 
 ### Phase 5: design-system components
 
-Every component in DESIGN §6 and v4 (VerseCard, EvidenceItem, slider, HizbCard, tiles, LiveCard, the player bar and sheet, AyahSheet, LangBox, RuleBox, the 13 الضياء blocks, grade badge, Admin form parts, banners, prompts), each with KDoc, previews and the screenshot matrix (light/dark × 100%/130% × two widths). Motion tokens are wired when the designer delivers them.
+Rebuilt on **design v7** (ADR 0018): the token generator moves from `design/archive/v5/tokens.json` to v7's `design/tokens.json`, then every component in `design/DESIGN-SYSTEM.md` §6 and §10 (TabBar, MiniPlayer with play scope and sleep timer, AyahSheet, VerseCard, SearchField and the six search types, spelling forms, TilawaCard, WeekStrip, MoonRow, SectionTiles, PostCard, LiveRow and LiveBanner, ModeratorInbox, the الضياء blocks, Admin form parts, banners, prompts, widget layouts), each with KDoc, previews and the screenshot matrix (light/dark × 100%/130%/200% × two widths).
 
 **Exit:** every component's screenshots approved; Konsist confirms no Material outside `core:designsystem`.
 
 ### Phase 6: offline screens
 
-In this order, each a PR that meets the quality bar: Home (with «تذكرة» and the moon), Moon, Mushaf (with index, advanced search, full screen, saved-page ribbon, recent pages), the study panel, word study and surah overview (ADR 0012), Hizb (with HizbEnd), الأبواب and the door pages, «كل الآيات», الحكمة, الضياء (hub and 11 stations), Collections (device; ADR 0012), Settings (local parts), onboarding (when designed). «أوقات التسبيح» lands on Home when designed. `app:shared` and `app:android` are wired at the start, so the app runs end to end from the first screen.
+The v7 structure (ADR 0018): four tabs, each with its own back stack, and the mini player everywhere. In this order, each a PR that meets the quality bar: the tab shell and mini player; الذكر (تلاوة card with its own memory and the sun-based reminders, the week, the moon row, تذكرة, section tiles); the Moon page; القرآن (search with the six types and spelling forms, continue reading, the index, مجموعاتي and a collection); the Reader (printed pages, pinch to zoom, full screen, the AyahSheet; word tap off for now); ادرس and the door pages, «كل الآيات», الحكمة; الضياء (hub and 11 stations); الإعدادات (local parts, وقتي مع القرآن); first launch (F1). «أوقات التسبيح» lands when designed. Word study and ayah study wait for their entry points.
 
 **Exit:** all offline screens merged; the app is usable without any network.
 

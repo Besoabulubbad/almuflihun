@@ -1,6 +1,7 @@
 # 0012 — A Quran study engine: collections, advanced search, word study, related verses
 
 - **Status:** accepted
+- **Later change:** Amended by [0018](0018-design-v7.md) (word tap off for now; word and ayah study entry points decided later)
 - **Date:** 2026-11-26
 - **Deciders:** Mohammad Abu Lubad, Claude
 - **Tags:** quran, product, search, data

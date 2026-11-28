@@ -30,6 +30,6 @@ dependencies {
 
 tasks.test {
     // The generator test runs against the real token file, so the build logic is proven on every `check`.
-    systemProperty("almuflihun.tokensFile", rootDir.parentFile.resolve("design/tokens.json").absolutePath)
+    systemProperty("almuflihun.tokensFile", rootDir.parentFile.resolve("design/archive/v5/tokens.json").absolutePath)
     systemProperty("almuflihun.quranSources", rootDir.parentFile.resolve("core/quran/sources").absolutePath)
 }

@@ -1,6 +1,7 @@
 # 0008 — Opt-in, purpose-limited analytics and crash reporting with Firebase
 
 - **Status:** accepted
+- **Later change:** Amended by [0020](0020-analytics-v7.md) (remote settings, more events, zero-result searches with consent; no A/B tests)
 - **Date:** 2026-11-26
 - **Deciders:** Mohammad Abu Lubad, Claude
 - **Tags:** analytics, privacy, quality

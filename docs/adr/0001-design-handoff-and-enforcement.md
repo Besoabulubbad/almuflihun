@@ -1,6 +1,7 @@
 # 0001 — The design handoff is binding, enforced with Sojourn's machinery
 
 - **Status:** accepted
+- **Later change:** Amended by [0018](0018-design-v7.md) (handoff v7 in `design/`; v5 archived)
 - **Date:** 2026-11-26
 - **Deciders:** Mohammad Abu Lubad, Claude
 - **Tags:** design-system, tooling

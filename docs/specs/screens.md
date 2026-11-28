@@ -2,6 +2,7 @@
 
 The owner and Claude go through every screen to agree what it shows, where its data comes from, its states, and where each action leads. `design/SCREENS.md` and `design/DESIGN.md` remain the visual source of truth; this page records the decisions on top of them. Open design questions go to [design-requests.md](../design-requests.md).
 
+> **Design v7 (2026-11-28, ADR 0018).** The UI now follows `design/` v7: four tabs, the mini player, and the v7 screens. The behaviour agreed below still stands; where v7 differs on fonts, word tap, «تلاوة», the player options, the search types, the first-APK features, the name or analytics, ADR 0018–0020 record the owner's decisions. Screen names below are the v5 ones.
 ## 1. Home
 
 **Agreed 2026-11-26.**
