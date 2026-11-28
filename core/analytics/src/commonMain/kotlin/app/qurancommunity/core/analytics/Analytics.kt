@@ -21,6 +21,19 @@ object NoAnalyticsSink : AnalyticsSink {
     override fun setCollectionEnabled(enabled: Boolean) = Unit
 }
 
+/**
+ * Where [AnalyticsEvent.unlinked] events go (tracking plan, "Zero-result searches"): a create-only record with no user
+ * or install link, never Firebase Analytics. Set up in Phase 7; nothing before.
+ */
+fun interface UnlinkedSink {
+    fun record(name: String, params: Map<String, Any>)
+}
+
+/** Records nothing. Used until the backend is set up, and in tests. */
+object NoUnlinkedSink : UnlinkedSink {
+    override fun record(name: String, params: Map<String, Any>) = Unit
+}
+
 /** The user properties the plan allows: no identity, never which staff role. */
 enum class UserProperty(val key: String) {
     Theme("theme"),
@@ -31,9 +44,14 @@ enum class UserProperty(val key: String) {
 
 /**
  * The only way the app sends analytics (ADR 0008). Nothing leaves before consent is [AnalyticsConsent.Granted]; a
- * denial also asks the SDK to stop collecting on the device. Events are typed, so only the tracking plan can be sent.
+ * denial also asks the SDK to stop collecting on the device. Events are typed, so only the tracking plan can be sent;
+ * unlinked ones go only to the [UnlinkedSink].
  */
-class Analytics(private val sink: AnalyticsSink, initialConsent: AnalyticsConsent = AnalyticsConsent.Unknown) {
+class Analytics(
+    private val sink: AnalyticsSink,
+    initialConsent: AnalyticsConsent = AnalyticsConsent.Unknown,
+    private val unlinkedSink: UnlinkedSink = NoUnlinkedSink,
+) {
 
     private val consentState = MutableStateFlow(initialConsent)
 
@@ -51,7 +69,9 @@ class Analytics(private val sink: AnalyticsSink, initialConsent: AnalyticsConsen
     }
 
     fun log(event: AnalyticsEvent) {
-        if (consentState.value == AnalyticsConsent.Granted) sink.log(event.name, event.params)
+        if (consentState.value != AnalyticsConsent.Granted) return
+        // An unlinked event must never reach the analytics SDK, which ties every event to the app instance.
+        if (event.unlinked) unlinkedSink.record(event.name, event.params) else sink.log(event.name, event.params)
     }
 
     fun setUserProperty(property: UserProperty, value: String) {
