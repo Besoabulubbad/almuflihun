@@ -1,5 +1,5 @@
-# Defaults for the المفلحون design rules; detekt validates config/detekt/detekt.yml against this file.
-almuflihun:
+# Defaults for the مجتمع القرآن design rules; detekt validates config/detekt/detekt.yml against this file.
+qurancommunity:
   active: true
   TokensOnly:
     active: true

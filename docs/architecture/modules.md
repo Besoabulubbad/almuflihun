@@ -1,6 +1,6 @@
 # Modules
 
-Every Gradle module, what it owns and what it may depend on. Package root `app.almuflihun` (ADR 0009). A module's own `README.md` holds detail that changes often; this page holds the contract. **core-base** = `core:model`, `core:common`.
+Every Gradle module, what it owns and what it may depend on. Package root `app.qurancommunity` (ADR 0009). A module's own `README.md` holds detail that changes often; this page holds the contract. **core-base** = `core:model`, `core:common`.
 
 ## Application
 
@@ -56,7 +56,7 @@ All features share one contract: they may depend on `:core:ui`, `:core:designsys
 
 | Path | Owns |
 |---|---|
-| `build-logic/` | Convention plugins `almuflihun.*`, the token generator, resource checks |
+| `build-logic/` | Convention plugins `qurancommunity.*`, the token generator, resource checks |
 | `tooling/detekt-rules`, `tooling/konsist` | The custom detekt rule set; architecture tests |
 | `firebase/` | `firestore.rules` with emulator tests; Cloud Functions (TypeScript) |
 | `design/` | The binding design handoff, verbatim |

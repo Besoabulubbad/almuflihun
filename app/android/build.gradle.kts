@@ -1,13 +1,13 @@
 plugins {
-    id("almuflihun.android.application")
+    id("qurancommunity.android.application")
 }
 
 android {
-    namespace = "app.almuflihun"
+    namespace = "app.qurancommunity"
 
     defaultConfig {
-        // Permanent: never change after the first install (ADR 0009).
-        applicationId = "app.almuflihun"
+        // Permanent: never change after the first install (ADR 0009, ADR 0021).
+        applicationId = "app.qurancommunity"
         versionCode = 1
         versionName = "0.1.0"
     }

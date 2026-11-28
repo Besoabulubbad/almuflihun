@@ -1,10 +1,10 @@
-# CLAUDE.md: working in مجتمع القرآن (`almuflihun`)
+# CLAUDE.md: working in مجتمع القرآن
 
 This file is the contract between the codebase and any AI agent (Claude Code, the PR-review action, or a contributor's assistant). Read it fully before changing anything. Humans: it is also the shortest accurate summary of how this repo works.
 
 ## What this is
 
-«مجتمع القرآن» (codename `almuflihun`, ADR 0019) is an open-source, non-profit, **Arabic-only, Quran-only** Kotlin Multiplatform app with one shared Compose Multiplatform UI (Android first; iOS is built, not distributed). It has a printed-page Mushaf with recitation, curated doors of verses, الضياء (food in the Quran), the moon and the Quranic times of tasbih computed on the device, and a moderated community. It is a production app used by real people: the bar is [docs/guides/quality-bar.md](docs/guides/quality-bar.md).
+«مجتمع القرآن» (`qurancommunity`, ADR 0019, ADR 0021) is an open-source, non-profit, **Arabic-only, Quran-only** Kotlin Multiplatform app with one shared Compose Multiplatform UI (Android first; iOS is built, not distributed). It has a printed-page Mushaf with recitation, curated doors of verses, الضياء (food in the Quran), the moon and the Quranic times of tasbih computed on the device, and a moderated community. It is a production app used by real people: the bar is [docs/guides/quality-bar.md](docs/guides/quality-bar.md).
 
 ## Before you change anything
 
@@ -33,12 +33,12 @@ This file is the contract between the codebase and any AI agent (Claude Code, th
 ./gradlew check buildHealth                           # what CI runs on every PR (.github/workflows/pr.yml)
 ```
 
-Convention plugins live in `build-logic/` (`almuflihun.*`); versions in `gradle/libs.versions.toml`.
+Convention plugins live in `build-logic/` (`qurancommunity.*`); versions in `gradle/libs.versions.toml`.
 
 ## Conventions
 
 - Kotlin official style; detekt is the single linter (from Phase 1).
-- Package root `app.almuflihun` (ADR 0009). Modules per ADR 0011.
+- Package root `app.qurancommunity` (ADR 0021). Modules per ADR 0011.
 - Conventional Commits (`feat(mushaf): …`); scope = module name without `feature:`/`core:`. Agent-authored commits carry a `Co-Authored-By` trailer.
 - Every PR that adds or changes a screen meets the quality bar and states which design screen it implements.
 

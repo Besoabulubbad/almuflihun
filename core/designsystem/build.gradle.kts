@@ -1,8 +1,8 @@
 plugins {
-    id("almuflihun.kmp.library")
-    id("almuflihun.compose")
-    id("almuflihun.tokens")
-    id("almuflihun.screenshot")
+    id("qurancommunity.kmp.library")
+    id("qurancommunity.compose")
+    id("qurancommunity.tokens")
+    id("qurancommunity.screenshot")
 }
 
 kotlin {
@@ -21,5 +21,5 @@ kotlin {
 
 compose.resources {
     publicResClass = false
-    packageOfResClass = "app.almuflihun.core.designsystem.resources"
+    packageOfResClass = "app.qurancommunity.core.designsystem.resources"
 }

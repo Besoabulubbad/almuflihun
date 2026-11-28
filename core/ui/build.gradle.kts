@@ -1,6 +1,6 @@
 plugins {
-    id("almuflihun.kmp.library")
-    id("almuflihun.compose")
+    id("qurancommunity.kmp.library")
+    id("qurancommunity.compose")
 }
 
 kotlin {

@@ -1,3 +1,3 @@
 plugins {
-    id("almuflihun.kmp.feature")
+    id("qurancommunity.kmp.feature")
 }

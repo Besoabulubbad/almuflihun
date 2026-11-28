@@ -1,6 +1,6 @@
 # Security policy
 
-المفلحون handles accounts, moderation and a public community, so security reports matter.
+مجتمع القرآن handles accounts, moderation and a public community, so security reports matter.
 
 ## Reporting a vulnerability
 

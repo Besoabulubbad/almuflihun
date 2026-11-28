@@ -1,6 +1,6 @@
 plugins {
-    id("almuflihun.kmp.library")
-    id("almuflihun.koin")
+    id("qurancommunity.kmp.library")
+    id("qurancommunity.koin")
     id("app.cash.sqldelight")
 }
 
@@ -26,7 +26,7 @@ kotlin {
 sqldelight {
     databases {
         create("UserDatabase") {
-            packageName.set("app.almuflihun.core.database")
+            packageName.set("app.qurancommunity.core.database")
         }
     }
 }

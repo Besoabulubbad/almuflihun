@@ -20,7 +20,7 @@
 | Offline | Downloaded audio and pages, excluded from device backups | Quran iOS |
 | Accessibility | **No accessibility statement in any listing read** | all |
 
-## 2. Where المفلحون can be clearly better
+## 2. Where مجتمع القرآن can be clearly better
 
 These come from the gaps above and from how glyph-font Mushafs work.
 
@@ -50,7 +50,7 @@ These come from the gaps above and from how glyph-font Mushafs work.
 
 ## 3. Owner decision on the first pass (2026-11-26)
 
-**المفلحون is a study app, not a memorisation app.** "We are not for repeaters; we are here to study it." Priorities: ease of use, grouping saved verses, an advanced search system, and a product that beats quran.com; the design may change to get there.
+**مجتمع القرآن is a study app, not a memorisation app.** "We are not for repeaters; we are here to study it." Priorities: ease of use, grouping saved verses, an advanced search system, and a product that beats quran.com; the design may change to get there.
 
 - **Rejected:** P1 as a headline feature (the quality bar's basic TalkBack readability still applies: the Mushaf exposes its real text to screen readers), P3 memorisation mode, P4 repeat pauses.
 - **Kept, small ease-of-use items (pending confirmation):** P2 copy real text, P5 play scope, P6 recent pages, P8 sleep timer.

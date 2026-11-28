@@ -1,4 +1,4 @@
-# المفلحون detekt configuration, layered on detekt's defaults (buildUponDefaultConfig = true). Adapted from Sojourn.
+# مجتمع القرآن detekt configuration, layered on detekt's defaults (buildUponDefaultConfig = true). Adapted from Sojourn.
 # Three rule sets: detekt core, formatting (ktlint rules), and the Compose rules (io.nlopez.compose.rules).
 # Design-system standards (tokens only, start/end only, …) come from the custom rule set in tooling/detekt-rules.
 
@@ -117,7 +117,7 @@ Compose:
 # The design and Quran rules (tooling/detekt-rules). Token, text-style, motion, direction and text rules govern
 # screens (feature/*) and core:ui; core:designsystem is where tokens become components and is exempt. Insets are
 # owned by named components everywhere. Quran text is never typed into product code, outside tests and the engine.
-almuflihun:
+qurancommunity:
   active: true
   TokensOnly:
     active: true

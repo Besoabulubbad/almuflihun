@@ -5,7 +5,7 @@
 - **Licence:** MIT, © 2019-2025 Don Cross; the notice is kept at the top of `astronomy.kt`.
 - **Why vendored:** the published Kotlin build is JVM-only (JitPack 2.1.19); the source uses only `kotlin.math`, so it runs as common code for Android and iOS (ADR 0017).
 
-## Changes (each marked `[almuflihun]` in the code)
+## Changes (each marked `[qurancommunity]` in the code)
 
 1. Explicit imports of `kotlin.jvm.JvmName`, `JvmOverloads`, `JvmStatic` (implicit only on the JVM).
 2. `Time.toString`: `String.format` (JVM-only) replaced by `padStart`, with the same output.

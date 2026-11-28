@@ -547,7 +547,7 @@ class DateTime(
         val millis: Double = 1000.0 * (second - wholeSeconds)
         val wholeMillis: Int = millis.toInt()
 
-        // [almuflihun] String.format is JVM-only; the same text with padStart.
+        // [qurancommunity] String.format is JVM-only; the same text with padStart.
         fun pad(n: Int, width: Int) = n.toString().padStart(width, '0')
         val ytext = when {
             year < 0 -> "-" + pad(-year, 6)
@@ -3639,7 +3639,7 @@ private fun getPlutoSegment(tt: Double): List<BodyGravCalc>? {
         return null     // Don't bother calculating a segment. Let the caller crawl backward/forward to this time
 
     val segIndex = clampIndex((tt - plutoStateTable[0].tt) / PLUTO_TIME_STEP, PLUTO_NUM_STATES-1)
-    return withPlatformLock(plutoCache) { // [almuflihun] synchronized is JVM-only
+    return withPlatformLock(plutoCache) { // [qurancommunity] synchronized is JVM-only
         plutoCache.getOrPut(segIndex) {
             val seg = mutableListOf<BodyGravCalc>()
 

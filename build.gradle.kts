@@ -19,6 +19,17 @@ tasks.check {
     dependsOn(gradle.includedBuild("build-logic").task(":convention:test"))
 }
 
+// The analyser's per-module tasks are never taken from the build cache: their cache key misses a change of package
+// (the rename to app.qurancommunity, ADR 0021, restored summaries naming the old classes and buildHealth reported
+// every module as unused). They are quick to recompute.
+subprojects {
+    tasks.configureEach {
+        if (javaClass.name.startsWith("com.autonomousapps.")) {
+            outputs.doNotCacheIf("dependency-analysis cache keys miss package moves") { true }
+        }
+    }
+}
+
 // `./gradlew buildHealth`. Applied per module by the convention plugins; the root aggregates. Every category fails.
 // Modules that are still skeletons warn instead; remove a module from this list in the PR that gives it code.
 val skeletonModules = (
@@ -67,7 +78,7 @@ dependencyAnalysis {
             onAny { severity("warn") }
             onUnusedDependencies {
                 severity("fail")
-                // almuflihun.kmp.library gives every module kotlin-test, ready for its first test.
+                // qurancommunity.kmp.library gives every module kotlin-test, ready for its first test.
                 exclude("org.jetbrains.kotlin:kotlin-test")
             }
             onUsedTransitiveDependencies {

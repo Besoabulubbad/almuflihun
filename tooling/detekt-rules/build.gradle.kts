@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     alias(libs.plugins.kotlinJvm)
-    id("almuflihun.detekt")
+    id("qurancommunity.detekt")
     alias(libs.plugins.dependencyAnalysis)
 }
 
